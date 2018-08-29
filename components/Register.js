@@ -17,6 +17,12 @@ export default class Register extends React.Component {
     submit = () => {
         const {userName, userPassword, confirmPassword, firstName, lastName} = this.state;
 
+        if (userName == '' || firstName == '' || lastName == '')
+        {
+            alert("UserName, FirstName and LastName fields must be filled in!");
+            return;
+        }
+
         if (userPassword != confirmPassword)
         {
             alert("Both password fields must be identical!");
@@ -40,33 +46,39 @@ export default class Register extends React.Component {
             .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
             .then((result) => { // no error in server
                 const userId = JSON.parse(result.d);
+                
                 switch(userId)
                 {
+                    case -2:
+                    {
+                        alert("Error! User could not be created");
+                        break;
+                    }
                     case -1:
                     {
-                        alert("User could not be created. Use a different username.");
+                        alert("There is already a user with that UserName. Use a different UserName.");
                         break;
                     }
                     default:
                     {
                         let details = {
-                            user = {
-                                userId,
-                                userName,
-                                userPassword,
-                                firstName,
-                                lastName  
+                            user : {
+                                UserId,
+                                UserName : userName,
+                                UserPassword : userPassword,
+                                FirstName : firstName,
+                                LastName : lastName  
                             },
-                            userList = {
+                            userList : {
                                 user : user
                             },
-                            homeList = {
+                            homeList : {
                                 home : {
                                     HomeId : "",
                                     HomeName : "",
                                     Address : "" 
                                 }
-                            }
+                            },
                         }
                         this.props.navigation.navigate('Home', {details});
                         break;

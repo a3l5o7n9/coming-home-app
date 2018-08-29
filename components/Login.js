@@ -17,6 +17,12 @@ export default class Login extends React.Component {
         debugger;
         const { userName, userPassword } = this.state;
 
+        if (userName == '')
+        {
+            Alert.alert("Please enter your username and password");
+            return;
+        }
+
         var request = {
             userName,
             userPassword
@@ -36,6 +42,12 @@ export default class Login extends React.Component {
                 user : jsonData.U,
                 userList : jsonData.LU,
                 homeList : jsonData.LH
+            }
+
+            if (details.user == null)
+            {
+                Alert.alert("Invalid Username or Password. Please try again.");
+                return;
             }
             this.props.navigation.navigate("Home", {details});
         })
@@ -63,11 +75,11 @@ export default class Login extends React.Component {
     }
 }
 
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: '#fff',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-// });
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+});

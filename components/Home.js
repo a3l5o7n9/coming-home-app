@@ -20,6 +20,32 @@ export default class Home extends React.Component
         }
     }
 
+    showHomes = () => {
+        if (this.state.homeList != null)
+        {
+            return ( 
+                <View>
+                    <Text>Your Homes</Text>
+                    {
+                        this.state.homeList.map((home, HomeId) => (
+                        <Text>{home["HomeName"]} {home["Address"]}</Text>
+                        ))
+                    }
+                </View>
+            );
+        }
+        else
+        {
+            return (
+                <View>
+                    {
+                        <Text>You have yet to join a home</Text>
+                    }
+                </View>
+            );
+        }
+    }
+
     // GetItemList = () => {
     //     let itemsList = []
         
@@ -38,11 +64,12 @@ export default class Home extends React.Component
                         Hello, {this.state.user["FirstName"]}
                     </Text>
                     <View>
-                        {
+                        {this.showHomes()}
+                        {/* {
                             this.state.homeList.map((home, HomeId) => (
                                <Text>{home["HomeName"]} {home["Address"]}</Text>
                             ))
-                        }
+                        } */}
                     </View>
                     <Button primary text="Sign Out" onPress={ () => {this.props.navigation.navigate('Login')}}/>
                 </View>
