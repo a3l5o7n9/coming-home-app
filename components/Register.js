@@ -80,7 +80,7 @@ export default class Register extends React.Component {
                                 }
                             },
                         }
-                        this.props.navigation.navigate('Home', {details});
+                        this.props.navigation.navigate('MainPage', {details});
                         break;
                     }
                 }      

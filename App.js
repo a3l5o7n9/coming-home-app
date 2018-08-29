@@ -4,6 +4,7 @@ import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import { createSwitchNavigator } from 'react-navigation';
 import Login from './components/Login';
 import Register from './components/Register';
+import MainPage from './components/MainPage';
 import Home from './components/Home';
 
 
@@ -26,6 +27,7 @@ const AppNavigator = createSwitchNavigator(
   {
     Login,
     Register,
+    MainPage,
     Home
   },
   {

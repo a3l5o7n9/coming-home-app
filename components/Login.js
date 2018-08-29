@@ -49,7 +49,7 @@ export default class Login extends React.Component {
                 Alert.alert("Invalid Username or Password. Please try again.");
                 return;
             }
-            this.props.navigation.navigate("Home", {details});
+            this.props.navigation.navigate("MainPage", {details});
         })
         .catch((error) => {
             alert("Login Error");
