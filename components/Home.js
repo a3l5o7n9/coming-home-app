@@ -8,43 +8,37 @@ export default class Home extends React.Component
     {
         super(props);
 
-        let {details} = props.navigation.state.params;
-        let {user} = details;
-        let {userList} = details;
-        let {homeList} = details;
-
         this.state = {
-            user : user,
-            userList : userList,
-            homeList : homeList
+            user : props.navigation.state.params.user,
+            home : props.navigation.state.params.home
         }
     }
 
-    showHomes = () => {
-        if (this.state.homeList != null)
-        {
-            return ( 
-                <View>
-                    <Text>Your Homes</Text>
-                    {
-                        this.state.homeList.map((home, HomeId) => (
-                        <Text>{home["HomeName"]} {home["Address"]}</Text>
-                        ))
-                    }
-                </View>
-            );
-        }
-        else
-        {
-            return (
-                <View>
-                    {
-                        <Text>You have yet to join a home</Text>
-                    }
-                </View>
-            );
-        }
-    }
+    // showHomes = () => {
+    //     if (this.state.homeList != null)
+    //     {
+    //         return ( 
+    //             <View>
+    //                 <Text>Your Homes</Text>
+    //                 {
+    //                     this.state.homeList.map((home, HomeId) => (
+    //                     <Text>{home["HomeName"]} {home["Address"]}</Text>
+    //                     ))
+    //                 }
+    //             </View>
+    //         );
+    //     }
+    //     else
+    //     {
+    //         return (
+    //             <View>
+    //                 {
+    //                     <Text>You have yet to join a home</Text>
+    //                 }
+    //             </View>
+    //         );
+    //     }
+    // }
 
     // GetItemList = () => {
     //     let itemsList = []
@@ -56,22 +50,18 @@ export default class Home extends React.Component
 
     render()
     {
+        let user = this.state.user;
+        let home = this.state.home;
         return(
             // <ThemeProvider>
                 <View>
-                    <Text>Home</Text>
+                    <Text>{this.state.home["HomeName"]}</Text>
                     <Text>
                         Hello, {this.state.user["FirstName"]}
                     </Text>
-                    <View>
-                        {this.showHomes()}
-                        {/* {
-                            this.state.homeList.map((home, HomeId) => (
-                               <Text>{home["HomeName"]} {home["Address"]}</Text>
-                            ))
-                        } */}
-                    </View>
-                    <Button primary text="Sign Out" onPress={ () => {this.props.navigation.navigate('Login')}}/>
+                    <Button primary text="Rooms" onPress={ () => {this.props.navigation.navigate("Rooms", {user, home})}}/>
+                    <Button primary text="Devices" onPress={ () => {this.props.navigation.navigate('Devices', {user, home})}}/>
+                    <Button primary text="Users" onPress={ () => {this.props.navigation.navigate("Users", {user, home})}}/>
                 </View>
             // </ThemeProvider>
         );

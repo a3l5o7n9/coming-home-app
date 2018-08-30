@@ -9,26 +9,24 @@ export default class MainPage extends React.Component
         super(props);
 
         let {details} = props.navigation.state.params;
-        let {user} = details;
-        let {userList} = details;
-        let {homeList} = details;
 
         this.state = {
-            user : user,
-            userList : userList,
-            homeList : homeList
+            user : details.user,
+            userList : details.userList,
+            homeList : details.homeList
         }
     }
 
     showHomes = () => {
         if (this.state.homeList != null)
         {
+            let user = this.state.user;
             return ( 
                 <View>
                     <Text>Your Homes</Text>
                     {
                         this.state.homeList.map((home, HomeId) => (
-                        <Text>{home["HomeName"]} {home["Address"]}</Text>
+                        <Button primary key={HomeId} text={home["HomeName"] + " " + home["Address"]} onPress={ () => {this.props.navigation.navigate("Home", {user, home})}}/> 
                         ))
                     }
                 </View>

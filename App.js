@@ -6,6 +6,10 @@ import Login from './components/Login';
 import Register from './components/Register';
 import MainPage from './components/MainPage';
 import Home from './components/Home';
+import Rooms from './components/Rooms';
+import Devices from './components/Devices';
+import Users from './components/Users';
+import ActivationConditions from './components/ActivationConditions';
 
 
 export default class App extends React.Component {
@@ -28,7 +32,11 @@ const AppNavigator = createSwitchNavigator(
     Login,
     Register,
     MainPage,
-    Home
+    Home,
+    Rooms,
+    Devices,
+    Users,
+    ActivationConditions
   },
   {
     backBehavior: 'initialRoute',

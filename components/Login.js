@@ -9,7 +9,8 @@ export default class Login extends React.Component {
             userName: '',
             userPassword: '',
             users : [],
-            homes : []
+            homes : [],
+            resultMessage : ''
         }
     }
 
@@ -41,14 +42,17 @@ export default class Login extends React.Component {
             let details = {
                 user : jsonData.U,
                 userList : jsonData.LU,
-                homeList : jsonData.LH
+                homeList : jsonData.LH,
+                resultMessage : jsonData.ResultMessage
             }
+            console.log(details);
 
-            if (details.user == null)
+            if (details.resultMessage === 'No Data')
             {
-                Alert.alert("Invalid Username or Password. Please try again.");
+                alert("Invalid Username or Password. Please try again.");
                 return;
             }
+
             this.props.navigation.navigate("MainPage", {details});
         })
         .catch((error) => {
