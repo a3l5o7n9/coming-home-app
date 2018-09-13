@@ -10,6 +10,14 @@ import Rooms from './components/Rooms';
 import Devices from './components/Devices';
 import Users from './components/Users';
 import ActivationConditions from './components/ActivationConditions';
+import ActivationCondition from './components/ActivationCondition';
+import CreateActivationCondition from './components/CreateActivationCondition';
+import CreateDevice from './components/CreateDevice';
+import CreateHome from './components/CreateHome';
+import CreateRoom from './components/CreateRoom';
+import Device from './components/Device';
+import JoinHome from './components/JoinHome';
+import Room from './components/Room';
 
 
 export default class App extends React.Component {
@@ -36,7 +44,15 @@ const AppNavigator = createSwitchNavigator(
     Rooms,
     Devices,
     Users,
-    ActivationConditions
+    ActivationConditions,
+    ActivationCondition,
+    CreateActivationCondition,
+    CreateDevice,
+    CreateHome,
+    CreateRoom,
+    Device,
+    JoinHome,
+    Room
   },
   {
     backBehavior: 'initialRoute',

@@ -63,24 +63,28 @@ export default class Register extends React.Component {
                     {
                         let details = {
                             user : {
-                                UserId,
+                                UserId : userId,
                                 UserName : userName,
                                 UserPassword : userPassword,
                                 FirstName : firstName,
-                                LastName : lastName  
+                                LastName : lastName,
+                                UserTypeName : '',
+                                Token : ''
                             },
-                            userList : {
-                                user : user
-                            },
-                            homeList : {
-                                home : {
-                                    HomeId : "",
-                                    HomeName : "",
-                                    Address : "" 
-                                }
-                            },
+                            userList : null,
+                            homeList : null,
+                            resultMessage : 'Data'
                         }
-                        this.props.navigation.navigate('MainPage', {details});
+
+                        let detailsStr = JSON.stringify(details);
+                        AsyncStorage.setItem('detailsStr', detailsStr).then(() =>
+                        { console.log("detailStr");
+                            AsyncStorage.getItem('detailsStr').then((value) => {
+                                console.log('detailsStr = ' + value);
+                            });
+                            this.props.navigation.navigate("MainPage");
+                        });        
+
                         break;
                     }
                 }      
@@ -92,26 +96,37 @@ export default class Register extends React.Component {
 
     render() {
         return (
-            //   <ThemeProvider>
-                <View>
-                    <Card>
-                        <Text>Registration</Text>
-                        <Text>Username</Text>
-                        <TextInput value={this.state.userName} placeholder="Username" onChangeText={(userName) => this.setState({userName})}></TextInput>
-                        <Text>Password</Text>
-                        <TextInput value={this.state.userPassword} placeholder="Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>
-                        <Text>Confirm Password</Text>
-                        <TextInput value={this.state.confirmPassword} placeholder="Confirm Password" onChangeText={(confirmPassword) => this.setState({confirmPassword})}></TextInput>
-                        <Text>First Name</Text>
-                        <TextInput value={this.state.firstName} placeholder="First Name" onChangeText={(firstName) => this.setState({firstName})}></TextInput>
-                        <Text>Last Name</Text>
-                        <TextInput value={this.state.lastName} placeholder="Last Name" onChangeText={(lastName) => this.setState({lastName})}></TextInput>
-                        <Button primary text="Submit" onPress={this.submit} />
-                        <Button primary text="Login" onPress={() => {this.props.navigation.navigate('Login')}}/>
-                    </Card>
-                </View>
-            //   </ThemeProvider>
-
+            <View style={styles.container}>
+                <Text style={{fontSize:30}}>Registration</Text>
+                <Text style={styles.textStyle}>Username</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.userName} placeholder="Username" onChangeText={(userName) => this.setState({userName})}></TextInput>
+                <Text style={styles.textStyle}>Password</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.userPassword} placeholder="Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>
+                <Text style={styles.textStyle}>Confirm Password</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.confirmPassword} placeholder="Confirm Password" onChangeText={(confirmPassword) => this.setState({confirmPassword})}></TextInput>
+                <Text style={styles.textStyle}>First Name</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.firstName} placeholder="First Name" onChangeText={(firstName) => this.setState({firstName})}></TextInput>
+                <Text style={styles.textStyle}>Last Name</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.lastName} placeholder="Last Name" onChangeText={(lastName) => this.setState({lastName})}></TextInput>
+                <Button primary text="Submit" onPress={this.submit} />
+                <Button primary text="Login" onPress={() => {this.props.navigation.navigate('Login')}}/>
+            </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: '#fff',
+        marginTop:20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textStyle: {
+        fontSize:20,
+        alignItems: 'center',
+    },
+    textInputStyle: { 
+        fontSize:25,
+    }
+});

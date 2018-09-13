@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage} from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Login extends React.Component {
@@ -8,8 +8,8 @@ export default class Login extends React.Component {
         this.state = {
             userName: '',
             userPassword: '',
-            users : [],
-            homes : [],
+            userList : [],
+            homeList : [],
             resultMessage : ''
         }
     }
@@ -40,20 +40,28 @@ export default class Login extends React.Component {
         .then((result) => { // no error in server
             let jsonData = JSON.parse(result.d);
             let details = {
-                user : jsonData.U,
-                userList : jsonData.LU,
-                homeList : jsonData.LH,
-                resultMessage : jsonData.ResultMessage
-            }
+                    user : jsonData.AU,
+                    userList : jsonData.LU,
+                    homeList : jsonData.LH,
+                    resultMessage : jsonData.ResultMessage
+                }
+                    
             console.log(details);
 
-            if (details.resultMessage === 'No Data')
+            if (details.resultMessage == 'No Data')
             {
                 alert("Invalid Username or Password. Please try again.");
                 return;
             }
 
-            this.props.navigation.navigate("MainPage", {details});
+            let detailsStr = JSON.stringify(details);
+            AsyncStorage.setItem('detailsStr', detailsStr).then(() =>
+               {
+               AsyncStorage.getItem('detailsStr').then((value) => {
+                    console.log('detailsStr = ' + value);
+               });
+               this.props.navigation.navigate("MainPage");
+            });        
         })
         .catch((error) => {
             alert("Login Error");
@@ -62,28 +70,31 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            // <ThemeProvider>
-                <View>
-                  <Card>
-                    <Text>Login</Text>
-                    <Text>Username</Text>
-                    <TextInput name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({userName})}></TextInput>
-                    <Text>Password</Text>
-                    <TextInput name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>
-                    <Button primary text="Sign In" onPress={this.signIn} />
-                    <Button primary text="Sign Up" onPress={ () => {this.props.navigation.navigate('Register')}} />
-                  </Card>
-                </View>
-            // </ThemeProvider>
+            <View style={styles.container}>
+                <Text style={{fontSize:30}}>Login</Text>
+                <Text style={styles.textStyle}>Username</Text>  
+                <TextInput style={styles.textInputStyle} name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({userName})}></TextInput>  
+                <Text style={styles.textStyle}>Password</Text>    
+                <TextInput style={styles.textInputStyle} name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>   
+                <Button primary text="Sign In" onPress={this.signIn} /> 
+                <Button primary text="Sign Up" onPress={ () => {this.props.navigation.navigate('Register')}} />       
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
+        marginTop:20,
         justifyContent: 'center',
+        alignItems: 'center',
     },
+    textStyle: {
+        fontSize:20,
+        alignItems: 'center',
+    },
+    textInputStyle: { 
+        fontSize:25,
+    }
 });
