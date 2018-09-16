@@ -10,7 +10,8 @@ export default class Devices extends React.Component
 
         this.state = {
             user : {},
-            home : {}
+            home : {},
+            deviceList : []
         }
     }
 
@@ -21,26 +22,62 @@ export default class Devices extends React.Component
             AsyncStorage.getItem('detailsStr').then((value) => {
                 details = JSON.parse(value);
       
-                this.setState({
-                  user : details.user,
-                  home : home
-              });
+                AsyncStorage.getItem('devicesStr').then((value) => {
+                    devices = JSON.parse(value);
+          
+                    this.setState({
+                      user : details.user,
+                      home : home,
+                      deviceList : devices.deviceList
+                  });
+                });
             });
         });
     }
 
-    render() {
-        let user = this.state.user;
-        let home = this.state.home;
-        let room = {
-            RoomId : 0,
-            RoomName : '',
-            HomeId : home.HomeId,
-            RoomTypeName : '' 
+    showRooms = () => {
+        if (this.state.deviceList != null)
+        {
+            return ( 
+                <View style={styles.container}>
+                    <Text style={styles.textStyle}>Your Devices</Text>
+                    {
+                        this.state.deviceList.map((device, DeviceId) => (
+                        <Button primary key={DeviceId} text={device["DeviceName"] + "\n" + device["DeviceTypeName"]} onPress={ () => {
+                            let deviceStr = JSON.stringify(device);
+                            AsyncStorage.setItem('deviceStr', deviceStr).then(() =>
+                            { 
+                                AsyncStorage.getItem('deviceStr').then((value) => 
+                                {
+                                    console.log('deviceStr = ' + value);
+                                });
+                                this.props.navigation.navigate("Device");
+                            });        
+                        }}/> 
+                        ))
+                    }
+                </View>
+            );
         }
+        else
+        {
+            return (
+                <View>
+                    {
+                        <Text style={styles.textStyle}>There are no devices in your home that you have access to</Text>
+                    }
+                </View>
+            );
+        }
+    }
+
+    render() {
         return(
             <View style={styles.container}>
                 <Text style={{fontSize:30}}>Devices</Text>
+                <View style={styles.container}>
+                    {this.showDevices()}
+                </View>
                 <Button primary text="Add New Device" onPress={() => {this.props.navigation.navigate("CreateDevice")}}/>
                 <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
             </View>

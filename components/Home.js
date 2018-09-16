@@ -29,10 +29,199 @@ export default class Home extends React.Component
         });
     }
 
+    backToMainPage = () => {
+        const userName = this.state.user["UserName"];
+        const userPassword = this.state.user["UserPassword"];
+
+        var request = {
+            userName,
+            userPassword
+        }
+        //Alert.alert(JSON.stringify(request));
+        fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Login", {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json;'
+            }),
+            body: JSON.stringify(request)
+        })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+            let jsonData = JSON.parse(result.d);
+            let details = {
+                    user : jsonData.AU,
+                    userList : jsonData.LU,
+                    homeList : jsonData.LH,
+                    resultMessage : jsonData.ResultMessage
+                }
+                    
+            console.log(details);
+
+            if (details.resultMessage == 'No Data')
+            {
+                alert("Error! User could not be found.");
+                return;
+            }
+
+            let detailsStr = JSON.stringify(details);
+            AsyncStorage.setItem('detailsStr', detailsStr).then(() =>
+               {
+               AsyncStorage.getItem('detailsStr').then((value) => {
+                    console.log('detailsStr = ' + value);
+               });
+               this.props.navigation.navigate("MainPage");
+            });        
+        })
+        .catch((error) => {
+            alert("A connection Error has occurred.");
+        });
+    }
+
+    getUserRooms = () => {
+        var userId = this.state.user["UserId"];
+        var homeId = this.state.home["HomeId"];
+
+        var request = {
+            userId,
+            homeId
+        }
+        //Alert.alert(JSON.stringify(request));
+        fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserRoomsInHome", {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json;'
+            }),
+            body: JSON.stringify(request)
+        })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+            let jsonData = JSON.parse(result.d);
+            let rooms = {
+                    roomList : jsonData.LR,
+                    resultMessage : jsonData.ResultMessage
+                }
+                    
+            console.log(rooms);
+
+            if (rooms.resultMessage != "Data")
+            {
+                alert(rooms.resultMessage);
+                return;
+            }
+
+            let roomsStr = JSON.stringify(rooms);
+            AsyncStorage.setItem('roomsStr', roomsStr).then(() =>
+               {
+               AsyncStorage.getItem('roomsStr').then((value) => {
+                    console.log('roomsStr = ' + value);
+               });
+               this.props.navigation.navigate("Rooms");
+            });        
+        })
+        .catch((error) => {
+            alert("A connection Error has occurred.");
+        });
+    }
+
+    getUserDevices = () => {
+        var userId = this.state.user["UserId"];
+        var homeId = this.state.home["HomeId"];
+
+        var request = {
+            userId,
+            homeId
+        }
+        //Alert.alert(JSON.stringify(request));
+        fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserDevicesInHome", {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json;'
+            }),
+            body: JSON.stringify(request)
+        })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+            let jsonData = JSON.parse(result.d);
+            let devices = {
+                    deviceList : jsonData.LD,
+                    resultMessage : jsonData.ResultMessage
+                }
+                    
+            console.log(devices);
+
+            if (devices.resultMessage != "Data")
+            {
+                alert(devices.resultMessage);
+                return;
+            }
+
+            let roomsStr = JSON.stringify(devices);
+            AsyncStorage.setItem('devicesStr', devicesStr).then(() =>
+               {
+               AsyncStorage.getItem('devicesStr').then((value) => {
+                    console.log('devicesStr = ' + value);
+               });
+               this.props.navigation.navigate("Devices");
+            });        
+        })
+        .catch((error) => {
+            alert("A connection Error has occurred.");
+        });
+    }
+
+    getUsersInHome = () => {
+        var userId = this.state.user["UserId"];
+        var homeId = this.state.home["HomeId"];
+
+        var request = {
+            userId,
+            homeId
+        }
+        //Alert.alert(JSON.stringify(request));
+        fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUsersInHome", {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json;'
+            }),
+            body: JSON.stringify(request)
+        })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+            let jsonData = JSON.parse(result.d);
+            let users = {
+                    userList : jsonData.LU,
+                    resultMessage : jsonData.ResultMessage
+                }
+                    
+            console.log(users);
+
+            if (users.resultMessage == 'No Data')
+            {
+                alert("Error! No users found.");
+                return;
+            }
+            else if (users.resultMessage != "Data")
+            {
+                alert(users.resultMessage);
+                return;
+            }
+
+            let usersStr = JSON.stringify(users);
+            AsyncStorage.setItem('usersStr', usersStr).then(() =>
+               {
+               AsyncStorage.getItem('usersStr').then((value) => {
+                    console.log('usersStr = ' + value);
+               });
+               this.props.navigation.navigate("Users");
+            });        
+        })
+        .catch((error) => {
+            alert("A connection Error has occurred.");
+        });
+    }
+
     render()
     {
-        let user = this.state.user;
-        let home = this.state.home;
         return(
             <View style={styles.container}>
                 <Text style={{fontSize:30}}>{this.state.home["HomeName"]}</Text>
@@ -41,38 +230,23 @@ export default class Home extends React.Component
                 </Text>
                 <View style={{flex:1, width: '100%', height: '100%', flexDirection:'row', justifyContent:'space-around', flexWrap:'wrap'}}>
                     <View style={{width: '40%', height: 100, margin:10, backgroundColor: 'powderblue', flexWrap:'wrap', alignContent:'center'}}>
-                        <Button primary text="Rooms" onPress={ () => {this.props.navigation.navigate("Rooms")}}/>
+                        <Button primary text="Rooms" onPress={this.getUserRooms}/>
                     </View>
                     <View style={{width: '40%', height: 100, margin:10, backgroundColor: 'skyblue', flexWrap:'wrap'}}>
-                        <Button primary text="Devices" onPress={ () => {this.props.navigation.navigate('Devices')}}/>
+                        <Button primary text="Devices" onPress={this.getUserDevices}/>
                     </View>
                     <View style={{width: '40%', height: 100, margin:10, backgroundColor: 'steelblue', flexWrap:'wrap'}}>
-                        <Button primary text="Users" onPress={ () => {this.props.navigation.navigate("Users")}}/>
+                        <Button primary text="Users" onPress={this.getUsersInHome}/>
                     </View>
                     <View style={{width: '40%', height: 100, margin:10, backgroundColor:'blue', flexWrap:'wrap'}}>
                         <Button primary text="Activation Conditions" onPress={ () => {this.props.navigation.navigate("ActivationConditions")}}/>
                     </View>
-                </View>   
+                </View>
+                <Button primary text="Main Page" onPress={this.backToMainPage}/>  
             </View>
         );
     }
 }
-
-{/* <View style={{justifyContent : 'space-around'}}>
-<View style={{flex: 1, flexDirection:'column', justifyContent:'space-around'}}>
-  <View style={{flex: 1, flexDirection: 'row', justifyContent:'space-around'}}>
-    <View style={{width: 50, height: 50, backgroundColor: 'powderblue', justifyContent:'space-around'}} />
-    <View style={{width: 50, height: 50, backgroundColor: 'skyblue', justifyContent:'space-around'}} />
-  </View>
-</View>
-<View style={{flex: 1, flexDirection:'column', justifyContent:'space-around'}}>
-  <View style={{flex: 1, flexDirection: 'row', justifyContent:'space-around'}}>
-    <View style={{width: 50, height: 50, backgroundColor: 'steelblue', justifyContent:'space-around'}} />
-    <View style={{width: 50, height: 50, backgroundColor:'blue', justifyContent:'space-around'}}/>
-  </View>
-</View>
-</View> */}
-
 
 const styles = StyleSheet.create({
     container: {

@@ -11,7 +11,8 @@ export default class CreateRoom extends React.Component
             user : {},
             home : {},
             roomName : '',
-            roomTypeName : ''
+            roomTypeName : '',
+            isShared:''
         }
     }
 
@@ -31,19 +32,22 @@ export default class CreateRoom extends React.Component
     }
 
     createRoom = () => {
+        const userId = this.state.user['UserId'];
         const homeId = this.state.home['HomeId'];
-        const {roomName, roomTypeName} = this.state;
+        const {roomName, roomTypeName, isShared} = this.state;
 
-        if (roomName == '' || roomTypeName == '')
+        if (roomName == '' || roomTypeName == '' || (isShared != 'true' && isShared != 'false'))
         {
-            alert("Both a name and a room type are required to create a room.");
+            alert("Both a name and a room type are required to create a room, and the words 'true' or 'false' to determine if it is shared between users.");
             return;
         }
 
         var request = {
             roomName,
             homeId,
-            roomTypeName
+            roomTypeName,
+            isShared,
+            userId
         }
 
         fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateRoom", {
@@ -66,16 +70,24 @@ export default class CreateRoom extends React.Component
                     }
                     default:
                     {
-                        var user = this.state.user;
-                        var home = this.state.home;
-                        var room = {
+                        var room =
+                        {
                             RoomId : roomId,
                             RoomName : roomName,
                             RoomTypeName : roomTypeName,
-                            HomeId : homeId
+                            HomeId : homeId,
+                            IsShared : isShared
                         }
 
-                        this.props.navigation.navigate('Room', {user, home, room});
+                        let roomStr = JSON.stringify(room);
+
+                        AsyncStorage.setItem('roomStr', roomStr).then(() =>
+                        { console.log("roomStr");
+                            AsyncStorage.getItem('roomStr').then((value) => {
+                                console.log('roomStr = ' + value);
+                            });
+                            this.props.navigation.navigate("Room");
+                        });        
                         break;
                     }
                 }      
@@ -86,7 +98,6 @@ export default class CreateRoom extends React.Component
     }  
 
     render() {
-        var {user, home} = this.state;
         return(
             <View style={styles.container}>
                 <Text style={{fontSize:30}}>Create Home</Text>
@@ -94,8 +105,10 @@ export default class CreateRoom extends React.Component
                 <TextInput style={styles.textInputStyle} value={this.state.roomName} placeholder="Room Name" onChangeText={(roomName) => this.setState({roomName})}></TextInput>
                 <Text style={styles.textStyle}>Room Type Name</Text>
                 <TextInput style={styles.textInputStyle} value={this.state.roomTypeName} placeholder="" onChangeText={(roomTypeName) => this.setState({roomTypeName})}></TextInput>
+                <Text style={styles.textStyle}>Is Shared?(true/false)</Text>
+                <TextInput style={styles.textInputStyle} value={this.state.isShared} placeholder="false" onChangeText={(isShared) => this.setState({isShared})}></TextInput>
                 <Button primary text="Create" onPress={this.createRoom} />
-                <Button primary text="Cancel" onPress={() => {this.props.navigation.navigate("Home", {user, home})}}/>
+                <Button primary text="Cancel" onPress={() => {this.props.navigation.navigate("Rooms")}}/>
             </View>
         )
     }

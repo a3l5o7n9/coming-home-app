@@ -2,19 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
-export default class Device extends React.Component
+export default class User extends React.Component
 {
     constructor(props) {
         super(props);
 
         this.state = {
-            user : {},
+            appUser : {},
             home : {},
-            device : {
-                DeviceId : '',
-                DeviceName : '',
-                DeviceTypeName : ''
-            }
+            user : {}
         }
     }
 
@@ -25,13 +21,13 @@ export default class Device extends React.Component
             AsyncStorage.getItem('detailsStr').then((value) => {
                 details = JSON.parse(value);
       
-                AsyncStorage.getItem('deviceStr').then((value) => {
-                    device = JSON.parse(value);
+                AsyncStorage.getItem('userStr').then((value) => {
+                    user = JSON.parse(value);
           
                     this.setState({
                       appUser : details.user,
                       home : home,
-                      device : device
+                      user : user
                   });
                 });
             });
@@ -40,10 +36,10 @@ export default class Device extends React.Component
 
     render() {
         return(
-            <View style={styles.container}>
-                <Text style={{fontSize:30}}>Device</Text>
-                <Text style={{fontSize:20}}>{this.state.device["DeviceName"]}</Text>
-                <Button primary text="Back To Device List" onPress={ () => {this.props.navigation.navigate("Devices")}}/>
+            <View style={style.container}>
+                <Text style={{fontSize:30}}>User</Text>
+                <Text style={{fontSize:20}}>{this.state.user["UserName"]}</Text>
+                <Button primary text="Users" onPress={ () => {this.props.navigation.navigate("Users")}}/>
             </View>
         )
     }

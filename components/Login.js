@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage} from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView} from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Login extends React.Component {
@@ -71,13 +71,15 @@ export default class Login extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={{fontSize:30}}>Login</Text>
-                <Text style={styles.textStyle}>Username</Text>  
-                <TextInput style={styles.textInputStyle} name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({userName})}></TextInput>  
-                <Text style={styles.textStyle}>Password</Text>    
-                <TextInput style={styles.textInputStyle} name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>   
-                <Button primary text="Sign In" onPress={this.signIn} /> 
-                <Button primary text="Sign Up" onPress={ () => {this.props.navigation.navigate('Register')}} />       
+                <ScrollView>
+                    <Text style={{fontSize:30}}>Login</Text>
+                    <Text style={styles.textStyle}>Username</Text>  
+                    <TextInput style={styles.textInputStyle} name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({userName})}></TextInput>  
+                    <Text style={styles.textStyle}>Password</Text>    
+                    <TextInput style={styles.textInputStyle} name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({userPassword})}></TextInput>   
+                    <Button primary text="Sign In" onPress={this.signIn} /> 
+                    <Button primary text="Sign Up" onPress={ () => {this.props.navigation.navigate('Register')}} />       
+                </ScrollView>
             </View>
         );
     }

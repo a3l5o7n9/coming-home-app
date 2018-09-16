@@ -10,18 +10,41 @@ export default class Room extends React.Component
         this.state = {
             user : {},
             home : {},
-            room : {}
+            room : {
+                RoomId : '',
+                RoomName : '',
+                RoomTypeName : ''
+            }
         }
     }
 
+    componentDidMount = () => {
+        AsyncStorage.getItem('homeStr').then((value) => {
+            home = JSON.parse(value);
+  
+            AsyncStorage.getItem('detailsStr').then((value) => {
+                details = JSON.parse(value);
+      
+                AsyncStorage.getItem('roomStr').then((value) => {
+                    room = JSON.parse(value);
+          
+                    this.setState({
+                      appUser : details.user,
+                      home : home,
+                      room : room
+                  });
+                });
+            });
+        });
+    }
+
     render() {
-        let {user, home, room} = this.state;
         return(
             <View style={styles.container}>
                 <Text style={{fontSize:30}}>Room</Text>
                 <Text style={{fontSize:25}}>{this.state.room["RoomName"]}</Text>
-                <Button primary text="Back to Room List" onPress={() => {this.props.navigation.navigate("Rooms", {user, home})}}/>
-                <Button primary text="Add New Device" onPress={() => {this.props.navigation.navigate("CreateDevice", {user, home, room})}}/>
+                <Button primary text="Back to Room List" onPress={() => {this.props.navigation.navigate("Rooms")}}/>
+                <Button primary text="Add New Room" onPress={() => {this.props.navigation.navigate("CreateRoom")}}/>
             </View>
         )
     }

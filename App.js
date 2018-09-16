@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import { createSwitchNavigator } from 'react-navigation';
 import Login from './components/Login';
@@ -18,6 +18,7 @@ import CreateRoom from './components/CreateRoom';
 import Device from './components/Device';
 import JoinHome from './components/JoinHome';
 import Room from './components/Room';
+import User from './components/User';
 
 
 export default class App extends React.Component {
@@ -29,7 +30,9 @@ export default class App extends React.Component {
   render() {
     return (
       <View>
-        <AppNavigator />
+        <ScrollView>
+          <AppNavigator />
+        </ScrollView>
       </View>
     );
   }
@@ -52,7 +55,8 @@ const AppNavigator = createSwitchNavigator(
     CreateRoom,
     Device,
     JoinHome,
-    Room
+    Room,
+    User
   },
   {
     backBehavior: 'initialRoute',
