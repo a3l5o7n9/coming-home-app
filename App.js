@@ -29,11 +29,11 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View>
-        <ScrollView>
+      <ScrollView>
+        <View>
           <AppNavigator />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     );
   }
 }
