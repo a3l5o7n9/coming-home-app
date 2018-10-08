@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } fr
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class MainPage extends React.Component {
+  static navigationOptions = {
+    title: 'Main'
+  }
+
   constructor(props) {
     super(props);
 
@@ -43,10 +47,6 @@ export default class MainPage extends React.Component {
               <Button primary key={HomeId} text={home["HomeName"] + "\n" + home["Address"]} onPress={() => {
                 let homeStr = JSON.stringify(home);
                 AsyncStorage.setItem('homeStr', homeStr).then(() => {
-                  // AsyncStorage.getItem('homeStr').then((value) => 
-                  // {
-                  //     console.log('homeStr = ' + value);
-                  // });
                   this.props.navigation.navigate("Home");
                 });
               }} />
@@ -72,7 +72,6 @@ export default class MainPage extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Main Page</Text>
           <Text style={styles.textStyle}>
             Hello, {user["FirstName"]}
           </Text>
@@ -106,9 +105,9 @@ export default class MainPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

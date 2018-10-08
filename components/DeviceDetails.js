@@ -12,7 +12,8 @@ export default class DeviceDetails extends React.Component {
       device: this.props.device,
       room: this.props.room,
       navigation: this.props.navigation,
-      deviceList: this.props.deviceList
+      deviceList: this.props.deviceList,
+      backName: this.props.backName
     }
   }
 
@@ -73,11 +74,7 @@ export default class DeviceDetails extends React.Component {
 
               var deviceStr = JSON.stringify(device);
 
-              AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-                // AsyncStorage.getItem('deviceStr').then((value) => 
-                // {
-                //     console.log('deviceStr = ' + value);
-                // }); 
+              AsyncStorage.setItem('deviceStr', deviceStr).then(() => { 
                 var deviceList = this.state.deviceList;
                 var index = deviceList.findIndex((d) => d.DeviceId == this.state.device.DeviceId);
                 deviceList[index].IsOn = this.state.device.IsOn;
@@ -108,13 +105,9 @@ export default class DeviceDetails extends React.Component {
           <Button primary text={this.state.device["DeviceName"] + "\n" + this.state.device["DeviceTypeName"]} onPress={() => {
             var deviceStr = JSON.stringify(this.state.device);
             AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-              // AsyncStorage.getItem('deviceStr').then((value) => 
-              // {
-              //     console.log('deviceStr = ' + value);
-              // });
               var roomStr = JSON.stringify(this.state.room);
               AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                this.state.navigation.navigate("Device");
+                this.state.navigation.navigate("Device", back={name: this.state.backName});
               });
             });
           }} />
@@ -131,7 +124,6 @@ export default class DeviceDetails extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '60%',

@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Pic
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateDevice extends React.Component {
+  static navigationOptions = {
+    title: 'New Device'
+  }
+
   constructor(props) {
     super(props);
 
@@ -18,7 +22,8 @@ export default class CreateDevice extends React.Component {
       deviceName: '',
       deviceTypeName: '',
       isDividedIntoRooms: false,
-      deviceTypes: []
+      deviceTypes: [],
+      back: this.props.navigation.state.params
     }
   }
 
@@ -41,8 +46,6 @@ export default class CreateDevice extends React.Component {
               deviceTypes: deviceTypes,
               roomList: rooms.roomList
             });
-
-            console.log(this.state);
           });
         });
       });
@@ -101,16 +104,13 @@ export default class CreateDevice extends React.Component {
               let deviceStr = JSON.stringify(device);
 
               AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-                // console.log("deviceStr");
-                // AsyncStorage.getItem('deviceStr').then((value) => {
-                //   console.log('deviceStr = ' + value);
-                // });
                 var { room } = this.state;
+                var { back } = this.state;
 
                 let roomStr = JSON.stringify(room);
 
                 AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                  this.props.navigation.navigate("Device");
+                  this.props.navigation.navigate("Device", back={back});
                 });
               });
               break;
@@ -165,7 +165,6 @@ export default class CreateDevice extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Create Device</Text>
           <Text style={styles.textStyle}>Device Name</Text>
           <TextInput style={styles.textInputStyle} value={this.state.deviceName} placeholder="Device Name" onChangeText={(deviceName) => this.setState({ deviceName })}></TextInput>
           <Text style={styles.textStyle}>Device Type Name</Text>
@@ -177,7 +176,7 @@ export default class CreateDevice extends React.Component {
           <Text style={styles.textStyle}>Room</Text>
           {this.pickRoom()}
           <Button primary text="Create" onPress={this.createDevice} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("Devices") }} />
+          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate(this.state.back["name"]) }} />
         </View>
       </ScrollView>
     )
@@ -187,9 +186,9 @@ export default class CreateDevice extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

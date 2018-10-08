@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Alert, TextInput, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
-import { createSwitchNavigator } from 'react-navigation';
+import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
 import Login from './components/Login';
 import Register from './components/Register';
 import MainPage from './components/MainPage';
@@ -29,16 +29,16 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <ScrollView>
-        <View>
+      // <ScrollView>
+      //   <View>
           <AppNavigator />
-        </View>
-      </ScrollView>
+      //   </View>
+      // </ScrollView>
     );
   }
 }
 
-const AppNavigator = createSwitchNavigator(
+const AppNavigator = createStackNavigator(
   {
     Login,
     Register,
@@ -60,7 +60,16 @@ const AppNavigator = createSwitchNavigator(
   },
   {
     backBehavior: 'initialRoute',
-    initialRouteName: 'Login'
+    initialRouteName: 'Login',
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+      headerTintColor: 'black',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    },
   }
 );
 

@@ -13,7 +13,8 @@ export default class ConditionDetails extends React.Component {
       room: this.props.room,
       activationCondition: this.props.activationCondition,
       navigation: this.props.navigation,
-      activationConditionList : this.props.activationConditionList
+      activationConditionList: this.props.activationConditionList,
+      backName: this.props.backName
     }
   }
 
@@ -107,15 +108,11 @@ export default class ConditionDetails extends React.Component {
           <Button primary text={this.state.activationCondition["ConditionName"] + "\n" + this.state.activationCondition["ActivationMethodName"]} onPress={() => {
             var activationConditionStr = JSON.stringify(this.state.activationCondition);
             AsyncStorage.setItem('activationConditionStr', activationConditionStr).then(() => {
-              // AsyncStorage.getItem('deviceStr').then((value) => 
-              // {
-              //     console.log('deviceStr = ' + value);
-              // });
               var deviceStr = JSON.stringify(this.state.device);
               AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                 var roomStr = JSON.stringify(this.state.room);
                 AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                  this.state.navigation.navigate("ActivationCondition");
+                  this.state.navigation.navigate("ActivationCondition", back={name: this.state.backName});
                 });
               });
             });
@@ -134,7 +131,6 @@ export default class ConditionDetails extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '60%',

@@ -4,6 +4,10 @@ import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import ConditionDetails from './ConditionDetails';
 
 export default class ActivationConditions extends React.Component {
+  static navigationOptions = {
+    title: 'Activation Conditions'
+  }
+
   constructor(props) {
     super(props);
 
@@ -65,7 +69,7 @@ export default class ActivationConditions extends React.Component {
 
               return (
                 <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
-                  <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
+                  <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList} backName={'ActivationConditions'}/>
                 </View>
               )
             })
@@ -77,7 +81,7 @@ export default class ActivationConditions extends React.Component {
       return (
         <View>
           {
-            <Text style={styles.textStyle}>There are no devices in your home that you have access to</Text>
+            <Text style={styles.textStyle}>There are no activation conditions in your home that you have access to</Text>
           }
         </View>
       );
@@ -112,7 +116,15 @@ export default class ActivationConditions extends React.Component {
         let activationMethodsStr = JSON.stringify(activationMethods);
 
         AsyncStorage.setItem('activationMethodsStr', activationMethodsStr).then(() => {
-          this.props.navigation.navigate("CreateActivationCondition", room={room}, device={device});
+          let roomStr = JSON.stringify(room);
+
+          AsyncStorage.setItem('roomStr', roomStr).then(() => {
+            let deviceStr = JSON.stringify(device);
+
+            AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+              this.props.navigation.navigate("CreateActivationCondition", back={name:'ActivationConditions'});
+            })
+          })
         })
       })
       .catch((error) => {
@@ -124,7 +136,6 @@ export default class ActivationConditions extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ flex: 1, fontSize: 30 }}>Activation Conditions</Text>
           <View style={{ flex: 8 }}>
             {this.showActivationConditions()}
           </View>
@@ -141,9 +152,9 @@ export default class ActivationConditions extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

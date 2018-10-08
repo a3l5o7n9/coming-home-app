@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Pic
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateActivationCondition extends React.Component {
+  static navigationOptions = {
+    title: 'New Activation Condition'
+  }
+
   constructor(props) {
     super(props);
 
@@ -17,7 +21,8 @@ export default class CreateActivationCondition extends React.Component {
       activationParam: '',
       activationMethods: [],
       roomList: [],
-      deviceList: []
+      deviceList: [],
+      back: this.props.navigation.state.params
     }
   }
 
@@ -144,11 +149,9 @@ export default class CreateActivationCondition extends React.Component {
               let activationConditionStr = JSON.stringify(activationCondition);
 
               AsyncStorage.setItem('activationConditionStr', activationConditionStr).then(() => {
-                // console.log("roomStr");
-                // AsyncStorage.getItem('roomStr').then((value) => {
-                //   console.log('roomStr = ' + value);
-                // });
-                this.props.navigation.navigate("ActivationCondition");
+                var {back} = this.state;
+
+                this.props.navigation.navigate("ActivationCondition", back={back});
               });
               break;
             }
@@ -206,7 +209,7 @@ export default class CreateActivationCondition extends React.Component {
           style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
           selectedValue={this.state.device.DeviceId}
           onValueChange={(itemValue) => {
-            var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
+            var device = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
             this.setState({ device: device })
           }
           }>
@@ -247,7 +250,6 @@ export default class CreateActivationCondition extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Create Activation Condition</Text>
           <Text style={styles.textStyle}>Condition Name</Text>
           <TextInput style={styles.textInputStyle} value={this.state.conditionName} placeholder="Condition Name" onChangeText={(conditionName) => this.setState({ conditionName })}></TextInput>
           <Text style={styles.textStyle}> Activation Method Name</Text>
@@ -261,7 +263,7 @@ export default class CreateActivationCondition extends React.Component {
           <Text style={styles.textStyle}>Activation Parameter</Text>
           <TextInput style={styles.textInputStyle} value={this.state.activationParam} placeHolder="80% Power" onChangeText={(activationParam) => this.setState({ activationParam })}></TextInput>
           <Button primary text="Create" onPress={this.createActivationCondition} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("ActivationConditions") }} />
+          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate(this.state.back["name"]) }} />
         </View>
       </ScrollView>
     )
@@ -271,9 +273,9 @@ export default class CreateActivationCondition extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

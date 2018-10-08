@@ -1,8 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import DeviceDetails from './DeviceDetails';
 
 export default class Room extends React.Component {
+  static navigationOptions = {
+    title: 'Room'
+  }
+
   constructor(props) {
     super(props);
 
@@ -13,7 +18,9 @@ export default class Room extends React.Component {
         RoomId: '',
         RoomName: '',
         RoomTypeName: ''
-      }
+      },
+      deviceList: [],
+      activationConditionList: []
     }
   }
 
@@ -27,14 +34,69 @@ export default class Room extends React.Component {
         AsyncStorage.getItem('roomStr').then((value) => {
           room = JSON.parse(value);
 
-          this.setState({
-            appUser: details.user,
-            home: home,
-            room: room
+          AsyncStorage.getItem('devicesStr').then((value) => {
+            devices = JSON.parse(value);
+
+            AsyncStorage.getItem('activationConditionsStr').then((value) => {
+              activationConditions = JSON.parse(value);
+
+              this.setState({
+                user: details.user,
+                home: home,
+                room: room,
+                deviceList: devices.deviceList,
+                activationConditionList: activationConditions.activationConditionList
+              })
+            })
           });
         });
       });
     });
+  }
+
+  showDevices = () => {
+    if (this.state.deviceList != null) {
+      var filteredDeviceList = this.state.deviceList.filter((d) => (d.RoomId === this.state.room.RoomId));
+
+      if (filteredDeviceList != null) {
+        return (
+          <View style={styles.container}>
+            <Text style={styles.textStyle}>Your Devices In This Room</Text>
+            {
+              filteredDeviceList.map((device, DeviceId) => {
+                var { room } = this.state;
+                var { user } = this.state;
+                var { home } = this.state;
+
+                return (
+                  <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
+                    <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} backName={'Room'}/>
+                  </View>
+                )
+              })
+            }
+          </View>
+        );
+      }
+      else {
+        return (
+          <View>
+            {
+              <Text style={styles.textStyle}>There are no devices in this room that you have access to</Text>
+            }
+          </View>
+        );
+      }
+    }
+    else {
+      return (
+        <View>
+          {
+            <Text style={styles.textStyle}>There are no devices in this room that you have access to</Text>
+          }
+        </View>
+      );
+    }
   }
 
   goToCreateDevice = () =>
@@ -58,7 +120,7 @@ export default class Room extends React.Component {
           var roomStr = JSON.stringify(room);
 
           AsyncStorage.setItem('roomStr', roomStr).then(() => {
-            this.props.navigation.navigate("CreateDevice")
+            this.props.navigation.navigate("CreateDevice", back={name:'Room'})
           })
         })
       })
@@ -80,7 +142,7 @@ export default class Room extends React.Component {
       .then((result) => { // no error in server
         let activationMethods = JSON.parse(result.d);
         var {room} = this.state;
-        var {device} = {
+        var device = {
           DeviceId : '',
           DeviceName : '',
           DeviceTypeName : ''
@@ -97,7 +159,7 @@ export default class Room extends React.Component {
             var deviceStr = JSON.stringify(device);
 
             AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-              this.props.navigation.navigate("CreateActivationCondition");
+              this.props.navigation.navigate("CreateActivationCondition", back={name:'Room'});
             })
           })
         })
@@ -112,12 +174,16 @@ export default class Room extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Room</Text>
-          <Text style={{ fontSize: 25 }}>{this.state.room["RoomName"]}</Text>
-          <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
-          <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-          <Button primary text="Back to Room List" onPress={() => { this.props.navigation.navigate("Rooms") }} />
-          <Button primary text="Add New Room" onPress={() => { this.props.navigation.navigate("CreateRoom") }} />
+          <Text style={{flex: 1, fontSize: 25 }}>{this.state.room["RoomName"]}</Text>
+          <View style={{ flex: 8 }}>
+            {this.showDevices()}
+          </View>
+          <View style={{ flex: 4 }}>
+            <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
+            <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
+            <Button primary text="Back" onPress={() => { this.props.navigation.navigate("Rooms") }} />
+            <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          </View>
         </View>
       </ScrollView>
     )
@@ -127,9 +193,9 @@ export default class Room extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

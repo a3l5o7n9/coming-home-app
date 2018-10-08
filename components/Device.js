@@ -1,8 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import ConditionDetails from './ConditionDetails';
 
 export default class Device extends React.Component {
+  static navigationOptions = {
+    title: 'Device'
+  }
+
   constructor(props) {
     super(props);
 
@@ -17,7 +22,9 @@ export default class Device extends React.Component {
       room: {
         RoomId: '',
         RoomName: ''
-      }
+      },
+      activationConditionList: [],
+      back: this.props.navigation.state.params
     }
   }
 
@@ -34,11 +41,16 @@ export default class Device extends React.Component {
           AsyncStorage.getItem('roomStr').then((value) => {
             room = JSON.parse(value);
 
-            this.setState({
-              user: details.user,
-              home: home,
-              device: device,
-              room: room
+            AsyncStorage.getItem('activationConditionsStr').then((value) => {
+              activationConditions = JSON.parse(value)
+
+              this.setState({
+                user: details.user,
+                home: home,
+                device: device,
+                room: room,
+                activationConditionList: activationConditions.activationConditionList
+              });
             });
           });
         });
@@ -46,8 +58,138 @@ export default class Device extends React.Component {
     });
   }
 
-  goToCreateActivationCondition = () =>
-  {
+  showActivationConditions = () => {
+    if (this.state.activationConditionList != null) {
+      var filteredConditionList = this.state.activationConditionList.filter((actCon) => (actCon.DeviceId === this.state.device.DeviceId && actCon.RoomId === this.state.device.RoomId));
+
+      if (filteredConditionList != null) {
+        return (
+          <View style={styles.container}>
+            <Text style={styles.textStyle}>Your Activation Conditions For This Device</Text>
+            {
+              filteredConditionList.map((activationCondition, ConditionId) => {
+                var { device } = this.state;
+                var { room } = this.state;
+                var { user } = this.state;
+                var { home } = this.state;
+
+                return (
+                  <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
+                    <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList} backName={'Device'}/>
+                  </View>
+                )
+              })
+            }
+          </View>
+        );
+      }
+      else {
+        return (
+          <View>
+            {
+              <Text style={styles.textStyle}>There are no activation conditions for this device that you have access to</Text>
+            }
+          </View>
+        );
+      }
+    }
+    else {
+      return (
+        <View>
+          {
+            <Text style={styles.textStyle}>There are no activation conditions for this device that you have access to</Text>
+          }
+        </View>
+      );
+    }
+  }
+
+  changeDeviceStatus = () => {
+    var userId = this.state.user["UserId"];
+    var { device } = this.state;
+    var deviceId = this.state.device["DeviceId"];
+    var roomId = this.state.device["RoomId"];
+    var turnOn;
+
+    if (this.state.device["IsOn"]) {
+      turnOn = 'false';
+    }
+    else if (!this.state.device["IsOn"]) {
+      turnOn = 'true';
+    }
+
+    var request = {
+      userId,
+      deviceId,
+      roomId,
+      turnOn,
+      activationMethodCode: '1',
+      statusDetails: 'null',
+      conditionId: 'null'
+    }
+
+    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json;'
+      }),
+      body: JSON.stringify(request)
+    })
+      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+      .then((result) => { // no error in server
+        let changeData = JSON.parse(result.d);
+
+        switch (changeData) {
+          case -2:
+            {
+              alert("You do not have permission to change this device's status right now.");
+              break;
+            }
+          case -1:
+            {
+              alert("Data Error!");
+              break;
+            }
+          case 0:
+            {
+              alert("Action aborted, as it does not actually change the device's current status.");
+              break;
+            }
+          default:
+            {
+              device.IsOn = !(device.IsOn);
+
+              var deviceStr = JSON.stringify(device);
+
+              AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+                AsyncStorage.getItem('devicesStr').then((value) => {
+                  devices = JSON.parse(value);
+                  var deviceList = [];
+                  deviceList = devices.deviceList;
+                  var index = deviceList.findIndex((d) => d.DeviceId == this.state.device.DeviceId);
+                  deviceList[index].IsOn = this.state.device.IsOn;
+                  var devices = {
+                    deviceList,
+                    resultMessage : 'Data'
+                  }
+                 var devicesStr = JSON.stringify(devices);
+
+                  AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
+                    this.setState({ device });
+                    alert("Device status changed!");
+                  }) 
+                });
+              });
+              break;
+            }
+        }
+      })
+      .catch((error) => {
+        alert("A connection Error has occurred.");
+      });
+  }
+
+  goToCreateActivationCondition = () => {
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
@@ -58,10 +200,20 @@ export default class Device extends React.Component {
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
         let activationMethods = JSON.parse(result.d);
-        var {room} = this.state;
-        var {device} = this.state;
+        var { room } = this.state;
+        var { device } = this.state;
 
-        this.props.navigation.navigate("CreateActivationCondition", activationMethods={activationMethods}, room={room}, device={device});
+        var activationMethodsStr = JSON.stringify(activationMethods);
+        var roomStr = JSON.stringify(room);
+        var deviceStr = JSON.stringify(device);
+
+        AsyncStorage.setItem('activationMethodsStr', activationMethodsStr).then(() => {
+          AsyncStorage.setItem('roomStr', roomStr).then(() => {
+            AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+              this.props.navigation.navigate("CreateActivationCondition", back = { name: 'Device' });
+            })
+          })
+        })
       })
       .catch((error) => {
         alert("A connection Error has occurred.");
@@ -72,11 +224,23 @@ export default class Device extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Device</Text>
-          <Text style={{ fontSize: 20 }}>{this.state.device["DeviceName"]}</Text>
-          <Text style={{ fontSize: 10 }}>{this.state.room["RoomName"]}</Text>
-          <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-          <Button primary text="Back To Device List" onPress={() => { this.props.navigation.navigate("Devices") }} />
+          <View style={{flex: 2, flexDirection:'row', justifyContent:'space-between'}}>
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
+              <Text style={{flex: 1, fontSize: 25 }}>{this.state.device["DeviceName"]}</Text>
+              <Text style={{flex: 1, fontSize: 10 }}>{this.state.room["RoomName"]}</Text>
+            </View>
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: "flex-end" }}>
+              <Switch value={this.state.device["IsOn"]} onValueChange={this.changeDeviceStatus} />
+            </View>
+          </View>
+          <View style={{ flex: 8 }}>
+            {this.showActivationConditions()}
+          </View>
+          <View style={{ flex: 3 }}>
+            <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
+            <Button primary text="Back" onPress={() => { this.props.navigation.navigate(this.state.back["name"]) }} />
+            <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          </View>
         </View>
       </ScrollView>
     )
@@ -86,9 +250,9 @@ export default class Device extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

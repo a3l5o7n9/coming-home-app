@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, ScrollView } from 'react-nati
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Register extends React.Component {
+  static navigationOptions = {
+    title: 'Registration',
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -75,10 +79,6 @@ export default class Register extends React.Component {
 
               let detailsStr = JSON.stringify(details);
               AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
-                // console.log("detailStr");
-                // AsyncStorage.getItem('detailsStr').then((value) => {
-                //     console.log('detailsStr = ' + value);
-                // });
                 this.props.navigation.navigate("MainPage");
               });
 
@@ -95,7 +95,6 @@ export default class Register extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Registration</Text>
           <Text style={styles.textStyle}>Username</Text>
           <TextInput style={styles.textInputStyle} value={this.state.userName} placeholder="Username" onChangeText={(userName) => this.setState({ userName })}></TextInput>
           <Text style={styles.textStyle}>Password</Text>
@@ -117,9 +116,9 @@ export default class Register extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

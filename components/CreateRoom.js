@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Pic
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateRoom extends React.Component {
+  static navigationOptions = {
+    title: 'New Room'
+  }
+
   constructor(props) {
     super(props);
 
@@ -84,10 +88,6 @@ export default class CreateRoom extends React.Component {
               let roomStr = JSON.stringify(room);
 
               AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                // console.log("roomStr");
-                // AsyncStorage.getItem('roomStr').then((value) => {
-                //   console.log('roomStr = ' + value);
-                // });
                 this.props.navigation.navigate("Room");
               });
               break;
@@ -121,7 +121,6 @@ export default class CreateRoom extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Create Room</Text>
           <Text style={styles.textStyle}>Room Name</Text>
           <TextInput style={styles.textInputStyle} value={this.state.roomName} placeholder="Room Name" onChangeText={(roomName) => this.setState({ roomName })}></TextInput>
           <Text style={styles.textStyle}>Room Type Name</Text>
@@ -141,9 +140,9 @@ export default class CreateRoom extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

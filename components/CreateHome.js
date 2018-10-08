@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } fr
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateHome extends React.Component {
+  static navigationOptions = {
+    title: 'New Home'
+  }
+
   constructor(props) {
     super(props);
 
@@ -68,10 +72,6 @@ export default class CreateHome extends React.Component {
               let homeStr = JSON.stringify(home);
 
               AsyncStorage.setItem('homeStr', homeStr).then(() => {
-                console.log("homeStr");
-                AsyncStorage.getItem('homeStr').then((value) => {
-                  console.log('homeStr = ' + value);
-                });
                 this.props.navigation.navigate("Home");
               });
               break;
@@ -87,7 +87,6 @@ export default class CreateHome extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>Create Home</Text>
           <Text style={styles.textStyle}>Home Name</Text>
           <TextInput style={styles.textInputStyle} value={this.state.homeName} placeholder="Home Name" onChangeText={(homeName) => this.setState({ homeName })}></TextInput>
           <Text style={styles.textStyle}>Address</Text>
@@ -103,9 +102,9 @@ export default class CreateHome extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

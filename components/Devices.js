@@ -4,6 +4,10 @@ import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import DeviceDetails from './DeviceDetails';
 
 export default class Devices extends React.Component {
+  static navigationOptions = {
+    title: 'Devices'
+  }
+
   constructor(props) {
     super(props);
 
@@ -60,7 +64,7 @@ export default class Devices extends React.Component {
 
               return (
                 <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                  <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
+                  <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} backName={'Devices'}/>
                 </View>
               )
             })
@@ -105,7 +109,7 @@ export default class Devices extends React.Component {
           let roomStr = JSON.stringify(room);
 
           AsyncStorage.setItem('roomStr', roomStr).then(() => {
-            this.props.navigation.navigate("CreateDevice")
+            this.props.navigation.navigate("CreateDevice", back={name:'Devices'})
           })
         })
       })
@@ -118,7 +122,6 @@ export default class Devices extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ flex: 1, fontSize: 30 }}>Devices</Text>
           <View style={{ flex: 8 }}>
             {this.showDevices()}
           </View>
@@ -135,9 +138,9 @@ export default class Devices extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,

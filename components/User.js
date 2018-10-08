@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } fr
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class User extends React.Component {
+  static navigationOptions = {
+    title: 'User'
+  }
+
   constructor(props) {
     super(props);
 
@@ -37,9 +41,9 @@ export default class User extends React.Component {
     return (
       <ScrollView>
         <View style={style.container}>
-          <Text style={{ fontSize: 30 }}>User</Text>
           <Text style={{ fontSize: 20 }}>{this.state.user["UserName"]}</Text>
           <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />
+          <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
         </View>
       </ScrollView>
     )
@@ -49,9 +53,9 @@ export default class User extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   textStyle: {
     fontSize: 20,
