@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
+import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateDevice extends React.Component {
@@ -14,16 +14,15 @@ export default class CreateDevice extends React.Component {
       user: {},
       home: {},
       room: {
-        RoomId : '',
-        RoomName : '',
-        RoomTypeName : ''
+        RoomId: '',
+        RoomName: '',
+        RoomTypeName: ''
       },
       roomList: [],
       deviceName: '',
       deviceTypeName: '',
       isDividedIntoRooms: false,
       deviceTypes: [],
-      back: this.props.navigation.state.params
     }
   }
 
@@ -40,11 +39,16 @@ export default class CreateDevice extends React.Component {
           AsyncStorage.getItem('roomsStr').then((value) => {
             rooms = JSON.parse(value);
 
-            this.setState({
-              user: details.user,
-              home: home,
-              deviceTypes: deviceTypes,
-              roomList: rooms.roomList
+            AsyncStorage.getItem('roomStr').then((value) => {
+              room = JSON.parse(value);
+
+              this.setState({
+                user: details.user,
+                home: home,
+                deviceTypes: deviceTypes,
+                roomList: rooms.roomList,
+                room: room,
+              });
             });
           });
         });
@@ -101,18 +105,43 @@ export default class CreateDevice extends React.Component {
                 RoomId: roomId
               }
 
-              let deviceStr = JSON.stringify(device);
+              AsyncStorage.getItem('devicesStr').then((value) => {
+                devices = JSON.parse(value);
+                var deviceList = [];
 
-              AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-                var { room } = this.state;
-                var { back } = this.state;
+                if (devices.deviceList != null)
+                {
+                  deviceList = devices.deviceList;
+                  resultMessage = devices.resultMessage;
+                }
+                else
+                {
+                  resultMessage = 'Data';
+                }
 
-                let roomStr = JSON.stringify(room);
+                deviceList.push(device);
 
-                AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                  this.props.navigation.navigate("Device", back={back});
+                var devicesNew = {
+                  deviceList,
+                  resultMessage,
+                }
+
+                let deviceStr = JSON.stringify(device);
+                let devicesStr = JSON.stringify(devicesNew);
+
+                AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+                 AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
+                  var { room } = this.state;
+  
+                  let roomStr = JSON.stringify(room);
+  
+                  AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                    this.props.navigation.navigate("Device");
+                  });
+                 });
                 });
               });
+              
               break;
             }
         }
@@ -140,25 +169,42 @@ export default class CreateDevice extends React.Component {
   }
 
   pickRoom = () => {
-    return (
-      <Picker
-        style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
-        selectedValue={this.state.room.RoomId}
-        onValueChange={(itemValue) => 
-          {
+    if (this.state.roomList != null) 
+    {
+      return (
+        <Picker
+          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          selectedValue={this.state.room.RoomId}
+          onValueChange={(itemValue) => {
             var room = this.state.roomList.find((room) => room.RoomId === itemValue);
             this.setState({ room: room })
+          }}
+        >
+          {
+            this.state.roomList.map((r) => {
+              return (
+                <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
+              );
+            })
           }
-        }>
-        {
-          this.state.roomList.map((r) => {
-            return (
-              <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
-            )
-          })
-        }
-      </Picker>
-    );
+        </Picker>
+      );
+    }
+    else
+    {
+      return(
+        <Picker
+          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          selectedValue={this.state.room.RoomId}
+          onValueChange={(itemValue) => {
+            var {room} = this.state
+            this.setState({ room: room })
+          }}
+        > 
+            <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
+        </Picker>
+      );
+    }
   }
 
   render() {
@@ -169,14 +215,14 @@ export default class CreateDevice extends React.Component {
           <TextInput style={styles.textInputStyle} value={this.state.deviceName} placeholder="Device Name" onChangeText={(deviceName) => this.setState({ deviceName })}></TextInput>
           <Text style={styles.textStyle}>Device Type Name</Text>
           {this.pickDeviceType()}
-          <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={styles.textStyle}>Is Divided Into Rooms?(true/false)</Text>
-            <Switch value={this.state.isDividedIntoRooms} onValueChange={(isDividedIntoRooms) => {this.setState({isDividedIntoRooms})}} />
+            <Switch value={this.state.isDividedIntoRooms} onValueChange={(isDividedIntoRooms) => { this.setState({ isDividedIntoRooms }) }} />
           </View>
           <Text style={styles.textStyle}>Room</Text>
           {this.pickRoom()}
           <Button primary text="Create" onPress={this.createDevice} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate(this.state.back["name"]) }} />
+          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
         </View>
       </ScrollView>
     )

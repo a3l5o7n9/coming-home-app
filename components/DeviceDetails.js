@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class DeviceDetails extends React.Component {
@@ -13,7 +13,6 @@ export default class DeviceDetails extends React.Component {
       room: this.props.room,
       navigation: this.props.navigation,
       deviceList: this.props.deviceList,
-      backName: this.props.backName
     }
   }
 
@@ -107,7 +106,7 @@ export default class DeviceDetails extends React.Component {
             AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
               var roomStr = JSON.stringify(this.state.room);
               AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                this.state.navigation.navigate("Device", back={name: this.state.backName});
+                this.state.navigation.navigate("Device");
               });
             });
           }} />

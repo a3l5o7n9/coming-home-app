@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Home extends React.Component {
@@ -157,6 +157,7 @@ export default class Home extends React.Component {
               <Button primary text="Activation Conditions" onPress={() => { this.props.navigation.navigate("ActivationConditions") }} />
             </View>
           </View>
+          <Button primary text="Update Home Details" onPress={() => {this.props.navigation.navigate('UpdateHome')}}/>
           <Button primary text="Main Page" onPress={this.backToMainPage} />
         </View>
       </ScrollView>

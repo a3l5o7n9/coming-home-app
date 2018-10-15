@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Switch } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class ConditionDetails extends React.Component {
@@ -14,7 +14,6 @@ export default class ConditionDetails extends React.Component {
       activationCondition: this.props.activationCondition,
       navigation: this.props.navigation,
       activationConditionList: this.props.activationConditionList,
-      backName: this.props.backName
     }
   }
 
@@ -112,7 +111,7 @@ export default class ConditionDetails extends React.Component {
               AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                 var roomStr = JSON.stringify(this.state.room);
                 AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                  this.state.navigation.navigate("ActivationCondition", back={name: this.state.backName});
+                  this.state.navigation.navigate("ActivationCondition");
                 });
               });
             });

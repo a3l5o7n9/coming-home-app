@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import DeviceDetails from './DeviceDetails';
 
@@ -70,7 +70,7 @@ export default class Room extends React.Component {
 
                 return (
                   <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                    <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} backName={'Room'}/>
+                    <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
                   </View>
                 )
               })
@@ -120,13 +120,28 @@ export default class Room extends React.Component {
           var roomStr = JSON.stringify(room);
 
           AsyncStorage.setItem('roomStr', roomStr).then(() => {
-            this.props.navigation.navigate("CreateDevice", back={name:'Room'})
+            this.props.navigation.navigate("CreateDevice")
           })
         })
       })
       .catch((error) => {
         alert("A connection Error has occurred.");
       });
+  }
+
+  goToBindDeviceToRoom = () =>
+  {
+    var device = {
+      DeviceId: '',
+      DeviceName: '',
+      DeviceTypeName: '',
+    }
+
+    var deviceStr = JSON.stringify(device);
+
+    AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+      this.props.navigation.navigate("BindDeviceToRoom");
+    })
   }
 
   goToCreateActivationCondition = () =>
@@ -159,7 +174,7 @@ export default class Room extends React.Component {
             var deviceStr = JSON.stringify(device);
 
             AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-              this.props.navigation.navigate("CreateActivationCondition", back={name:'Room'});
+              this.props.navigation.navigate("CreateActivationCondition");
             })
           })
         })
@@ -180,8 +195,9 @@ export default class Room extends React.Component {
           </View>
           <View style={{ flex: 4 }}>
             <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
+            <Button primary text="Add Existing Device" onPress={this.goToBindDeviceToRoom}/>
             <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-            <Button primary text="Back" onPress={() => { this.props.navigation.navigate("Rooms") }} />
+            <Button primary text="Update Room Details" onPress={() => {this.props.navigation.navigate('UpdateRoom')}}/>
             <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
           </View>
         </View>

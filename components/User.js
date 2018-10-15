@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class User extends React.Component {
@@ -42,6 +42,7 @@ export default class User extends React.Component {
       <ScrollView>
         <View style={style.container}>
           <Text style={{ fontSize: 20 }}>{this.state.user["UserName"]}</Text>
+          <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate("UpdateUser", back="User")}}/>
           <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />
           <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
         </View>

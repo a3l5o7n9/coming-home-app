@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView,Picker } from 'react-native';
+import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView} from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Login extends React.Component {
@@ -24,7 +24,7 @@ export default class Login extends React.Component {
     const { userName, userPassword } = this.state;
 
     if (userName == '') {
-      Alert.alert("Please enter your username and password");
+      alert("Please enter your username and password");
       return;
     }
 
@@ -32,7 +32,7 @@ export default class Login extends React.Component {
       userName,
       userPassword
     }
-    //Alert.alert(JSON.stringify(request));
+
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Login", {
       method: 'POST',
       headers: new Headers({
@@ -43,7 +43,7 @@ export default class Login extends React.Component {
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
         let jsonData = JSON.parse(result.d);
-        let details = {
+        var details = {
           user: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
@@ -55,7 +55,7 @@ export default class Login extends React.Component {
           return;
         }
 
-        let detailsStr = JSON.stringify(details);
+        var detailsStr = JSON.stringify(details);
         AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
           this.props.navigation.navigate("MainPage");
         });

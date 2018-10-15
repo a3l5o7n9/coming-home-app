@@ -2,23 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, View, Alert, TextInput, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
-import Login from './components/Login';
-import Register from './components/Register';
-import MainPage from './components/MainPage';
-import Home from './components/Home';
-import Rooms from './components/Rooms';
-import Devices from './components/Devices';
-import Users from './components/Users';
-import ActivationConditions from './components/ActivationConditions';
-import ActivationCondition from './components/ActivationCondition';
-import CreateActivationCondition from './components/CreateActivationCondition';
-import CreateDevice from './components/CreateDevice';
-import CreateHome from './components/CreateHome';
-import CreateRoom from './components/CreateRoom';
-import Device from './components/Device';
-import JoinHome from './components/JoinHome';
-import Room from './components/Room';
-import User from './components/User';
+import { Notifications } from 'expo';
+import registerForPushNotificationsAsync from './functional-components/registerForPushNotificationsAsync';
+import Session from './navigator-components/Session';
+import Authentication from './navigator-components/Authentication';
 
 
 export default class App extends React.Component {
@@ -27,40 +14,37 @@ export default class App extends React.Component {
     this.state = {}
   }
 
+  componentDidMount() {
+    registerForPushNotificationsAsync();
+
+    // Handle notifications that are received or selected while the app
+    // is open. If the app was closed and then opened by tapping the
+    // notification (rather than just tapping the app icon to open it),
+    // this function will fire on the next tick after the app starts
+    // with the notification data.
+    this._notificationSubscription = Notifications.addListener(this._handleNotification);
+  }
+
+  _handleNotification = (notification) => {
+    this.setState({ notification: notification });
+  };
+
+
   render() {
     return (
-      // <ScrollView>
-      //   <View>
-          <AppNavigator />
-      //   </View>
-      // </ScrollView>
+      <AppNavigator />
     );
   }
 }
 
-const AppNavigator = createStackNavigator(
+const AppNavigator = createSwitchNavigator(
   {
-    Login,
-    Register,
-    MainPage,
-    Home,
-    Rooms,
-    Devices,
-    Users,
-    ActivationConditions,
-    ActivationCondition,
-    CreateActivationCondition,
-    CreateDevice,
-    CreateHome,
-    CreateRoom,
-    Device,
-    JoinHome,
-    Room,
-    User
+    Authentication: Authentication,
+    Session: Session
   },
   {
     backBehavior: 'initialRoute',
-    initialRouteName: 'Login',
+    initialRouteName: 'Authentication',
     navigationOptions: {
       headerStyle: {
         backgroundColor: 'white',

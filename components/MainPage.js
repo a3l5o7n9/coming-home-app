@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class MainPage extends React.Component {
@@ -17,10 +17,9 @@ export default class MainPage extends React.Component {
         UserPassword: '',
         FirstName: '',
         LastName: '',
-        UserTypeName: '',
         Token: ''
       },
-      userList: [],
+      userList: null,
       homeList: null
     }
   }
@@ -78,6 +77,7 @@ export default class MainPage extends React.Component {
           <View style={styles.container}>
             {this.showHomes()}
           </View>
+          <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate('UpdateUser', back="MainPage")}}/>
           <Button primary text="Create New Home" onPress={() => { this.props.navigation.navigate("CreateHome") }} />
           <Button primary text="Join an existing Home" onPress={() => { this.props.navigation.navigate("JoinHome") }} />
           <Button primary text="Sign Out" onPress={() => { this.props.navigation.navigate('Login') }} />
@@ -86,21 +86,6 @@ export default class MainPage extends React.Component {
     );
   }
 }
-
-{/* <View style={{justifyContent : 'space-around'}}>
-<View style={{flex: 1, flexDirection:'column', justifyContent:'space-around'}}>
-  <View style={{flex: 1, flexDirection: 'row', justifyContent:'space-around'}}>
-    <View style={{width: 50, height: 50, backgroundColor: 'powderblue', justifyContent:'space-around'}} />
-    <View style={{width: 50, height: 50, backgroundColor: 'skyblue', justifyContent:'space-around'}} />
-  </View>
-</View>
-<View style={{flex: 1, flexDirection:'column', justifyContent:'space-around'}}>
-  <View style={{flex: 1, flexDirection: 'row', justifyContent:'space-around'}}>
-    <View style={{width: 50, height: 50, backgroundColor: 'steelblue', justifyContent:'space-around'}} />
-    <View style={{width: 50, height: 50, backgroundColor:'blue', justifyContent:'space-around'}}/>
-  </View>
-</View>
-</View> */}
 
 const styles = StyleSheet.create({
   container: {

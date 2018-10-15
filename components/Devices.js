@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import DeviceDetails from './DeviceDetails';
 
@@ -64,7 +64,7 @@ export default class Devices extends React.Component {
 
               return (
                 <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                  <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} backName={'Devices'}/>
+                  <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
                 </View>
               )
             })
@@ -109,7 +109,7 @@ export default class Devices extends React.Component {
           let roomStr = JSON.stringify(room);
 
           AsyncStorage.setItem('roomStr', roomStr).then(() => {
-            this.props.navigation.navigate("CreateDevice", back={name:'Devices'})
+            this.props.navigation.navigate("CreateDevice")
           })
         })
       })

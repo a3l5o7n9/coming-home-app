@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import ConditionDetails from './ConditionDetails';
 
@@ -69,7 +69,7 @@ export default class ActivationConditions extends React.Component {
 
               return (
                 <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
-                  <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList} backName={'ActivationConditions'}/>
+                  <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
                 </View>
               )
             })
@@ -122,7 +122,7 @@ export default class ActivationConditions extends React.Component {
             let deviceStr = JSON.stringify(device);
 
             AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
-              this.props.navigation.navigate("CreateActivationCondition", back={name:'ActivationConditions'});
+              this.props.navigation.navigate("CreateActivationCondition");
             })
           })
         })

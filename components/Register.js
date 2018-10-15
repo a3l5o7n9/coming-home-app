@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, AsyncStorage } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Register extends React.Component {
@@ -48,40 +48,36 @@ export default class Register extends React.Component {
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
         const userId = JSON.parse(result.d);
-
         switch (userId) {
           case -2:
             {
               alert("Error! User could not be created");
-              break;
+              return;
             }
           case -1:
             {
               alert("There is already a user with that UserName. Use a different UserName.");
-              break;
+              return;
             }
           default:
             {
-              let details = {
+              var details = {
                 user: {
                   UserId: userId,
                   UserName: userName,
                   UserPassword: userPassword,
                   FirstName: firstName,
                   LastName: lastName,
-                  UserTypeName: '',
-                  Token: ''
+                  Token: null
                 },
                 userList: null,
                 homeList: null,
                 resultMessage: 'Data'
               }
-
-              let detailsStr = JSON.stringify(details);
+              var detailsStr = JSON.stringify(details);
               AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
                 this.props.navigation.navigate("MainPage");
               });
-
               break;
             }
         }

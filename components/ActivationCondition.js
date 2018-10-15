@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Switch } from 'react-native';
+import { StyleSheet, Text, View, AsyncStorage, ScrollView, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class ActivationCondition extends React.Component {
@@ -27,7 +27,6 @@ export default class ActivationCondition extends React.Component {
         ConditionName: '',
         IsActive: false
       },
-      back: this.props.navigation.state.params
     }
   }
 
@@ -154,14 +153,13 @@ export default class ActivationCondition extends React.Component {
           <View style={{flex: 2, flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
               <Text style={{ fontSize: 20 }}>{this.state.activationCondition["ConditionName"]}</Text>
-              <Text style={{ fontSize: 15 }}>{this.state.device["DeviceName"]}</Text>
+              <Text style={{ fontSize: 15 }}>{'Turn ' + this.state.device["DeviceName"] + ' ' + this.state.activationCondition["TurnOn"] ? 'On' : 'Off' }</Text>
               <Text style={{ fontSize: 10 }}>{this.state.room["RoomName"]}</Text>
             </View>
             <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: "flex-end" }}>
               <Switch value={this.state.activationCondition["IsActive"]} onValueChange={this.changeConditionStatus} />
             </View>
           </View>
-          <Button primary text="Back" onPress={() => { this.props.navigation.navigate(this.state.back["name"]) }} />
           <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
         </View>
       </ScrollView>

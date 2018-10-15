@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
+import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class CreateRoom extends React.Component {
@@ -85,10 +85,35 @@ export default class CreateRoom extends React.Component {
                 IsShared: isShared
               }
 
-              let roomStr = JSON.stringify(room);
+              AsyncStorage.getItem('roomsStr').then((value) => {
+                rooms = JSON.parse(value);
+                var roomList = [];
 
-              AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                this.props.navigation.navigate("Room");
+                if (rooms.roomList != null)
+                {
+                  roomList = rooms.roomList;
+                  resultMessage = rooms.resultMessage;
+                }
+                else
+                {
+                  resultMessage = 'Data';
+                }
+
+                roomList.push(room);
+
+                var roomsNew = {
+                roomList,
+                resultMessage,
+                }
+
+                let roomStr = JSON.stringify(room);
+                let roomsStr = JSON.stringify(roomsNew);
+
+                AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                  AsyncStorage.setItem('roomsStr', roomsStr).then(() => {
+                    this.props.navigation.navigate("Room");
+                  });
+                });
               });
               break;
             }

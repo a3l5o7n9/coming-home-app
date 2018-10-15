@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
-export default class CreateActivationCondition extends React.Component {
+export default class UpdateActivationCondition extends React.Component {
   static navigationOptions = {
-    title: 'New Activation Condition'
+    title: 'Update Activation Condition'
   }
 
   constructor(props) {
@@ -15,11 +15,12 @@ export default class CreateActivationCondition extends React.Component {
       home: {},
       room: {},
       device: {},
-      conditionName: '',
-      turnOn: false,
-      activationMethodName: '',
-      distanceOrTimeParam: '07:00',
-      activationParam: '25 `C',
+      activationCondition: {},
+      newConditionName: '',
+      newStatus: false,
+      newActivationMethodName: '',
+      newDistanceOrTimeParam: '07:00',
+      newActivationParam: '25 `C',
       activationMethods: [],
       roomList: [],
       deviceList: [],
@@ -54,18 +55,23 @@ export default class CreateActivationCondition extends React.Component {
                     AsyncStorage.getItem('deviceStr').then((value) => {
                       device = JSON.parse(value);
 
-                      this.setState({
-                        user: details.user,
-                        home: home,
-                        deviceList: devices.deviceList,
-                        roomList: rooms.roomList,
-                        userList: users.userList,
-                        activationConditionList: activationConditions.activationConditionList,
-                        activationMethods: activationMethods,
-                        room: room,
-                        device: device,
-                        roomList: rooms.roomList,
-                        deviceList: devices.deviceList
+                      AsyncStorage.getItem('activationConditionStr').then((value) => {
+                        activationCondition = JSON.parse(value);
+
+                        this.setState({
+                          user: details.user,
+                          home: home,
+                          deviceList: devices.deviceList,
+                          roomList: rooms.roomList,
+                          userList: users.userList,
+                          activationConditionList: activationConditions.activationConditionList,
+                          activationMethods: activationMethods,
+                          room: room,
+                          device: device,
+                          activationCondition: activationCondition,
+                          roomList: rooms.roomList,
+                          deviceList: devices.deviceList
+                        });
                       });
                     });
                   });
@@ -78,44 +84,71 @@ export default class CreateActivationCondition extends React.Component {
     });
   }
 
-  createActivationCondition = () => {
-    const userId = this.state.user['UserId'];
+  updateActivationConditionDetails = () => {
+    const appUserId = this.state.user['UserId'];
     const homeId = this.state.home['HomeId'];
-    const device = this.state.device;
-    const room = this.state.room;
-    var { conditionName, turnOn, activationMethodName, distanceOrTimeParam, activationParam } = this.state;
+    const conditionId = this.state.activationCondition['ConditionId'];
+    const newDevice = this.state.device;
+    const newRoom = this.state.room;
+    var newDeviceId = newDevice['DeviceId'];
+    var newRoomId = newRoom['RoomId'];
+    var { newConditionName, newStatus, newActivationMethodCode, newActivationMethodName, newDistanceOrTimeParam, newActivationParam } = this.state;
 
-    if (conditionName == '' || activationMethodName == '' || device.DeviceId == '' || room.RoomId == '') {
-      alert("Creating a condition requires a name, an activation method, a device and a room");
-      return;
+    if (newConditionName == '' || newConditionName == null) {
+      newConditionName = 'null';
     }
 
-    if (distanceOrTimeParam == '' || distanceOrTimeParam == null)
+    if (newStatus == '' || newStatus == null)
     {
-      distanceOrTimeParam = 'null';
+      newStatus = 'null';
     }
 
-    if (activationParam == '' || activationParam == null)
+    if (newActivationMethodCode == '' || newActivationMethodCode == null)
     {
-      activationParam = 'null';
+      newActivationMethodCode = 'null';
+      newActivationMethodName = this.state.activationCondition.ActivationMethodName;
+    }
+    else
+    {
+      var typeIndex = this.state.activationMethods.findIndex((am) => am.ActivationMethodCode == newActivationMethodCode);
+
+      newActivationMethodName = this.state.activationMethods[typeIndex].ActivationMethodName;
     }
 
-    var deviceId = device['DeviceId'];
-    var roomId = room['RoomId'];
+    if (newDistanceOrTimeParam == '' || newDistanceOrTimeParam == null)
+    {
+      newDistanceOrTimeParam = 'null';
+    }
+
+    if (newActivationParam == '' || newActivationParam == null)
+    {
+      newActivationParam = 'null';
+    }
+
+    if (newDeviceId == '' || newDeviceId == null)
+    {
+      newDeviceId = 'null';
+    }
+
+    if (newRoomId == '' || newRoomId == null)
+    {
+      newRoomId == null;
+    }
 
     var request = {
-      conditionName,
-      turnOn,
-      userId,
+      appUserId,
       homeId,
-      deviceId,
-      roomId,
-      activationMethodName,
-      distanceOrTimeParam,
-      activationParam
+      conditionId,
+      newDeviceId,
+      newRoomId,
+      newConditionName,
+      newStatus,
+      newActivationMethodCode,
+      newDistanceOrTimeParam,
+      newActivationParam
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateActivationCondition", {
+    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateActivationConditionDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -124,62 +157,56 @@ export default class CreateActivationCondition extends React.Component {
     })
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
-        const conditionId = JSON.parse(result.d);
+        const resultMessage = JSON.parse(result.d);
 
-        switch (conditionId) {
-          case -3:
+        switch (resultMessage) 
+        {
+          case 'Update Completed':
             {
-              alert('Error! Room could not be found!');
-              return;
-            }
-          case -2:
-            {
-              alert('Error! You are not registered as a member of this home.');
-              return;
-            }
-          case 0:
-            {
-              alert("There is already a condition with those properties in this home. Use a different name, or change some of the properties.");
-              break;
-            }
-          default:
-            {
-              var activationCondition =
+              var newActivationCondition =
               {
                 ConditionId: conditionId,
-                ConditionName: conditionName,
-                TurnOn: turnOn,
-                CreatedByUserId: userId,
+                ConditionName: newConditionName == 'null' ? this.state.activationCondition.ConditionName : newConditionName,
+                TurnOn: newStatus == 'null' ? this.state.activationCondition.TurnOn : newStatus,
+                CreatedByUserId: appUserId,
                 HomeId: homeId,
-                DeviceId: deviceId,
-                RoomId: roomId,
-                ActivationMethodName: activationMethodName,
-                DistanceOrTimeParam: distanceOrTimeParam,
-                ActivationParam: activationParam,
-                IsActive: true
+                DeviceId: newDeviceId == 'null' ? this.state.activationCondition.DeviceId : newDeviceId,
+                RoomId: newRoomId == 'null' ? this.state.activationCondition.RoomId : newRoomId,
+                ActivationMethodName: newActivationMethodName,
+                DistanceOrTimeParam: newDistanceOrTimeParam == 'null' ? this.state.activationCondition.DistanceOrTimeParam : newDistanceOrTimeParam,
+                ActivationParam: newActivationParam == 'null' ? this.state.activationCondition.ActivationParam : newActivationParam,
+                IsActive: this.state.activationCondition.IsActive
               }
               
-              var activationConditionList = [];
+              var newActivationConditionList = [];
 
               if(this.state.activationConditionList != null)
               {
-                activationConditionList = this.state.activationConditionList;
+                newActivationConditionList = this.state.activationConditionList;
               }
 
-              activationConditionList.push(activationCondition);
+              var index = newActivationConditionList.findIndex((ac) => {ac.ConditionId === conditionId});
+
+              newActivationConditionList[index].ConditionName = newActivationCondition.ConditionName;
+              newActivationConditionList[index].TurnOn = newActivationCondition.TurnOn;
+              newActivationConditionList[index].DeviceId = newActivationCondition.DeviceId;
+              newActivationConditionList[index].RoomId = newActivationCondition.RoomId;
+              newActivationConditionList[index].ActivationMethodName = newActivationCondition.ActivationMethodName;
+              newActivationConditionList[index].DistanceOrTimeParam = newActivationCondition.DistanceOrTimeParam;
+              newActivationConditionList[index].ActivationParam = newActivationCondition.ActivationParam;
 
               var activationConditionsNew = {
-                activationConditionList,
+                activationConditionList: newActivationConditionList,
                 resultMessage: 'Data',
               }
 
-              let activationConditionStr = JSON.stringify(activationCondition);
+              let activationConditionStr = JSON.stringify(newActivationCondition);
               let activationConditionsStr = JSON.stringify(activationConditionsNew);
 
               AsyncStorage.setItem('activationConditionStr', activationConditionStr).then(() => {
                 AsyncStorage.setItem('activationConditionsStr', activationConditionsStr).then(() => {
-                  let deviceStr = JSON.stringify(device);
-                  let roomStr = JSON.stringify(room);
+                  let deviceStr = JSON.stringify(newDevice);
+                  let roomStr = JSON.stringify(newRoom);
 
                   AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                     AsyncStorage.setItem('roomStr', roomStr).then(() => {
@@ -189,6 +216,11 @@ export default class CreateActivationCondition extends React.Component {
                 });
               });
               break;
+            }
+          default:
+            {
+              alert(resultMessage);
+              return;
             }
         }
       })
@@ -201,12 +233,12 @@ export default class CreateActivationCondition extends React.Component {
     return (
       <Picker
         style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
-        selectedValue={this.state.activationMethodName}
-        onValueChange={(itemValue) => this.setState({ activationMethodName: itemValue })}>
+        selectedValue={this.state.activationMethodCode}
+        onValueChange={(itemValue) => this.setState({ newActivationMethodCode: itemValue })}>
         {
           this.state.activationMethods.map((activationMethod) => {
             return (
-              <Picker.Item key={activationMethod["ActivationMethodCode"]} label={activationMethod["ActivationMethodName"]} value={activationMethod["ActivationMethodName"]} />
+              <Picker.Item key={activationMethod["ActivationMethodCode"]} label={activationMethod["ActivationMethodName"]} value={activationMethod["ActivationMethodCode"]} />
             )
           })
         }
@@ -331,22 +363,22 @@ export default class CreateActivationCondition extends React.Component {
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.textStyle}>Condition Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.conditionName} placeholder="Condition Name" onChangeText={(conditionName) => this.setState({ conditionName })}></TextInput>
+          <TextInput style={styles.textInputStyle} value={this.state.newConditionName} placeholder={this.state.activationCondition.ConditionName} onChangeText={(newConditionName) => this.setState({ newConditionName })}></TextInput>
           <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
             <Text style={styles.textStyle}>Turn Device On?</Text>
-            <Switch value={this.state.turnOn} onValueChange={(turnOn) => {this.setState({turnOn})}}/>
+            <Switch value={this.state.newStatus} onValueChange={(newStatus) => {this.setState({newStatus})}}/>
           </View>
-          <Text style={styles.textStyle}> Activation Method Name</Text>
+          <Text style={styles.textStyle}> Activation Method</Text>
           {this.pickActivationMethod()}
           <Text style={styles.textStyle}>Device</Text>
           {this.pickDevice()}
           <Text style={styles.textStyle}>Room</Text>
           {this.pickRoom()}
           <Text style={styles.textStyle}>Distance Or Time Parameter</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.distanceOrTimeParam} placeHolder="10 km" onChangeText={(distanceOrTimeParam) => this.setState({ distanceOrTimeParam })}></TextInput>
+          <TextInput style={styles.textInputStyle} value={this.state.newDistanceOrTimeParam} placeHolder={this.state.activationCondition.DistanceOrTimeParam} onChangeText={(newDistanceOrTimeParam) => this.setState({ newDistanceOrTimeParam })}></TextInput>
           <Text style={styles.textStyle}>Activation Parameter</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.activationParam} placeHolder="80% Power" onChangeText={(activationParam) => this.setState({ activationParam })}></TextInput>
-          <Button primary text="Create" onPress={this.createActivationCondition} />
+          <TextInput style={styles.textInputStyle} value={this.state.newActivationParam} placeHolder={this.state.activationCondition.ActivationParam} onChangeText={(newActivationParam) => this.setState({ newActivationParam })}></TextInput>
+          <Button primary text="Update" onPress={this.updateActivationConditionDetails} />
           <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
         </View>
       </ScrollView>
