@@ -11,7 +11,7 @@ export default class Users extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       userList: []
     }
@@ -34,7 +34,7 @@ export default class Users extends React.Component {
               devices = JSON.parse(value);
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 userList: users.userList,
                 roomList: rooms.roomList,

@@ -11,7 +11,7 @@ export default class JoinHome extends React.Component {
     super(props);
 
     this.state = {
-      user: {
+      appUser: {
         UserId: '',
         UserName: '',
         UserPassword: '',
@@ -30,13 +30,13 @@ export default class JoinHome extends React.Component {
       details = JSON.parse(value);
 
       this.setState({
-        user: details.user,
+        appUser: details.appUser,
       });
     });
   }
 
   joinHome = () => {
-    const userId = this.state.user['UserId'];
+    const userId = this.state.appUser['UserId'];
     const { homeName, address } = this.state;
 
     if (homeName == '' || address == '') {

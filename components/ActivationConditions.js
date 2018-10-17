@@ -12,7 +12,7 @@ export default class ActivationConditions extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       deviceList: [],
       roomList: [],
@@ -40,7 +40,7 @@ export default class ActivationConditions extends React.Component {
                 activationConditions = JSON.parse(value);
 
                 this.setState({
-                  user: details.user,
+                  appUser: details.appUser,
                   home: home,
                   deviceList: devices.deviceList,
                   roomList: rooms.roomList,
@@ -64,12 +64,12 @@ export default class ActivationConditions extends React.Component {
             this.state.activationConditionList.map((activationCondition, ConditionId) => {
               let device = this.state.deviceList.find((d) => d.DeviceId === activationCondition.DeviceId);
               let room = this.state.roomList.find((r) => r.RoomId === activationCondition.RoomId);
-              let { user } = this.state;
+              let { appUser } = this.state;
               let { home } = this.state;
 
               return (
                 <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
-                  <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
+                  <ConditionDetails appUser={appUser} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
                 </View>
               )
             })

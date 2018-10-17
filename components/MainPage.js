@@ -11,7 +11,7 @@ export default class MainPage extends React.Component {
     super(props);
 
     this.state = {
-      user: {
+      appUser: {
         UserId: '',
         UserName: '',
         UserPassword: '',
@@ -29,7 +29,7 @@ export default class MainPage extends React.Component {
       details = JSON.parse(value);
 
       this.setState({
-        user: details.user,
+        appUser: details.appUser,
         userList: details.userList,
         homeList: details.homeList
       });
@@ -65,14 +65,20 @@ export default class MainPage extends React.Component {
     }
   }
 
+  signOut = () => {
+    AsyncStorage.multiRemove(['detailsStr', 'homeStr', 'userStr', 'roomStr', 'deviceStr', 'activationConditionStr', 'usersStr', 'roomsStr', 'devicesStr', 'activationConditionsStr']).then(() => {
+      this.props.navigation.navigate("Login");
+    });
+  }
+
   render() {
-    var { user } = this.state;
+    var { appUser } = this.state;
 
     return (
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.textStyle}>
-            Hello, {user["FirstName"]}
+            Hello, {appUser["FirstName"]}
           </Text>
           <View style={styles.container}>
             {this.showHomes()}
@@ -80,7 +86,7 @@ export default class MainPage extends React.Component {
           <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate('UpdateUser', back="MainPage")}}/>
           <Button primary text="Create New Home" onPress={() => { this.props.navigation.navigate("CreateHome") }} />
           <Button primary text="Join an existing Home" onPress={() => { this.props.navigation.navigate("JoinHome") }} />
-          <Button primary text="Sign Out" onPress={() => { this.props.navigation.navigate('Login') }} />
+          <Button primary text="Sign Out" onPress={ this.signOut } />
         </View>
       </ScrollView>
     );

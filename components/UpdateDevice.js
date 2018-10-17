@@ -11,7 +11,7 @@ export default class UpdateDevice extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       room: {
         RoomId: '',
@@ -49,7 +49,7 @@ export default class UpdateDevice extends React.Component {
 
                 this.setState(
                 {
-                  user: details.user,
+                  appUser: details.appUser,
                   home: home,
                   deviceTypes: deviceTypes,
                   roomList: rooms.roomList,
@@ -65,9 +65,10 @@ export default class UpdateDevice extends React.Component {
   }
 
   updateDeviceDetails = () => {
-    const appUserId = this.state.user['UserId'];
+    const appUserId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
-    const { newDeviceName, newDeviceTypeCode, newDeviceTypeName, newDivideStatus } = this.state;
+    const deviceId = this.state.device['DeviceId'];
+    var { newDeviceName, newDeviceTypeCode, newDeviceTypeName, newDivideStatus } = this.state;
 
     if (newDeviceName == '' || newDeviceName == null) 
     {
@@ -120,34 +121,38 @@ export default class UpdateDevice extends React.Component {
                 DeviceTypeName: newDeviceTypeName,
                 HomeId: homeId,
                 IsDividedIntoRooms: newDivideStatus == 'null' ? this.state.device.IsDividedIntoRooms : newDivideStatus,
+                RoomId: this.state.room.RoomId,
+                IsOn: this.state.device.IsOn
               }
 
               AsyncStorage.getItem('devicesStr').then((value) => {
                 devices = JSON.parse(value);
-                var deviceList = [];
+                var deviceList = new Array();
+                var devicesResultMessage = devices.resultMessage;
 
                 if (devices.deviceList != null) {
                   deviceList = devices.deviceList;
-                  resultMessage = devices.resultMessage;
+                  devicesResultMessage = devices.resultMessage;
                 }
                 else {
-                  resultMessage = 'Data';
+                  devicesResultMessage = 'Data';
                 }
 
-                var deviceArray = deviceList.filter((d) => (d.DeviceId === deviceId));
+                var filteredDeviceList = deviceList.filter((d) => (d.DeviceId === deviceId));
+                var numOfOccurrences = filteredDeviceList.length;
 
-                deviceArray.map((d) => {
-                  d.DeviceName = newDevice.DeviceName;
-                  d.DeviceTypeName = newDevice.DeviceTypeName;
-                  d.IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
-                });
+                var deviceFirstIndex = deviceList.findIndex((d) => (d.DeviceId === deviceId));
 
-                deviceList.pop((d) => {d.DeviceId === deviceId});
-                deviceList.append(deviceArray);
+                for (var i = deviceFirstIndex; i <= deviceFirstIndex + numOfOccurrences - 1; i++)
+                {
+                  deviceList[i].DeviceName = newDevice.DeviceName;
+                  deviceList[i].DeviceTypeName = newDevice.DeviceTypeName;
+                  deviceList[i].IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
+                }
 
                 var devicesNew = {
                   deviceList,
-                  resultMessage,
+                  resultMessage: devicesResultMessage,
                 }
 
                 let deviceStr = JSON.stringify(newDevice);
@@ -202,7 +207,7 @@ export default class UpdateDevice extends React.Component {
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.textStyle}>Device Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newDeviceName} placeholder={this.state.device.DeviceName} onChangeText={(newDeviceName) => this.setState({ newDeviceName })}></TextInput>
+          <TextInput style={styles.textInputStyle} value={this.state.newDeviceName} placeholder={this.state.device.DeviceName} onChangeText={(newDeviceName) => this.setState({ newDeviceName: newDeviceName })}></TextInput>
           <Text style={styles.textStyle}>Device Type</Text>
           {this.pickDeviceType()}
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>

@@ -11,7 +11,7 @@ export default class UpdateActivationCondition extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       room: {},
       device: {},
@@ -19,11 +19,13 @@ export default class UpdateActivationCondition extends React.Component {
       newConditionName: '',
       newStatus: false,
       newActivationMethodName: '',
-      newDistanceOrTimeParam: '07:00',
-      newActivationParam: '25 `C',
+      newActivationMethodCode: '',
+      newDistanceOrTimeParam: '',
+      newActivationParam: '',
       activationMethods: [],
       roomList: [],
       deviceList: [],
+      activationConditionList: [],
     }
   }
 
@@ -59,7 +61,7 @@ export default class UpdateActivationCondition extends React.Component {
                         activationCondition = JSON.parse(value);
 
                         this.setState({
-                          user: details.user,
+                          appUser: details.appUser,
                           home: home,
                           deviceList: devices.deviceList,
                           roomList: rooms.roomList,
@@ -70,7 +72,10 @@ export default class UpdateActivationCondition extends React.Component {
                           device: device,
                           activationCondition: activationCondition,
                           roomList: rooms.roomList,
-                          deviceList: devices.deviceList
+                          deviceList: devices.deviceList,
+                          newActivationMethodCode: activationMethods.find((activationMethod) => activationMethod.ActivationMethodName === activationCondition.ActivationMethodName).ActivationMethodCode,
+                          newDistanceOrTimeParam: activationCondition.DistanceOrTimeParam,
+                          newActivationParam: activationCondition.ActivationParam
                         });
                       });
                     });
@@ -85,11 +90,11 @@ export default class UpdateActivationCondition extends React.Component {
   }
 
   updateActivationConditionDetails = () => {
-    const appUserId = this.state.user['UserId'];
+    const appUserId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     const conditionId = this.state.activationCondition['ConditionId'];
-    const newDevice = this.state.device;
-    const newRoom = this.state.room;
+    var newDevice = this.state.device;
+    var newRoom = this.state.room;
     var newDeviceId = newDevice['DeviceId'];
     var newRoomId = newRoom['RoomId'];
     var { newConditionName, newStatus, newActivationMethodCode, newActivationMethodName, newDistanceOrTimeParam, newActivationParam } = this.state;
@@ -132,7 +137,7 @@ export default class UpdateActivationCondition extends React.Component {
 
     if (newRoomId == '' || newRoomId == null)
     {
-      newRoomId == null;
+      newRoomId = 'null';
     }
 
     var request = {
@@ -177,15 +182,15 @@ export default class UpdateActivationCondition extends React.Component {
                 ActivationParam: newActivationParam == 'null' ? this.state.activationCondition.ActivationParam : newActivationParam,
                 IsActive: this.state.activationCondition.IsActive
               }
-              
-              var newActivationConditionList = [];
+
+              var newActivationConditionList = new Array();
 
               if(this.state.activationConditionList != null)
               {
                 newActivationConditionList = this.state.activationConditionList;
               }
 
-              var index = newActivationConditionList.findIndex((ac) => {ac.ConditionId === conditionId});
+              var index = newActivationConditionList.findIndex((ac) => (ac.ConditionId === conditionId));
 
               newActivationConditionList[index].ConditionName = newActivationCondition.ConditionName;
               newActivationConditionList[index].TurnOn = newActivationCondition.TurnOn;
@@ -233,7 +238,7 @@ export default class UpdateActivationCondition extends React.Component {
     return (
       <Picker
         style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
-        selectedValue={this.state.activationMethodCode}
+        selectedValue={this.state.newActivationMethodCode}
         onValueChange={(itemValue) => this.setState({ newActivationMethodCode: itemValue })}>
         {
           this.state.activationMethods.map((activationMethod) => {
@@ -256,8 +261,8 @@ export default class UpdateActivationCondition extends React.Component {
             style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
             selectedValue={this.state.device.DeviceId}
             onValueChange={(itemValue) => {
-              var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
-              this.setState({ device: device })
+              var newDevice = this.state.deviceList.find((device) => device.DeviceId === itemValue);
+              this.setState({ device: newDevice })
             }}
            >
             {
@@ -268,12 +273,6 @@ export default class UpdateActivationCondition extends React.Component {
               })
             }
           </Picker>
-        );
-      }
-      else
-      {
-        return (
-          <Text style={styles.textStyle}>You must create a room and a device first!</Text>
         );
       }
     }
@@ -287,8 +286,8 @@ export default class UpdateActivationCondition extends React.Component {
             style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
             selectedValue={this.state.device.DeviceId}
             onValueChange={(itemValue) => {
-              var device = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
-              this.setState({ device: device })
+              var newDevice = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
+              this.setState({ device: newDevice })
             }}
           >
             {
@@ -312,7 +311,7 @@ export default class UpdateActivationCondition extends React.Component {
               this.setState({ device: device })
             }}
           >
-            <Picker.Item key={device.DeviceId} label={device.DeviceName} value={device.DeviceId} />
+            <Picker.Item key={newDevice.DeviceId} label={newDevice.DeviceName} value={newDevice.DeviceId} />
           </Picker>
         );
       }
@@ -327,8 +326,8 @@ export default class UpdateActivationCondition extends React.Component {
           style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
-            var room = this.state.roomList.find((room) => room.RoomId === itemValue);
-            this.setState({ room: room })
+            var newRoom = this.state.roomList.find((room) => room.RoomId === itemValue);
+            this.setState({ room: newRoom })
           }}
         >
           {

@@ -11,7 +11,7 @@ export default class CreateHome extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       homeName: '',
       address: '',
     }
@@ -22,13 +22,13 @@ export default class CreateHome extends React.Component {
       details = JSON.parse(value);
 
       this.setState({
-        user: details.user,
+        appUser: details.appUser,
       });
     });
   }
 
   createHome = () => {
-    const userId = this.state.user['UserId'];
+    const userId = this.state.appUser['UserId'];
     const { homeName, address } = this.state;
 
     if (homeName == '' || address == '') {
@@ -61,7 +61,6 @@ export default class CreateHome extends React.Component {
             }
           default:
             {
-              var user = this.state.user;
               let home = {
                 HomeId: homeId,
                 HomeName: homeName,

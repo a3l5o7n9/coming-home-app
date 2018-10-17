@@ -11,7 +11,7 @@ export default class CreateActivationCondition extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       room: {},
       device: {},
@@ -55,7 +55,7 @@ export default class CreateActivationCondition extends React.Component {
                       device = JSON.parse(value);
 
                       this.setState({
-                        user: details.user,
+                        appUser: details.appUser,
                         home: home,
                         deviceList: devices.deviceList,
                         roomList: rooms.roomList,
@@ -79,7 +79,7 @@ export default class CreateActivationCondition extends React.Component {
   }
 
   createActivationCondition = () => {
-    const userId = this.state.user['UserId'];
+    const userId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     const device = this.state.device;
     const room = this.state.room;

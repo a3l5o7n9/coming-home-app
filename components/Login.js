@@ -44,11 +44,13 @@ export default class Login extends React.Component {
       .then((result) => { // no error in server
         let jsonData = JSON.parse(result.d);
         var details = {
-          user: jsonData.AU,
+          appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
           resultMessage: jsonData.ResultMessage
         }
+
+        var user = details.appUser;
 
         if (details.resultMessage == 'No Data') {
           alert("Invalid Username or Password. Please try again.");
@@ -57,7 +59,10 @@ export default class Login extends React.Component {
 
         var detailsStr = JSON.stringify(details);
         AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
-          this.props.navigation.navigate("MainPage");
+          var userStr = JSON.stringify(user);
+          AsyncStorage.setItem('userStr', userStr).then(() => {
+            this.props.navigation.navigate("MainPage");
+          });
         });
       })
       .catch((error) => {

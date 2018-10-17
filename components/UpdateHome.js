@@ -11,7 +11,11 @@ export default class UpdateHome extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
+      home: {
+        HomeName: '',
+        Address: ''
+      },
       newHomeName: '',
       newAddress: '',
     }
@@ -25,7 +29,7 @@ export default class UpdateHome extends React.Component {
         details = JSON.parse(value);
 
         this.setState({
-          user: details.user,
+          appUser: details.appUser,
           home: home
         });
       });
@@ -33,9 +37,9 @@ export default class UpdateHome extends React.Component {
   }
 
   updateHomeDetails = () => {
-    const appUserId = this.state.user['UserId'];
+    const appUserId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
-    const { newHomeName, newAddress } = this.state;
+    var { newHomeName, newAddress } = this.state;
 
     if (newHomeName == '' || newHomeName == null) 
     {

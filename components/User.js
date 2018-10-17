@@ -28,7 +28,7 @@ export default class User extends React.Component {
           user = JSON.parse(value);
 
           this.setState({
-            appUser: details.user,
+            appUser: details.appUser,
             home: home,
             user: user
           });
@@ -40,7 +40,7 @@ export default class User extends React.Component {
   render() {
     return (
       <ScrollView>
-        <View style={style.container}>
+        <View style={styles.container}>
           <Text style={{ fontSize: 20 }}>{this.state.user["UserName"]}</Text>
           <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate("UpdateUser", back="User")}}/>
           <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />

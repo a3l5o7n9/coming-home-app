@@ -12,7 +12,7 @@ export default class Devices extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       deviceList: [],
       roomList: []
@@ -38,7 +38,7 @@ export default class Devices extends React.Component {
               users = JSON.parse(value);
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 deviceList: devices.deviceList,
                 roomList: rooms.roomList,
@@ -59,12 +59,12 @@ export default class Devices extends React.Component {
           {
             this.state.deviceList.map((device, DeviceId) => {
               let room = this.state.roomList.find((r) => r.RoomId === device.RoomId);
-              let { user } = this.state;
+              let { appUser } = this.state;
               let { home } = this.state;
 
               return (
                 <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                  <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
+                  <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
                 </View>
               )
             })

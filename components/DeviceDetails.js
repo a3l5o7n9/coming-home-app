@@ -7,7 +7,7 @@ export default class DeviceDetails extends React.Component {
     super(props);
 
     this.state = {
-      user: this.props.user,
+      appUser: this.props.appUser,
       home: this.props.home,
       device: this.props.device,
       room: this.props.room,
@@ -17,7 +17,7 @@ export default class DeviceDetails extends React.Component {
   }
 
   changeDeviceStatus = () => {
-    var userId = this.state.user["UserId"];
+    var userId = this.state.appUser["UserId"];
     var { device } = this.state;
     var deviceId = this.state.device["DeviceId"];
     var roomId = this.state.device["RoomId"];

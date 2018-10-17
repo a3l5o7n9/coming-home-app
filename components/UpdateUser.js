@@ -10,6 +10,7 @@ export default class UpdateUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      appUser: {},
       user: {
 
       },
@@ -29,18 +30,29 @@ export default class UpdateUser extends React.Component {
       AsyncStorage.getItem('detailsStr').then((value) => {
         details = JSON.parse(value);
 
-        this.setState({
-          user: details.user,
-          home: home
+        AsyncStorage.getItem('userStr').then((value) => {
+          user = JSON.parse(value);
+
+          this.setState({
+            appUser: details.appUser,
+            home: home,
+            user: user,
+          });
         });
       });
     });
   }
 
   updateUserDetails = () => {
-    const { newUserName, newUserPassword, newConfirmPassword, newFirstName, newLastName } = this.state;
-    const appUserId = this.state.user.UserId;
+    var { newUserName, newUserPassword, newConfirmPassword, newFirstName, newLastName } = this.state;
+    const appUserId = this.state.appUser.UserId;
     const userToUpdateId = this.state.user.UserId; 
+
+    if (appUserId != userToUpdateId)
+    {
+      alert("Error! You cannot change another user's details!");
+      return;
+    }
 
     if (newUserName == '' || newUserName == null) 
     {
@@ -89,14 +101,23 @@ export default class UpdateUser extends React.Component {
         switch (resultMessage) {
           case 'Update Completed':
             {
+              var userNew = {
+                UserId: userToUpdateId,
+                UserName: newUserName == 'null' ? this.state.user.UserName : newUserName,
+                UserPassword: newUserPassword == 'null' ? this.state.user.UserPassword : newUserPassword,
+                FirstName: newFirstName == 'null' ? this.state.user.FirstName : newFirstName,
+                LastName: newLastName == 'null' ? this.state.user.LastName : newLastName,
+                Token: this.state.user.Token,
+              };
+
               var newDetails = {
-                user: {
+                appUser: {
                   UserId: appUserId,
-                  UserName: newUserName == 'null' ? this.state.user.UserName : newUserName,
-                  UserPassword: newUserPassword == 'null' ? this.state.user.UserPassword : newUserPassword,
-                  FirstName: newFirstName == 'null' ? this.state.user.FirstName : newFirstName,
-                  LastName: newLastName == 'null' ? this.state.user.LastName : newLastName,
-                  Token: this.state.user.Token,
+                  UserName: newUserName == 'null' ? this.state.appUser.UserName : newUserName,
+                  UserPassword: newUserPassword == 'null' ? this.state.appUser.UserPassword : newUserPassword,
+                  FirstName: newFirstName == 'null' ? this.state.appUser.FirstName : newFirstName,
+                  LastName: newLastName == 'null' ? this.state.appUser.LastName : newLastName,
+                  Token: this.state.appUser.Token,
                 },
                 userList: null,
                 homeList: null,
@@ -104,8 +125,11 @@ export default class UpdateUser extends React.Component {
               }
               var detailsStr = JSON.stringify(newDetails);
               AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
-                var back = this.state.back;
-                this.props.navigation.navigate(back);
+                var userStr = JSON.stringify(userNew);
+                AsyncStorage.setItem('userStr', userStr).then(() => {
+                  var back = this.state.back;
+                  this.props.navigation.navigate(back);
+                });
               });
               break;
             }

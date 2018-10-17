@@ -11,7 +11,7 @@ export default class Home extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {}
     }
   }
@@ -24,7 +24,7 @@ export default class Home extends React.Component {
         details = JSON.parse(value);
 
         this.setState({
-          user: details.user,
+          appUser: details.appUser,
           home: home
         });
 
@@ -34,8 +34,8 @@ export default class Home extends React.Component {
   }
 
   backToMainPage = () => {
-    const userName = this.state.user["UserName"];
-    const userPassword = this.state.user["UserPassword"];
+    const userName = this.state.appUser["UserName"];
+    const userPassword = this.state.appUser["UserPassword"];
 
     var request = {
       userName,
@@ -51,22 +51,26 @@ export default class Home extends React.Component {
     })
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
-        let jsonData = JSON.parse(result.d);
-        let details = {
-          user: jsonData.AU,
+        var jsonData = JSON.parse(result.d);
+        var details = {
+          appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
           resultMessage: jsonData.ResultMessage
         }
+
+        var user = details.appUser;
 
         if (details.resultMessage == 'No Data') {
           alert("Error! User could not be found.");
           return;
         }
 
-        let detailsStr = JSON.stringify(details);
+        var detailsStr = JSON.stringify(details);
         AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
-          this.props.navigation.navigate("MainPage");
+          AsyncStorage.setItem('userStr', userStr).then(() => {
+            this.props.navigation.navigate("MainPage");
+          });
         });
       })
       .catch((error) => {
@@ -75,7 +79,7 @@ export default class Home extends React.Component {
   }
 
   getUserHomeDetails = () => {
-    var userId = this.state.user["UserId"];
+    var userId = this.state.appUser["UserId"];
     var homeId = this.state.home["HomeId"];
 
     var request = {
@@ -141,20 +145,36 @@ export default class Home extends React.Component {
         <View style={styles.container}>
           <Text style={{ fontSize: 30 }}>{this.state.home["HomeName"]}</Text>
           <Text style={{ fontSize: 20 }}>
-            Hello, {this.state.user["FirstName"]}
+            Hello, {this.state.appUser["FirstName"]}
           </Text>
           <View style={{ flex: 1, width: '100%', height: '100%', flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
             <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'powderblue', flexWrap: 'wrap', alignContent: 'center' }}>
-              <Button primary text="Rooms" onPress={() => { this.props.navigation.navigate("Rooms") }} />
+              <Button primary text="Rooms" onPress={() => { 
+                  this.getUserHomeDetails();
+                  this.props.navigation.navigate("Rooms"); 
+                }} 
+              />
             </View>
             <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'skyblue', flexWrap: 'wrap' }}>
-              <Button primary text="Devices" onPress={() => { this.props.navigation.navigate("Devices") }} />
+              <Button primary text="Devices" onPress={() => { 
+                  this.getUserHomeDetails();
+                  this.props.navigation.navigate("Devices");
+                }} 
+              />
             </View>
             <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'steelblue', flexWrap: 'wrap' }}>
-              <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />
+              <Button primary text="Users" onPress={() => {
+                  this.getUserHomeDetails(); 
+                  this.props.navigation.navigate("Users");
+                }} 
+              />
             </View>
             <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'blue', flexWrap: 'wrap' }}>
-              <Button primary text="Activation Conditions" onPress={() => { this.props.navigation.navigate("ActivationConditions") }} />
+              <Button primary text="Activation Conditions" onPress={() => {
+                  this.getUserHomeDetails(); 
+                  this.props.navigation.navigate("ActivationConditions"); 
+                }} 
+              />
             </View>
           </View>
           <Button primary text="Update Home Details" onPress={() => {this.props.navigation.navigate('UpdateHome')}}/>

@@ -7,7 +7,7 @@ export default class ConditionDetails extends React.Component {
     super(props);
 
     this.state = {
-      user: this.props.user,
+      appUser: this.props.appUser,
       home: this.props.home,
       device: this.props.device,
       room: this.props.room,
@@ -18,7 +18,7 @@ export default class ConditionDetails extends React.Component {
   }
 
   changeConditionStatus = () => {
-    var userId = this.state.user["UserId"];
+    var userId = this.state.appUser["UserId"];
     var homeId = this.state.home["HomeId"];
     var { activationCondition } = this.state;
     var deviceId = this.state.device["DeviceId"];

@@ -11,7 +11,7 @@ export default class CreateDevice extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       room: {
         RoomId: '',
@@ -43,7 +43,7 @@ export default class CreateDevice extends React.Component {
               room = JSON.parse(value);
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 deviceTypes: deviceTypes,
                 roomList: rooms.roomList,
@@ -57,7 +57,7 @@ export default class CreateDevice extends React.Component {
   }
 
   createDevice = () => {
-    const userId = this.state.user['UserId'];
+    const userId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     const roomId = this.state.room['RoomId'];
     const { deviceName, deviceTypeName, isDividedIntoRooms } = this.state;
@@ -102,12 +102,14 @@ export default class CreateDevice extends React.Component {
                 DeviceTypeName: deviceTypeName,
                 HomeId: homeId,
                 IsDividedIntoRooms: isDividedIntoRooms,
-                RoomId: roomId
+                RoomId: roomId,
+                IsOn: false
               }
 
               AsyncStorage.getItem('devicesStr').then((value) => {
                 devices = JSON.parse(value);
                 var deviceList = [];
+                var resultMessage = devices.resultMessage;
 
                 if (devices.deviceList != null)
                 {

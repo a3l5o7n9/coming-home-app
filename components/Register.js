@@ -62,7 +62,7 @@ export default class Register extends React.Component {
           default:
             {
               var details = {
-                user: {
+                appUser: {
                   UserId: userId,
                   UserName: userName,
                   UserPassword: userPassword,
@@ -74,9 +74,15 @@ export default class Register extends React.Component {
                 homeList: null,
                 resultMessage: 'Data'
               }
+
+              var user = details.appUser;
+
               var detailsStr = JSON.stringify(details);
               AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
-                this.props.navigation.navigate("MainPage");
+                var userStr = JSON.stringify(user);
+                AsyncStorage.setItem('userStr', userStr).then(() => {
+                  this.props.navigation.navigate("MainPage");
+                });
               });
               break;
             }

@@ -11,7 +11,7 @@ export default class CreateRoom extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       roomName: '',
       roomTypeName: '',
@@ -30,7 +30,7 @@ export default class CreateRoom extends React.Component {
         AsyncStorage.getItem('roomTypesStr').then((value) => {
           roomTypes = JSON.parse(value);
           this.setState({
-            user: details.user,
+            appUser: details.appUser,
             home: home,
             roomTypes: roomTypes
           });
@@ -40,7 +40,7 @@ export default class CreateRoom extends React.Component {
   }
 
   createRoom = () => {
-    const userId = this.state.user['UserId'];
+    const userId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     const { roomName, roomTypeName, isShared } = this.state;
 
@@ -88,6 +88,7 @@ export default class CreateRoom extends React.Component {
               AsyncStorage.getItem('roomsStr').then((value) => {
                 rooms = JSON.parse(value);
                 var roomList = [];
+                var resultMessage = rooms.resultMessage;
 
                 if (rooms.roomList != null)
                 {

@@ -12,7 +12,7 @@ export default class Device extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       device: {
         DeviceId: '',
@@ -44,7 +44,7 @@ export default class Device extends React.Component {
               activationConditions = JSON.parse(value)
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 device: device,
                 room: room,
@@ -69,12 +69,12 @@ export default class Device extends React.Component {
               filteredConditionList.map((activationCondition, ConditionId) => {
                 var { device } = this.state;
                 var { room } = this.state;
-                var { user } = this.state;
+                var { appUser } = this.state;
                 var { home } = this.state;
 
                 return (
                   <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
-                    <ConditionDetails user={user} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
+                    <ConditionDetails appUser={appUser} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
                   </View>
                 )
               })
@@ -104,7 +104,7 @@ export default class Device extends React.Component {
   }
 
   changeDeviceStatus = () => {
-    var userId = this.state.user["UserId"];
+    var userId = this.state.appUser["UserId"];
     var { device } = this.state;
     var deviceId = this.state.device["DeviceId"];
     var roomId = this.state.device["RoomId"];

@@ -12,7 +12,7 @@ export default class Room extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       room: {
         RoomId: '',
@@ -41,7 +41,7 @@ export default class Room extends React.Component {
               activationConditions = JSON.parse(value);
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 room: room,
                 deviceList: devices.deviceList,
@@ -65,12 +65,12 @@ export default class Room extends React.Component {
             {
               filteredDeviceList.map((device, DeviceId) => {
                 var { room } = this.state;
-                var { user } = this.state;
+                var { appUser } = this.state;
                 var { home } = this.state;
 
                 return (
                   <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                    <DeviceDetails user={user} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
+                    <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
                   </View>
                 )
               })

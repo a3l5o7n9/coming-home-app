@@ -11,7 +11,7 @@ export default class BindDeviceToRoom extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       device: {
         DeviceId: '',
@@ -47,7 +47,7 @@ export default class BindDeviceToRoom extends React.Component {
                 device = JSON.parse(value);
 
                 this.setState({
-                  user: details.user,
+                  appUser: details.appUser,
                   home: home,
                   roomList: rooms.roomList,
                   deviceList: devices.deviceList,
@@ -63,10 +63,10 @@ export default class BindDeviceToRoom extends React.Component {
   }
 
   bindDeviceToRoom = () => {
-    var { room, device, user } = this.state;
+    var { room, device, appUser } = this.state;
     const roomId = room.RoomId;
     const deviceId = device.DeviceId;
-    const userId = user.UserId;
+    const userId = appUser.UserId;
 
     var request = {
       roomId,

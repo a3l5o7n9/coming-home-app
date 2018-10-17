@@ -31,7 +31,7 @@ export default async function registerForPushNotificationsAsync() {
     AsyncStorage.getItem('detailsStr').then((value) => {
         details = JSON.parse(value);
 
-        var user = details.user;
+        var appUser = details.appUser;
 
         fetch('http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateTokenForUserId', {
             method: 'POST',
@@ -42,7 +42,7 @@ export default async function registerForPushNotificationsAsync() {
             body: JSON.stringify(
                 {
                     token: token,
-                    userId: user.UserId
+                    userId: appUser.UserId
                 }
             )
         })

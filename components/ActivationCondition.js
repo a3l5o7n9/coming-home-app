@@ -11,7 +11,7 @@ export default class ActivationCondition extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       device: {
         DeviceId: '',
@@ -47,7 +47,7 @@ export default class ActivationCondition extends React.Component {
               activationCondition = JSON.parse(value);
 
               this.setState({
-                user: details.user,
+                appUser: details.appUser,
                 home: home,
                 device: device,
                 room: room,
@@ -61,7 +61,7 @@ export default class ActivationCondition extends React.Component {
   }
 
   changeConditionStatus = () => {
-    var userId = this.state.user["UserId"];
+    var userId = this.state.appUser["UserId"];
     var homeId = this.state.home["HomeId"];
     var { activationCondition } = this.state;
     var deviceId = this.state.device["DeviceId"];
@@ -160,6 +160,8 @@ export default class ActivationCondition extends React.Component {
               <Switch value={this.state.activationCondition["IsActive"]} onValueChange={this.changeConditionStatus} />
             </View>
           </View>
+          <Button primary text="Update Activation Condition Details" onPress={() => {this.props.navigation.navigate("UpdateActivationCondition")}}/>
+          <Button primary text="Activation Conditions" onPress={() => {this.props.navigation.navigate("ActivationConditions")}}/>
           <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
         </View>
       </ScrollView>

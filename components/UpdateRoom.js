@@ -11,7 +11,7 @@ export default class UpdateRoom extends React.Component {
     super(props);
 
     this.state = {
-      user: {},
+      appUser: {},
       home: {},
       newRoomName: '',
       newRoomTypeCode: '',
@@ -37,7 +37,7 @@ export default class UpdateRoom extends React.Component {
 
             this.setState(
             {
-              user: details.user,
+              appUser: details.appUser,
               home: home,
               roomTypes: roomTypes,
               room: room
@@ -49,10 +49,10 @@ export default class UpdateRoom extends React.Component {
   }
 
   updateRoomDetails = () => {
-    const appUserId = this.state.user['UserId'];
+    const appUserId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     const roomId = this.state.room['RoomId'];
-    const { newRoomName, newRoomTypeCode, newRoomTypeName, newShareStatus } = this.state;
+    var { newRoomName, newRoomTypeCode, newRoomTypeName, newShareStatus } = this.state;
 
     if (newRoomName == '' || newRoomName == null) 
     {
@@ -110,13 +110,14 @@ export default class UpdateRoom extends React.Component {
               AsyncStorage.getItem('roomsStr').then((value) => {
                 rooms = JSON.parse(value);
                 var roomList = [];
+                var roomsResultMessage = rooms.resultMessage;
 
                 if (rooms.roomList != null) {
                   roomList = rooms.roomList;
-                  resultMessage = rooms.resultMessage;
+                  roomsResultMessage = rooms.resultMessage;
                 }
                 else {
-                  resultMessage = 'Data';
+                  roomsResultMessage = 'Data';
                 }
 
                 var index = roomList.findIndex((r) => r.RoomId == this.state.room.RoomId);
@@ -127,7 +128,7 @@ export default class UpdateRoom extends React.Component {
 
                 var roomsNew = {
                   roomList,
-                  resultMessage,
+                  resultMessage: roomsResultMessage,
                 }
 
                 let roomStr = JSON.stringify(newRoom);
