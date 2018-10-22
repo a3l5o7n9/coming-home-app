@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import {Location} from 'expo';
 
 export default class UpdateHome extends React.Component {
   static navigationOptions = {
@@ -40,6 +41,8 @@ export default class UpdateHome extends React.Component {
     const appUserId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
     var { newHomeName, newAddress } = this.state;
+    var newLatitude, newLongitude, newAltitude, newAccuracy;
+    var request;
 
     if (newHomeName == '' || newHomeName == null) 
     {
@@ -49,14 +52,38 @@ export default class UpdateHome extends React.Component {
     if (newAddress == '' || newAddress == null)
     {
       newAddress = 'null';
+      newLatitude = 'null';
+      newLongitude = 'null';
+      newAltitude = 'null';
+      newAccuracy = 'null';
+
+      request = {
+        appUserId,
+        homeId,
+        newHomeName,
+        newAddress,
+        newLatitude,
+        newLongitude,
+        newAltitude,
+        newAccuracy
+      }
+    }
+    else
+    {
+      Location.geocodeAsync(newAddress).then((newAddressGC) => {
+        request = {
+          appUserId,
+          homeId,
+          newHomeName,
+          newAddress,
+          newLatitude: newAddressGC[0].latitude,
+          newLongitude: newAddressGC[0].longitude,
+          newAltitude: newAddressGC[0].altitude,
+          newAccuracy: newAddressGC[0].accuracy
+        }
+      })
     }
 
-    var request = {
-      appUserId,
-      homeId,
-      newHomeName,
-      newAddress
-    }
 
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateHomeDetails", {
       method: 'POST',
@@ -76,6 +103,10 @@ export default class UpdateHome extends React.Component {
                 HomeId: homeId,
                 HomeName: newHomeName == 'null' ? this.state.home.HomeName : newHomeName,
                 Address: newAddress == 'null' ? this.state.home.Address : newAddress,
+                Latitude: newLatitude == 'null' ? this.state.home.Latitude : newLatitude,
+                Longitude: newLongitude == 'null' ? this.state.home.Longitude : newLongitude,
+                Altitude: newAltitude == 'null' ? this.state.home.Altitude : newAltitude,
+                Accuracy: newAccuracy == 'null' ? this.state.home.Accuracy : newAccuracy,
                 NumOfUsers: this.state.home.NumOfUsers
               }
 

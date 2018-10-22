@@ -68,6 +68,7 @@ export default class Home extends React.Component {
 
         var detailsStr = JSON.stringify(details);
         AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
+          var userStr = JSON.stringify(user);
           AsyncStorage.setItem('userStr', userStr).then(() => {
             this.props.navigation.navigate("MainPage");
           });

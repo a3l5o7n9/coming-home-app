@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import {Location} from 'expo';
 
 export default class JoinHome extends React.Component {
   static navigationOptions = {
@@ -21,7 +22,7 @@ export default class JoinHome extends React.Component {
         Token: ''
       },
       homeName: '',
-      address: '',
+      address: ''
     }
   }
 
@@ -44,43 +45,49 @@ export default class JoinHome extends React.Component {
       return;
     }
 
-    var request = {
-      userId,
-      homeName,
-      address
-    }
+    Location.geocodeAsync(address).then((addressGC) => {
+      var request = {
+        userId,
+        homeName,
+        address,
+        latitude: addressGC[0].latitude,
+        longitude: addressGC[0].longitude,
+        altitude: addressGC[0].altitude,
+        accuracy: addressGC[0].accuracy
+      }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/JoinHome", {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json;'
-      }),
-      body: JSON.stringify(request)
-    })
-      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-      .then((result) => { // no error in server
-        var jsonData = JSON.parse(result.d);
-        var homeDetails = {
-          home: jsonData.H,
-          resultMessage: jsonData.ResultMessage
-        }
-
-        if (homeDetails.resultMessage == 'Home Not Found' || homeDetails.resultMessage == 'User is already registered as a member of this home') {
-          alert(homeDetails.resultMessage);
-          return;
-        }
-
-        let home = homeDetails.home;
-
-        let homeStr = JSON.stringify(home);
-
-        AsyncStorage.setItem('homeStr', homeStr).then(() => {
-          this.props.navigation.navigate("Home");
-        });
+      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/JoinHome", {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json;'
+        }),
+        body: JSON.stringify(request)
       })
-      .catch((error) => {
-        alert('A connection error has occurred.');
-      });
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+          var jsonData = JSON.parse(result.d);
+          var homeDetails = {
+            home: jsonData.H,
+            resultMessage: jsonData.ResultMessage
+          }
+
+          if (homeDetails.resultMessage == 'Home Not Found' || homeDetails.resultMessage == 'User is already registered as a member of this home') {
+            alert(homeDetails.resultMessage);
+            return;
+          }
+
+          let home = homeDetails.home;
+
+          let homeStr = JSON.stringify(home);
+
+          AsyncStorage.setItem('homeStr', homeStr).then(() => {
+            this.props.navigation.navigate("Home");
+          });
+        })
+        .catch((error) => {
+          alert('A connection error has occurred.');
+        });
+    });
   }
 
   render() {

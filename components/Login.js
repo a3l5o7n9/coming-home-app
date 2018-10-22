@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
+import { Location } from 'expo';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Login extends React.Component {

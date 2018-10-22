@@ -28,10 +28,33 @@ export default class MainPage extends React.Component {
     AsyncStorage.getItem('detailsStr').then((value) => {
       details = JSON.parse(value);
 
-      this.setState({
-        appUser: details.appUser,
-        userList: details.userList,
-        homeList: details.homeList
+      var request = {
+        userId: details.appUser.UserId
+      };
+
+      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetAllUserActivationConditions", {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json;'
+      }),
+      body: JSON.stringify(request)
+      })
+      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+      .then((result) => { // no error in server
+        let userActivationConditionList = JSON.parse(result.d);
+
+        let userActivationConditionListStr = JSON.stringify(userActivationConditionList);
+
+        AsyncStorage.setItem('userActivationConditionListStr', userActivationConditionListStr).then(() => {
+          this.setState({
+            appUser: details.appUser,
+            userList: details.userList,
+            homeList: details.homeList
+          });
+        });
+      })
+      .catch((error) => {
+        alert("Login Error");
       });
     });
   }

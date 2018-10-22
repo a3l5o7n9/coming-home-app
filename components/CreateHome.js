@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import {Location} from 'expo';
 
 export default class CreateHome extends React.Component {
   static navigationOptions = {
@@ -13,7 +14,7 @@ export default class CreateHome extends React.Component {
     this.state = {
       appUser: {},
       homeName: '',
-      address: '',
+      address: ''
     }
   }
 
@@ -36,50 +37,56 @@ export default class CreateHome extends React.Component {
       return;
     }
 
-    var request = {
-      userId,
-      homeName,
-      address
-    }
+    Location.geocodeAsync(address).then((addressGC) => {
+      var request = {
+        userId,
+        homeName,
+        address,
+        latitude: addressGC[0].latitude,
+        longitude: addressGC[0].longitude,
+        altitude: addressGC[0].altitude,
+        accuracy: addressGC[0].accuracy
+      }  
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateHome", {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json;'
-      }),
-      body: JSON.stringify(request)
-    })
-      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-      .then((result) => { // no error in server
-        const homeId = JSON.parse(result.d);
-
-        switch (homeId) {
-          case -1:
-            {
-              alert("There is already a home with that name and address. Use a different home name or address.");
-              break;
-            }
-          default:
-            {
-              let home = {
-                HomeId: homeId,
-                HomeName: homeName,
-                Address: address,
-                NumOfUsers: 1
-              }
-
-              let homeStr = JSON.stringify(home);
-
-              AsyncStorage.setItem('homeStr', homeStr).then(() => {
-                this.props.navigation.navigate("Home");
-              });
-              break;
-            }
-        }
+      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateHome", {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json;'
+        }),
+        body: JSON.stringify(request)
       })
-      .catch((error) => {
-        alert('A connection error has occurred.');
-      });
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+          const homeId = JSON.parse(result.d);
+
+          switch (homeId) {
+            case -1:
+              {
+                alert("There is already a home with that name and address. Use a different home name or address.");
+                break;
+              }
+            default:
+              {
+                let home = {
+                  HomeId: homeId,
+                  HomeName: homeName,
+                  Address: address,
+                  NumOfUsers: 1
+                }
+
+                let homeStr = JSON.stringify(home);
+
+                AsyncStorage.setItem('homeStr', homeStr).then(() => {
+                  this.props.navigation.navigate("Home");
+                });
+                break;
+              }
+          }
+        })
+        .catch((error) => {
+          alert('A connection error has occurred.');
+        });
+    });
   }
 
   render() {
