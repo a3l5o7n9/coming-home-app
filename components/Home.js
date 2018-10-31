@@ -41,7 +41,6 @@ export default class Home extends React.Component {
       userName,
       userPassword
     }
-    //Alert.alert(JSON.stringify(request));
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Login", {
       method: 'POST',
       headers: new Headers({
@@ -56,6 +55,9 @@ export default class Home extends React.Component {
           appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
+          roomList: jsonData.LR,
+          deviceList: jsonData.LD,
+          activationConditionList: jsonData.LActCon,
           resultMessage: jsonData.ResultMessage
         }
 
@@ -87,7 +89,6 @@ export default class Home extends React.Component {
       userId,
       homeId
     }
-    //Alert.alert(JSON.stringify(request));
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserHomeDetails", {
       method: 'POST',
       headers: new Headers({

@@ -27,34 +27,10 @@ export default class MainPage extends React.Component {
   componentDidMount = () => {
     AsyncStorage.getItem('detailsStr').then((value) => {
       details = JSON.parse(value);
-
-      var request = {
-        userId: details.appUser.UserId
-      };
-
-      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetAllUserActivationConditions", {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json;'
-      }),
-      body: JSON.stringify(request)
-      })
-      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-      .then((result) => { // no error in server
-        let userActivationConditionList = JSON.parse(result.d);
-
-        let userActivationConditionListStr = JSON.stringify(userActivationConditionList);
-
-        AsyncStorage.setItem('userActivationConditionListStr', userActivationConditionListStr).then(() => {
-          this.setState({
-            appUser: details.appUser,
-            userList: details.userList,
-            homeList: details.homeList
-          });
-        });
-      })
-      .catch((error) => {
-        alert("Login Error");
+      this.setState({
+        appUser: details.appUser,
+        userList: details.userList,
+        homeList: details.homeList
       });
     });
   }
@@ -106,10 +82,10 @@ export default class MainPage extends React.Component {
           <View style={styles.container}>
             {this.showHomes()}
           </View>
-          <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate('UpdateUser', back="MainPage")}}/>
+          <Button primary text="Update User Details" onPress={() => { this.props.navigation.navigate('UpdateUser', back = "MainPage") }} />
           <Button primary text="Create New Home" onPress={() => { this.props.navigation.navigate("CreateHome") }} />
           <Button primary text="Join an existing Home" onPress={() => { this.props.navigation.navigate("JoinHome") }} />
-          <Button primary text="Sign Out" onPress={ this.signOut } />
+          <Button primary text="Sign Out" onPress={this.signOut} />
         </View>
       </ScrollView>
     );

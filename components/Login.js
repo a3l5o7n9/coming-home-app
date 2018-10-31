@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
-import { Location } from 'expo';
 import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class Login extends React.Component {
@@ -48,6 +47,9 @@ export default class Login extends React.Component {
           appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
+          roomList: jsonData.LR,
+          deviceList: jsonData.LD,
+          activationConditionList: jsonData.LActCon,
           resultMessage: jsonData.ResultMessage
         }
 
