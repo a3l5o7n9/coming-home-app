@@ -23,6 +23,12 @@ export default class CreateDevice extends React.Component {
       deviceTypeName: '',
       isDividedIntoRooms: false,
       deviceTypes: [],
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList:[],
+      resultMessage: ''
     }
   }
 
@@ -48,6 +54,12 @@ export default class CreateDevice extends React.Component {
                 deviceTypes: deviceTypes,
                 roomList: rooms.roomList,
                 room: room,
+                userList: details.userList,
+                homeList: details.homeList,
+                allUserRoomsList: details.allUserRoomsList,
+                allUserDevicesList: details.allUserDevicesList,
+                allUserActivationConditionsList: details.allUserActivationConditionsList,
+                resultMessage: details.resultMessage
               });
             });
           });
@@ -109,6 +121,7 @@ export default class CreateDevice extends React.Component {
               AsyncStorage.getItem('devicesStr').then((value) => {
                 devices = JSON.parse(value);
                 var deviceList = [];
+                var allUserDevicesList = [];
                 var resultMessage = devices.resultMessage;
 
                 if (devices.deviceList != null)
@@ -121,24 +134,43 @@ export default class CreateDevice extends React.Component {
                   resultMessage = 'Data';
                 }
 
+                if (this.state.allUserDevicesList != null)
+                {
+                  allUserDevicesList = this.state.allUserDevicesList;
+                }
+
                 deviceList.push(device);
+                allUserDevicesList.push(device);
 
                 var devicesNew = {
                   deviceList,
                   resultMessage,
                 }
 
+                var detailsNew = {
+                  appUser: this.state.appUser,
+                  userList: this.state.userList,
+                  homeList: this.state.homeList,
+                  allUserRoomsList: this.state.allUserRoomsList,
+                  allUserDevicesList: allUserDevicesList,
+                  allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                  resultMessage: this.state.resultMessage
+                }
+
                 let deviceStr = JSON.stringify(device);
                 let devicesStr = JSON.stringify(devicesNew);
+                let detailsNewStr = JSON.stringify(detailsNew);
 
                 AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                  AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                  var { room } = this.state;
+                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                    var { room } = this.state;
   
-                  let roomStr = JSON.stringify(room);
-  
-                  AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                    this.props.navigation.navigate("Device");
+                    let roomStr = JSON.stringify(room);
+    
+                    AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                      this.props.navigation.navigate("Device");
+                    });
                   });
                  });
                 });
@@ -156,7 +188,7 @@ export default class CreateDevice extends React.Component {
   pickDeviceType = () => {
     return (
       <Picker
-        style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+        style={styles.pickerStyle}
         selectedValue={this.state.deviceTypeName}
         onValueChange={(itemValue) => this.setState({ deviceTypeName: itemValue })}>
         {
@@ -175,7 +207,7 @@ export default class CreateDevice extends React.Component {
     {
       return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
             var room = this.state.roomList.find((room) => room.RoomId === itemValue);
@@ -196,7 +228,7 @@ export default class CreateDevice extends React.Component {
     {
       return(
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
             var {room} = this.state
@@ -213,18 +245,30 @@ export default class CreateDevice extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Device Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.deviceName} placeholder="Device Name" onChangeText={(deviceName) => this.setState({ deviceName })}></TextInput>
-          <Text style={styles.textStyle}>Device Type Name</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.deviceName} placeholder="Device Name" onChangeText={(deviceName) => this.setState({ deviceName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device Type Name</Text>
+          </View>
           {this.pickDeviceType()}
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={styles.switchViewStyle}>
             <Text style={styles.textStyle}>Is Divided Into Rooms?(true/false)</Text>
             <Switch value={this.state.isDividedIntoRooms} onValueChange={(isDividedIntoRooms) => { this.setState({ isDividedIntoRooms }) }} />
           </View>
-          <Text style={styles.textStyle}>Room</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Room</Text>
+          </View>
           {this.pickRoom()}
-          <Button primary text="Create" onPress={this.createDevice} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Create" onPress={this.createDevice} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -233,7 +277,7 @@ export default class CreateDevice extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'peachpuff',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -241,8 +285,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  switchViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1,
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between'
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
+  pickerStyle: {
+    width: '80%', 
+    borderColor: 'black',
+    borderRadius:5, 
+    borderWidth: 2
+  },
 });

@@ -55,12 +55,14 @@ export default class Rooms extends React.Component {
           <Text style={styles.textStyle}>Your Rooms</Text>
           {
             this.state.roomList.map((room, RoomId) => (
-              <Button primary key={RoomId} text={room["RoomName"] + "\n" + room["RoomTypeName"]} onPress={() => {
-                let roomStr = JSON.stringify(room);
-                AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                  this.props.navigation.navigate("Room");
-                });
-              }} />
+              <View key={RoomId} style={{margin:5, borderColor:'blue', borderRadius:10, borderWidth:5, backgroundColor:'powderblue', flex: 1, flexDirection:'row', alignItems: 'center' }}>
+                <Button primary text={room["RoomName"] + "\n" + room["RoomTypeName"]} onPress={() => {
+                  let roomStr = JSON.stringify(room);
+                  AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                    this.props.navigation.navigate("Room");
+                  });
+                }} />
+              </View>
             ))
           }
         </View>
@@ -105,11 +107,15 @@ export default class Rooms extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.container}>
+          <View>
             {this.showRooms()}
           </View>
-          <Button primary text="Add New Room" onPress={ this.goToCreateRoom } />
-          <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+          <View style={styles.createButtonStyle}>
+            <Button primary text="Add New Room" onPress={ this.goToCreateRoom } />
+          </View>
+          <View style={styles.homeButtonStyle}>
+            <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -118,7 +124,8 @@ export default class Rooms extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    width:'100%',
+    backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -129,5 +136,19 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

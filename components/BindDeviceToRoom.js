@@ -24,6 +24,12 @@ export default class BindDeviceToRoom extends React.Component {
       },
       roomList: [],
       deviceList: [],
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: ''
     }
   }
 
@@ -53,6 +59,12 @@ export default class BindDeviceToRoom extends React.Component {
                   deviceList: devices.deviceList,
                   room: room,
                   device: device,
+                  userList: details.userList,
+                  homeList: details.homeList,
+                  allUserRoomsList: details.allUserRoomsList,
+                  allUserDevicesList: details.allUserDevicesList,
+                  allUserActivationConditionsList: details.allUserActivationConditionsList,
+                  resultMessage: details.resultMessage
                 });
               });
             });
@@ -114,24 +126,45 @@ export default class BindDeviceToRoom extends React.Component {
                 deviceList = this.state.deviceList;
               }
 
+              var allUserDevicesList = [];
+
+              if (this.state.allUserDevicesList != null)
+              {
+                allUserDevicesList = this.state.allUserDevicesList;
+              }
+
               deviceList.push(deviceNew);
+              allUserDevicesList.push(deviceNew);
 
               var devicesNew = {
                 deviceList,
                 resultMessage: 'Data',
               }
 
+              var detailsNew = {
+                appUser: this.state.appUser,
+                userList: this.state.userList,
+                homeList: this.state.homeList,
+                allUserRoomsList: this.state.allUserRoomsList,
+                allUserDevicesList: allUserDevicesList,
+                allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                resultMessage: this.state.resultMessage
+              }
+
               let deviceStr = JSON.stringify(deviceNew);
               let devicesStr = JSON.stringify(devicesNew);
+              let detailsNewStr = JSON.stringify(detailsNew);
 
               AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                 AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                  var { room } = this.state;
+                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                    var { room } = this.state;
 
-                  let roomStr = JSON.stringify(room);
-
-                  AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                    this.props.navigation.navigate("Device");
+                    let roomStr = JSON.stringify(room);
+  
+                    AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                      this.props.navigation.navigate("Device");
+                    });
                   });
                 });
               });
@@ -151,7 +184,7 @@ export default class BindDeviceToRoom extends React.Component {
       if (this.state.roomList != null) {
         return (
           <Picker
-            style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+            style={styles.pickerStyle}
             selectedValue={this.state.room.RoomId}
             onValueChange={(itemValue) => {
               var room = this.state.roomList.find((room) => room.RoomId === itemValue);
@@ -171,7 +204,7 @@ export default class BindDeviceToRoom extends React.Component {
       else {
         return (
           <Picker
-            style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+            style={styles.pickerStyle}
             selectedValue={this.state.room.RoomId}
             onValueChange={(itemValue) => {
               var { room } = this.state
@@ -186,7 +219,7 @@ export default class BindDeviceToRoom extends React.Component {
     else {
       return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
             var { room } = this.state
@@ -206,7 +239,7 @@ export default class BindDeviceToRoom extends React.Component {
     {
       return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.device.DeviceId}
           onValueChange={(itemValue) => {
             var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
@@ -227,7 +260,7 @@ export default class BindDeviceToRoom extends React.Component {
     {
       return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.device.DeviceId}
           onValueChange={(itemValue) => {
             var { device } = this.state;
@@ -244,12 +277,20 @@ export default class BindDeviceToRoom extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Room</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Room</Text>
+          </View>
           {this.pickRoom()}
-          <Text style={styles.textStyle}>Device</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device</Text>
+          </View>
           {this.pickDevice()}
-          <Button primary text="Bind" onPress={this.bindDeviceToRoom} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Bind" onPress={this.bindDeviceToRoom} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -258,7 +299,7 @@ export default class BindDeviceToRoom extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'peachpuff',
     justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
@@ -266,9 +307,39 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
+  pickerStyle: { 
+    width: '80%', 
+    borderColor: 'black', 
+    borderRadius:5, 
+    borderWidth: 2 
+  },
 });
 

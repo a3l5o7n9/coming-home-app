@@ -15,10 +15,14 @@ export default class Devices extends React.Component {
       appUser: {},
       home: {},
       deviceList: [],
-      roomList: []
+      roomList: [],
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: ''
     }
-
-    // this.showDevices = this.showDevices.bind(this);
   }
 
   componentDidMount = () => {
@@ -34,16 +38,17 @@ export default class Devices extends React.Component {
           AsyncStorage.getItem('roomsStr').then((value) => {
             rooms = JSON.parse(value);
 
-            AsyncStorage.getItem('usersStr').then((value) => {
-              users = JSON.parse(value);
-
-              this.setState({
-                appUser: details.appUser,
-                home: home,
-                deviceList: devices.deviceList,
-                roomList: rooms.roomList,
-                userList: users.userList
-              });
+            this.setState({
+              appUser: details.appUser,
+              home: home,
+              deviceList: devices.deviceList,
+              roomList: rooms.roomList,
+              userList: details.userList,
+              homeList: details.homeList,
+              allUserRoomsList: details.allUserRoomsList,
+              allUserDevicesList: details.allUserDevicesList,
+              allUserActivationConditionsList: details.allUserActivationConditionsList,
+              resultMessage: details.resultMessage
             });
           });
         });
@@ -55,7 +60,9 @@ export default class Devices extends React.Component {
     if (this.state.deviceList != null) {
       return (
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Your Devices</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Your Devices</Text>
+          </View>
           {
             this.state.deviceList.map((device, DeviceId) => {
               let room = this.state.roomList.find((r) => r.RoomId === device.RoomId);
@@ -63,8 +70,8 @@ export default class Devices extends React.Component {
               let { home } = this.state;
 
               return (
-                <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                  <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
+                <View key={DeviceId} style={{borderColor:'blue', borderRadius:10, borderWidth:5, backgroundColor:'skyblue', flex: 1, alignItems: 'center' }}>
+                  <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} userList={this.state.userList} homeList={this.state.homeList} allUserRoomsList={this.state.allUserRoomsList} allUserDevicesList={this.state.allUserDevicesList} allUserActivationConditionsList={this.state.allUserActivationConditionsList} resultMessage={this.state.resultMessage} />
                 </View>
               )
             })
@@ -74,7 +81,7 @@ export default class Devices extends React.Component {
     }
     else {
       return (
-        <View>
+        <View style={styles.textViewStyle}>
           {
             <Text style={styles.textStyle}>There are no devices in your home that you have access to</Text>
           }
@@ -83,8 +90,7 @@ export default class Devices extends React.Component {
     }
   }
 
-  goToCreateDevice = () =>
-  {
+  goToCreateDevice = () => {
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetDeviceTypes", {
       method: 'POST',
       headers: new Headers({
@@ -97,9 +103,9 @@ export default class Devices extends React.Component {
         let deviceTypes = JSON.parse(result.d);
 
         var room = {
-          RoomId : '',
-          RoomName : '',
-          RoomTypeName : ''
+          RoomId: '',
+          RoomName: '',
+          RoomTypeName: ''
         }
 
         let deviceTypesStr = JSON.stringify(deviceTypes);
@@ -126,8 +132,12 @@ export default class Devices extends React.Component {
             {this.showDevices()}
           </View>
           <View style={{ flex: 2 }}>
-            <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
-            <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+            <View style={styles.createButtonStyle}>
+              <Button primary text="Add New Device" onPress={this.goToCreateDevice} />
+            </View>
+            <View style={styles.homeButtonStyle}>
+              <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -137,7 +147,7 @@ export default class Devices extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'blue',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
@@ -148,5 +158,22 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

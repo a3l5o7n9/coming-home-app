@@ -11,6 +11,12 @@ export default class UpdateUser extends React.Component {
     super(props);
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       user: {
 
       },
@@ -35,6 +41,12 @@ export default class UpdateUser extends React.Component {
 
           this.setState({
             appUser: details.appUser,
+            userList: details.userList,
+            homeList: details.homeList,
+            allUserRoomsList: details.allUserRoomsList,
+            allUserDevicesList: details.allUserDevicesList,
+            allUserActivationConditionsList: details.allUserActivationConditionsList,
+            resultMessage: details.resultMessage,
             home: home,
             user: user,
           });
@@ -110,6 +122,22 @@ export default class UpdateUser extends React.Component {
                 Token: this.state.user.Token,
               };
 
+              var userList = [];
+
+              if (this.state.userList != null)
+              {
+                userList = this.state.userList;
+              }
+
+              for (var i = 0; i < userList.length; i++)
+              {
+                userList[i].UserName = userNew.UserName;
+                userList[i].UserPassword = userNew.UserPassword;
+                userList[i].FirstName = userNew.FirstName;
+                userList[i].LastName = userNew.LastName;
+                userList[i].Token = userNew.Token;
+              }
+
               var newDetails = {
                 appUser: {
                   UserId: appUserId,
@@ -119,10 +147,14 @@ export default class UpdateUser extends React.Component {
                   LastName: newLastName == 'null' ? this.state.appUser.LastName : newLastName,
                   Token: this.state.appUser.Token,
                 },
-                userList: null,
-                homeList: null,
+                userList: userList,
+                homeList: this.state.homeList,
+                allUserRoomsList: this.state.allUserRoomsList,
+                allUserDevicesList: this.state.allUserDevicesList,
+                allUserActivationConditionsList: this.state.allUserActivationConditionsList,
                 resultMessage: 'Data'
               }
+              
               var detailsStr = JSON.stringify(newDetails);
               AsyncStorage.setItem('detailsStr', detailsStr).then(() => {
                 var userStr = JSON.stringify(userNew);
@@ -149,18 +181,42 @@ export default class UpdateUser extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Username</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newUserName} placeholder={this.state.user.UserName} onChangeText={(newUserName) => this.setState({ newUserName })}></TextInput>
-          <Text style={styles.textStyle}>Password</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newUserPassword} placeholder="Password" onChangeText={(newUserPassword) => this.setState({ newUserPassword })}></TextInput>
-          <Text style={styles.textStyle}>Confirm Password</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newConfirmPassword} placeholder="Confirm Password" onChangeText={(newConfirmPassword) => this.setState({ newConfirmPassword })}></TextInput>
-          <Text style={styles.textStyle}>First Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newFirstName} placeholder={this.state.user.FirstName} onChangeText={(newFirstName) => this.setState({ newFirstName })}></TextInput>
-          <Text style={styles.textStyle}>Last Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newLastName} placeholder={this.state.user.LastName} onChangeText={(newLastName) => this.setState({ newLastName })}></TextInput>
-          <Button primary text="Update" onPress={this.updateUserDetails} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Username</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newUserName} placeholder={this.state.user.UserName} onChangeText={(newUserName) => this.setState({ newUserName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Password</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newUserPassword} placeholder="Password" onChangeText={(newUserPassword) => this.setState({ newUserPassword })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Confirm Password</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newConfirmPassword} placeholder="Confirm Password" onChangeText={(newConfirmPassword) => this.setState({ newConfirmPassword })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>First Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newFirstName} placeholder={this.state.user.FirstName} onChangeText={(newFirstName) => this.setState({ newFirstName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Last Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newLastName} placeholder={this.state.user.LastName} onChangeText={(newLastName) => this.setState({ newLastName })}></TextInput>
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Update" onPress={this.updateUserDetails} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     );
@@ -169,7 +225,7 @@ export default class UpdateUser extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'salmon',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -177,8 +233,32 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

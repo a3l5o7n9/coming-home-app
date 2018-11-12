@@ -41,10 +41,18 @@ export default class User extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 20 }}>{this.state.user["UserName"]}</Text>
-          <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate("UpdateUser", back="User")}}/>
-          <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />
-          <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          <View style={styles.textViewStyle}>
+            <Text style={{ fontSize: 20 }}>{this.state.user["UserName"]}</Text>
+          </View>
+          <View style={styles.updateButtonStyle}>
+            <Button primary text="Update User Details" onPress={() => {this.props.navigation.navigate("UpdateUser", back="User")}}/>
+          </View>
+          <View style={styles.listButtonStyle}>
+            <Button primary text="Users" onPress={() => { this.props.navigation.navigate("Users") }} />
+          </View>
+          <View style={styles.homeButtonStyle}>
+            <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          </View>
         </View>
       </ScrollView>
     )
@@ -53,7 +61,7 @@ export default class User extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -64,5 +72,29 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  updateButtonStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
+  listButtonStyle: {
+    margin:5,
+    backgroundColor:'lawngreen',
+    borderColor:'green',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

@@ -13,6 +13,12 @@ export default class DeviceDetails extends React.Component {
       room: this.props.room,
       navigation: this.props.navigation,
       deviceList: this.props.deviceList,
+      userList: this.props.userList,
+      homeList: this.props.homeList,
+      allUserRoomsList: this.props.allUserRoomsList,
+      allUserDevicesList: this.props.allUserDevicesList,
+      allUserActivationConditionsList: this.props.allUserActivationConditionsList,
+      resultMessage: this.props.resultMessage
     }
   }
 
@@ -75,7 +81,7 @@ export default class DeviceDetails extends React.Component {
 
               AsyncStorage.setItem('deviceStr', deviceStr).then(() => { 
                 var deviceList = this.state.deviceList;
-                var index = deviceList.findIndex((d) => d.DeviceId == this.state.device.DeviceId);
+                var index = deviceList.findIndex((d) => d.DeviceId === this.state.device.DeviceId && d.RoomId === this.state.device.RoomId);
                 deviceList[index].IsOn = this.state.device.IsOn;
                 var devices = {
                   deviceList,
@@ -84,8 +90,26 @@ export default class DeviceDetails extends React.Component {
                 var devicesStr = JSON.stringify(devices);
 
                 AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                  this.setState({ device, deviceList });
-                  alert("Device status changed!");
+                  var allUserDevicesList = this.state.allUserDevicesList;
+                  var indexA = allUserDevicesList.findIndex((de) => (de.DeviceId === this.state.device.DeviceId && de.RoomId === this.state.device.RoomId));
+                  allUserDevicesList[indexA].IsOn = this.state.device.IsOn;
+
+                  var detailsNew = {
+                    appUser: this.state.appUser,
+                    userList: this.state.userList,
+                    homeList: this.state.homeList,
+                    allUserRoomsList: this.state.allUserRoomsList,
+                    allUserDevicesList: allUserDevicesList,
+                    allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                    resultMessage: this.state.resultMessage
+                  }
+
+                  var detailsNewStr = JSON.stringify(detailsNew);
+
+                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                    this.setState({ device, deviceList, allUserDevicesList });
+                    alert("Device status changed!");
+                  });
                 });
               });
               break;
@@ -122,10 +146,10 @@ export default class DeviceDetails extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'skyblue',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '60%',
+    width: '70%',
   },
   textStyle: {
     fontSize: 20,

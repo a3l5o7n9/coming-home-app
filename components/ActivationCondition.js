@@ -27,6 +27,12 @@ export default class ActivationCondition extends React.Component {
         ConditionName: '',
         IsActive: false
       },
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: ''
     }
   }
 
@@ -51,7 +57,13 @@ export default class ActivationCondition extends React.Component {
                 home: home,
                 device: device,
                 room: room,
-                activationCondition: activationCondition
+                activationCondition: activationCondition,
+                userList: details.userList,
+                homeList: details.homeList,
+                allUserRoomsList: details.allUserRoomsList,
+                allUserDevicesList: details.allUserDevicesList,
+                allUserActivationConditionsList: details.allUserActivationConditionsList,
+                resultMessage: details.resultMessage
               });
             });
           });
@@ -132,8 +144,26 @@ export default class ActivationCondition extends React.Component {
                   var activationConditionsStr = JSON.stringify(activationConditions);
 
                   AsyncStorage.setItem('activationConditionsStr', activationConditionsStr).then(() => {
-                    this.setState({ activationCondition });
-                    alert("Condition status changed!");
+                    var allUserActivationConditionsList = [];
+                    allUserActivationConditionsList = this.state.allUserActivationConditionsList;
+                    var indexA = allUserActivationConditionsList.findIndex((acCo) => (acCo.ConditionId === this.state.activationCondition.ConditionId));
+                    allUserActivationConditionsList[indexA].IsActive = this.state.activationCondition.IsActive;
+                    var detailsNew = {
+                      appUser: this.state.appUser,
+                      userList: this.state.userList,
+                      homeList: this.state.homeList,
+                      allUserRoomsList: this.state.allUserRoomsList,
+                      allUserDevicesList: this.state.allUserDevicesList,
+                      allUserActivationConditionsList: allUserActivationConditionsList,
+                      resultMessage: this.state.resultMessage
+                    }
+
+                    var detailsNewStr = JSON.stringify(detailsNew);
+
+                    AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                      this.setState({ activationCondition, allUserActivationConditionsList });
+                      alert("Condition status changed!");
+                    });
                   });
                 });
               });
@@ -150,19 +180,27 @@ export default class ActivationCondition extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <View style={{flex: 2, flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{margin:5, width:'100%', backgroundColor:'lawngreen', borderColor:'green', borderRadius:10, borderWidth:2, flex: 7, flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
               <Text style={{ fontSize: 20 }}>{this.state.activationCondition["ConditionName"]}</Text>
-              <Text style={{ fontSize: 15 }}>{'Turn ' + this.state.device["DeviceName"] + ' ' + this.state.activationCondition["TurnOn"] ? 'On' : 'Off' }</Text>
+              <Text style={{ fontSize: 15 }}>{'Turn ' + this.state.device["DeviceName"] + ' ' + (this.state.activationCondition["TurnOn"] ? 'On' : 'Off') }</Text>
               <Text style={{ fontSize: 10 }}>{this.state.room["RoomName"]}</Text>
             </View>
             <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: "flex-end" }}>
               <Switch value={this.state.activationCondition["IsActive"]} onValueChange={this.changeConditionStatus} />
             </View>
           </View>
-          <Button primary text="Update Activation Condition Details" onPress={() => {this.props.navigation.navigate("UpdateActivationCondition")}}/>
-          <Button primary text="Activation Conditions" onPress={() => {this.props.navigation.navigate("ActivationConditions")}}/>
-          <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          <View style={{width:'100%', flex:3, flexDirection:'column'}}>
+            <View style={styles.updateButtonStyle}>
+              <Button primary text="Update Activation Condition Details" onPress={() => {this.props.navigation.navigate("UpdateActivationCondition")}}/>
+            </View>
+            <View style={styles.listButtonStyle}>
+              <Button primary text="Activation Conditions" onPress={() => {this.props.navigation.navigate("ActivationConditions")}}/>
+            </View>
+            <View style={styles.homeButtonStyle}>
+              <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+            </View>
+          </View>
         </View>
       </ScrollView>
     )
@@ -171,7 +209,7 @@ export default class ActivationCondition extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -182,5 +220,29 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  updateButtonStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
+  listButtonStyle: {
+    margin:5,
+    backgroundColor:'lawngreen',
+    borderColor:'green',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

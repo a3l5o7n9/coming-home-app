@@ -14,6 +14,12 @@ export default class ConditionDetails extends React.Component {
       activationCondition: this.props.activationCondition,
       navigation: this.props.navigation,
       activationConditionList: this.props.activationConditionList,
+      userList: this.props.userList,
+      homeList: this.props.homeList,
+      allUserRoomsList: this.props.allUserRoomsList,
+      allUserDevicesList: this.props.allUserDevicesList,
+      allUserActivationConditionsList: this.props.allUserActivationConditionsList,
+      resultMessage: this.props.resultMessage
     }
   }
 
@@ -87,8 +93,27 @@ export default class ConditionDetails extends React.Component {
                 var activationConditionsStr = JSON.stringify(activationConditions);
 
                 AsyncStorage.setItem('activationConditionsStr', activationConditionsStr).then(() => {
-                  this.setState({ activationCondition, activationConditionList});
-                  alert("Condition status changed!");
+                  var allUserActivationConditionsList = [];
+                  allUserActivationConditionsList = this.state.allUserActivationConditionsList;
+                  var indexA = allUserActivationConditionsList.findIndex((acCo) => (acCo.ConditionId === this.state.activationCondition.ConditionId));
+                  
+                  allUserActivationConditionsList[indexA].IsActive = this.state.activationCondition.IsActive;
+                  var detailsNew = {
+                    appUser: this.state.appUser,
+                    userList: this.state.userList,
+                    homeList: this.state.homeList,
+                    allUserRoomsList: this.state.allUserRoomsList,
+                    allUserDevicesList: this.state.allUserDevicesList,
+                    allUserActivationConditionsList: allUserActivationConditionsList,
+                    resultMessage: this.state.resultMessage
+                  }
+
+                  var detailsNewStr = JSON.stringify(detailsNew);
+
+                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() =>{
+                    this.setState({ activationCondition, activationConditionList, allUserActivationConditionsList});
+                    alert("Condition status changed!");
+                  });
                 });
               });
               break;
@@ -103,7 +128,7 @@ export default class ConditionDetails extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
           <Button primary text={this.state.activationCondition["ConditionName"] + "\n" + this.state.activationCondition["ActivationMethodName"]} onPress={() => {
             var activationConditionStr = JSON.stringify(this.state.activationCondition);
             AsyncStorage.setItem('activationConditionStr', activationConditionStr).then(() => {
@@ -129,10 +154,10 @@ export default class ConditionDetails extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'lawngreen',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '60%',
+    width: '70%',
   },
   textStyle: {
     fontSize: 20,

@@ -12,6 +12,12 @@ export default class CreateActivationCondition extends React.Component {
 
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: [],
       home: {},
       room: {},
       device: {},
@@ -39,34 +45,35 @@ export default class CreateActivationCondition extends React.Component {
           AsyncStorage.getItem('roomsStr').then((value) => {
             rooms = JSON.parse(value);
 
-            AsyncStorage.getItem('usersStr').then((value) => {
-              users = JSON.parse(value);
+            AsyncStorage.getItem('activationConditionsStr').then((value) => {
+              activationConditions = JSON.parse(value);
 
-              AsyncStorage.getItem('activationConditionsStr').then((value) => {
-                activationConditions = JSON.parse(value);
+              AsyncStorage.getItem('activationMethodsStr').then((value) => {
+                activationMethods = JSON.parse(value);
 
-                AsyncStorage.getItem('activationMethodsStr').then((value) => {
-                  activationMethods = JSON.parse(value);
+                AsyncStorage.getItem('roomStr').then((value) => {
+                  room = JSON.parse(value);
 
-                  AsyncStorage.getItem('roomStr').then((value) => {
-                    room = JSON.parse(value);
+                  AsyncStorage.getItem('deviceStr').then((value) => {
+                    device = JSON.parse(value);
 
-                    AsyncStorage.getItem('deviceStr').then((value) => {
-                      device = JSON.parse(value);
-
-                      this.setState({
-                        appUser: details.appUser,
-                        home: home,
-                        deviceList: devices.deviceList,
-                        roomList: rooms.roomList,
-                        userList: users.userList,
-                        activationConditionList: activationConditions.activationConditionList,
-                        activationMethods: activationMethods,
-                        room: room,
-                        device: device,
-                        roomList: rooms.roomList,
-                        deviceList: devices.deviceList
-                      });
+                    this.setState({
+                      appUser: details.appUser,
+                      userList: details.userList,
+                      homeList: details.homeList,
+                      allUserRoomsList: details.allUserRoomsList,
+                      allUserDevicesList: details.allUserDevicesList,
+                      allUserActivationConditionsList: details.allUserActivationConditionsList,
+                      resultMessage: details.resultMessage,
+                      home: home,
+                      deviceList: devices.deviceList,
+                      roomList: rooms.roomList,
+                      activationConditionList: activationConditions.activationConditionList,
+                      activationMethods: activationMethods,
+                      room: room,
+                      device: device,
+                      roomList: rooms.roomList,
+                      deviceList: devices.deviceList
                     });
                   });
                 });
@@ -90,13 +97,11 @@ export default class CreateActivationCondition extends React.Component {
       return;
     }
 
-    if (distanceOrTimeParam == '' || distanceOrTimeParam == null)
-    {
+    if (distanceOrTimeParam == '' || distanceOrTimeParam == null) {
       distanceOrTimeParam = 'null';
     }
 
-    if (activationParam == '' || activationParam == null)
-    {
+    if (activationParam == '' || activationParam == null) {
       activationParam = 'null';
     }
 
@@ -158,26 +163,45 @@ export default class CreateActivationCondition extends React.Component {
                 ActivationParam: activationParam,
                 IsActive: true
               }
-              
+
               var activationConditionList = [];
 
-              if(this.state.activationConditionList != null)
-              {
+              if (this.state.activationConditionList != null) {
                 activationConditionList = this.state.activationConditionList;
               }
 
+              var allUserActivationConditionsList = [];
+
+              if (this.state.allUserActivationConditionsList != null)
+              {
+                allUserActivationConditionsList = this.state.allUserActivationConditionsList;
+              }
+
               activationConditionList.push(activationCondition);
+              allUserActivationConditionsList.push(activationCondition);
 
               var activationConditionsNew = {
                 activationConditionList,
                 resultMessage: 'Data',
               }
 
+              var detailsNew = {
+                appUser: this.state.appUser,
+                userList: this.state.userList,
+                homeList: this.state.homeList,
+                allUserRoomsList: this.state.allUserRoomsList,
+                allUserDevicesList: this.state.allUserDevicesList,
+                allUserActivationConditionsList: allUserActivationConditionsList,
+                resultMessage: this.state.resultMessage
+              }
+
               let activationConditionStr = JSON.stringify(activationCondition);
               let activationConditionsStr = JSON.stringify(activationConditionsNew);
+              let detailsNewStr = JSON.stringify(detailsNew);
 
               AsyncStorage.setItem('activationConditionStr', activationConditionStr).then(() => {
                 AsyncStorage.setItem('activationConditionsStr', activationConditionsStr).then(() => {
+                 AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
                   let deviceStr = JSON.stringify(device);
                   let roomStr = JSON.stringify(room);
 
@@ -186,6 +210,7 @@ export default class CreateActivationCondition extends React.Component {
                       this.props.navigation.navigate("ActivationCondition");
                     });
                   });
+                 });
                 });
               });
               break;
@@ -200,7 +225,7 @@ export default class CreateActivationCondition extends React.Component {
   pickActivationMethod = () => {
     return (
       <Picker
-        style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+        style={styles.pickerStyle}
         selectedValue={this.state.activationMethodName}
         onValueChange={(itemValue) => this.setState({ activationMethodName: itemValue })}>
         {
@@ -215,19 +240,17 @@ export default class CreateActivationCondition extends React.Component {
   }
 
   pickDevice = () => {
-    if (this.state.room.RoomId == '')
-    {
-      if (this.state.deviceList != null)
-      {
+    if (this.state.room.RoomId == '') {
+      if (this.state.deviceList != null) {
         return (
           <Picker
-            style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+            style={styles.pickerStyle}
             selectedValue={this.state.device.DeviceId}
             onValueChange={(itemValue) => {
               var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
               this.setState({ device: device })
             }}
-           >
+          >
             {
               this.state.deviceList.map((d) => {
                 return (
@@ -238,21 +261,18 @@ export default class CreateActivationCondition extends React.Component {
           </Picker>
         );
       }
-      else
-      {
+      else {
         return (
           <Text style={styles.textStyle}>You must create a room and a device first!</Text>
         );
       }
     }
-    else
-    {
-      if (this.state.deviceList != null)
-      {
+    else {
+      if (this.state.deviceList != null) {
         var filteredDeviceList = this.state.deviceList.filter((d) => (d.RoomId === this.state.room.RoomId));
         return (
           <Picker
-            style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+            style={styles.pickerStyle}
             selectedValue={this.state.device.DeviceId}
             onValueChange={(itemValue) => {
               var device = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
@@ -269,14 +289,13 @@ export default class CreateActivationCondition extends React.Component {
           </Picker>
         );
       }
-      else
-      {
-        return(
+      else {
+        return (
           <Picker
-            style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+            style={styles.pickerStyle}
             selectedValue={this.state.device.DeviceId}
             onValueChange={(itemValue) => {
-              var {device} = this.state;
+              var { device } = this.state;
               this.setState({ device: device })
             }}
           >
@@ -288,11 +307,10 @@ export default class CreateActivationCondition extends React.Component {
   }
 
   pickRoom = () => {
-    if (this.state.roomList != null) 
-    {
+    if (this.state.roomList != null) {
       return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
             var room = this.state.roomList.find((room) => room.RoomId === itemValue);
@@ -309,18 +327,17 @@ export default class CreateActivationCondition extends React.Component {
         </Picker>
       );
     }
-    else
-    {
-      return(
+    else {
+      return (
         <Picker
-          style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+          style={styles.pickerStyle}
           selectedValue={this.state.room.RoomId}
           onValueChange={(itemValue) => {
-            var {room} = this.state
+            var { room } = this.state
             this.setState({ room: room })
-            }}
-        > 
-            <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
+          }}
+        >
+          <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
         </Picker>
       );
     }
@@ -330,24 +347,46 @@ export default class CreateActivationCondition extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Condition Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.conditionName} placeholder="Condition Name" onChangeText={(conditionName) => this.setState({ conditionName })}></TextInput>
-          <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
-            <Text style={styles.textStyle}>Turn Device On?</Text>
-            <Switch value={this.state.turnOn} onValueChange={(turnOn) => {this.setState({turnOn})}}/>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Condition Name</Text>
           </View>
-          <Text style={styles.textStyle}> Activation Method Name</Text>
-          {this.pickActivationMethod()}
-          <Text style={styles.textStyle}>Device</Text>
-          {this.pickDevice()}
-          <Text style={styles.textStyle}>Room</Text>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.conditionName} placeholder="Condition Name" onChangeText={(conditionName) => this.setState({ conditionName })}></TextInput>
+          </View>
+          <View style={styles.switchViewStyle}>
+            <Text style={styles.textStyle}>Turn Device On?</Text>
+            <Switch value={this.state.turnOn} onValueChange={(turnOn) => { this.setState({ turnOn }) }} />
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Room</Text>
+          </View>
           {this.pickRoom()}
-          <Text style={styles.textStyle}>Distance Or Time Parameter</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.distanceOrTimeParam} placeHolder="10 km" onChangeText={(distanceOrTimeParam) => this.setState({ distanceOrTimeParam })}></TextInput>
-          <Text style={styles.textStyle}>Activation Parameter</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.activationParam} placeHolder="80% Power" onChangeText={(activationParam) => this.setState({ activationParam })}></TextInput>
-          <Button primary text="Create" onPress={this.createActivationCondition} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device</Text>
+          </View>
+          {this.pickDevice()}
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}> Activation Method Name</Text>
+          </View>
+          {this.pickActivationMethod()}
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Distance Or Time Parameter</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.distanceOrTimeParam} placeHolder="10 km" onChangeText={(distanceOrTimeParam) => this.setState({ distanceOrTimeParam })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Activation Parameter</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.activationParam} placeHolder="80% Power" onChangeText={(activationParam) => this.setState({ activationParam })}></TextInput>
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Create" onPress={this.createActivationCondition} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -356,7 +395,7 @@ export default class CreateActivationCondition extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'peachpuff',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -364,8 +403,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  switchViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1,
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between'
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
+  pickerStyle: { 
+    width: '80%', 
+    borderColor: 'black', 
+    borderRadius:5, 
+    borderWidth: 2 
+  },
 });

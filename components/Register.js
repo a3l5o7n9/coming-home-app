@@ -72,6 +72,9 @@ export default class Register extends React.Component {
                 },
                 userList: null,
                 homeList: null,
+                allUserRoomsList: null,
+                allUserDevicesList: null,
+                allUserActivationConditionsList: null,
                 resultMessage: 'Data'
               }
 
@@ -97,18 +100,42 @@ export default class Register extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Username</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.userName} placeholder="Username" onChangeText={(userName) => this.setState({ userName })}></TextInput>
-          <Text style={styles.textStyle}>Password</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.userPassword} placeholder="Password" onChangeText={(userPassword) => this.setState({ userPassword })}></TextInput>
-          <Text style={styles.textStyle}>Confirm Password</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.confirmPassword} placeholder="Confirm Password" onChangeText={(confirmPassword) => this.setState({ confirmPassword })}></TextInput>
-          <Text style={styles.textStyle}>First Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.firstName} placeholder="First Name" onChangeText={(firstName) => this.setState({ firstName })}></TextInput>
-          <Text style={styles.textStyle}>Last Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.lastName} placeholder="Last Name" onChangeText={(lastName) => this.setState({ lastName })}></TextInput>
-          <Button primary text="Submit" onPress={this.submit} />
-          <Button primary text="Login" onPress={() => { this.props.navigation.navigate('Login') }} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Username</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.userName} placeholder="Username" onChangeText={(userName) => this.setState({ userName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Password</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.userPassword} placeholder="Password" onChangeText={(userPassword) => this.setState({ userPassword })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Confirm Password</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.confirmPassword} placeholder="Confirm Password" onChangeText={(confirmPassword) => this.setState({ confirmPassword })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>First Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.firstName} placeholder="First Name" onChangeText={(firstName) => this.setState({ firstName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Last Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.lastName} placeholder="Last Name" onChangeText={(lastName) => this.setState({ lastName })}></TextInput>
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Submit" onPress={this.submit} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Login" onPress={() => { this.props.navigation.navigate('Login') }} />
+          </View>
         </View>
       </ScrollView>
     );
@@ -117,7 +144,7 @@ export default class Register extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -125,8 +152,32 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

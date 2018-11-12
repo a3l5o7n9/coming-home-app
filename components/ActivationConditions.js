@@ -16,7 +16,13 @@ export default class ActivationConditions extends React.Component {
       home: {},
       deviceList: [],
       roomList: [],
-      activationConditionList: []
+      activationConditionList: [],
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: ''
     }
   }
 
@@ -33,20 +39,21 @@ export default class ActivationConditions extends React.Component {
           AsyncStorage.getItem('roomsStr').then((value) => {
             rooms = JSON.parse(value);
 
-            AsyncStorage.getItem('usersStr').then((value) => {
-              users = JSON.parse(value);
+            AsyncStorage.getItem('activationConditionsStr').then((value) => {
+              activationConditions = JSON.parse(value);
 
-              AsyncStorage.getItem('activationConditionsStr').then((value) => {
-                activationConditions = JSON.parse(value);
-
-                this.setState({
-                  appUser: details.appUser,
-                  home: home,
-                  deviceList: devices.deviceList,
-                  roomList: rooms.roomList,
-                  userList: users.userList,
-                  activationConditionList: activationConditions.activationConditionList
-                });
+              this.setState({
+                appUser: details.appUser,
+                home: home,
+                deviceList: devices.deviceList,
+                roomList: rooms.roomList,
+                activationConditionList: activationConditions.activationConditionList,
+                userList: details.userList,
+                homeList: details.homeList,
+                allUserRoomsList: details.allUserRoomsList,
+                allUserDevicesList: details.allUserDevicesList,
+                allUserActivationConditionsList: details.allUserActivationConditionsList,
+                resultMessage: details.resultMessage
               });
             });
           });
@@ -59,7 +66,9 @@ export default class ActivationConditions extends React.Component {
     if (this.state.activationConditionList != null) {
       return (
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Your Activation Conditions</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Your Activation Conditions</Text>
+          </View>
           {
             this.state.activationConditionList.map((activationCondition, ConditionId) => {
               let device = this.state.deviceList.find((d) => d.DeviceId === activationCondition.DeviceId);
@@ -68,8 +77,8 @@ export default class ActivationConditions extends React.Component {
               let { home } = this.state;
 
               return (
-                <View key={ConditionId} style={{ flex: 1, alignItems: 'center' }}>
-                  <ConditionDetails appUser={appUser} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList}/>
+                <View key={ConditionId} style={{borderColor:'green', borderRadius:10, borderWidth:5, backgroundColor:'lawngreen', flex: 1, alignItems: 'center' }}>
+                  <ConditionDetails appUser={appUser} home={home} device={device} room={room} activationCondition={activationCondition} navigation={this.props.navigation} activationConditionList={this.state.activationConditionList} userList={this.state.userList} homeList={this.state.homeList} allUserRoomsList={this.state.allUserRoomsList} allUserDevicesList={this.state.allUserDevicesList} allUserActivationConditionsList={this.state.allUserActivationConditionsList} resultMessage={this.state.resultMessage} />
                 </View>
               )
             })
@@ -79,7 +88,7 @@ export default class ActivationConditions extends React.Component {
     }
     else {
       return (
-        <View>
+        <View style={styles.textViewStyle}>
           {
             <Text style={styles.textStyle}>There are no activation conditions in your home that you have access to</Text>
           }
@@ -88,8 +97,7 @@ export default class ActivationConditions extends React.Component {
     }
   }
 
-  goToCreateActivationCondition = () =>
-  {
+  goToCreateActivationCondition = () => {
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
@@ -100,17 +108,17 @@ export default class ActivationConditions extends React.Component {
       .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
       .then((result) => { // no error in server
         let activationMethods = JSON.parse(result.d);
-        
+
         var room = {
-          RoomId : '',
-          RoomName : '',
-          RoomTypeName : ''
+          RoomId: '',
+          RoomName: '',
+          RoomTypeName: ''
         }
 
         var device = {
-          DeviceId : '',
-          DeviceName : '',
-          DeviceTypeName : ''
+          DeviceId: '',
+          DeviceName: '',
+          DeviceTypeName: ''
         }
 
         let activationMethodsStr = JSON.stringify(activationMethods);
@@ -140,8 +148,12 @@ export default class ActivationConditions extends React.Component {
             {this.showActivationConditions()}
           </View>
           <View style={{ flex: 2 }}>
-            <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-            <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+            <View style={styles.createButtonStyle}>
+              <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
+            </View>
+            <View style={styles.homeButtonStyle}>
+              <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -151,7 +163,7 @@ export default class ActivationConditions extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'green',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
@@ -162,5 +174,22 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

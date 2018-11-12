@@ -12,6 +12,12 @@ export default class CreateRoom extends React.Component {
 
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       home: {},
       roomName: '',
       roomTypeName: '',
@@ -31,6 +37,12 @@ export default class CreateRoom extends React.Component {
           roomTypes = JSON.parse(value);
           this.setState({
             appUser: details.appUser,
+            userList: details.userList,
+            homeList: details.homeList,
+            allUserRoomsList: details.allUserRoomsList,
+            allUserDevicesList: details.allUserDevicesList,
+            allUserActivationConditionsList: details.allUserActivationConditionsList,
+            resultMessage: details.resultMessage,
             home: home,
             roomTypes: roomTypes
           });
@@ -90,29 +102,48 @@ export default class CreateRoom extends React.Component {
                 var roomList = [];
                 var resultMessage = rooms.resultMessage;
 
-                if (rooms.roomList != null)
-                {
+                if (rooms.roomList != null) {
                   roomList = rooms.roomList;
                   resultMessage = rooms.resultMessage;
                 }
-                else
-                {
+                else {
                   resultMessage = 'Data';
                 }
 
                 roomList.push(room);
 
                 var roomsNew = {
-                roomList,
-                resultMessage,
+                  roomList,
+                  resultMessage,
+                }
+
+                var allUserRoomsList = [];
+
+                if (this.state.allUserRoomsList != null) {
+                  allUserRoomsList = this.state.allUserRoomsList;
+                }
+
+                allUserRoomsList.push(room);
+
+                var detailsNew = {
+                  appUser: this.state.appUser,
+                  userList: this.state.userList,
+                  homeList: this.state.homeList,
+                  allUserRoomsList: allUserRoomsList,
+                  allUserDevicesList: this.state.allUserDevicesList,
+                  allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                  resultMessage: this.state.resultMessage
                 }
 
                 let roomStr = JSON.stringify(room);
                 let roomsStr = JSON.stringify(roomsNew);
+                let detailsNewStr = JSON.stringify(detailsNew);
 
                 AsyncStorage.setItem('roomStr', roomStr).then(() => {
                   AsyncStorage.setItem('roomsStr', roomsStr).then(() => {
-                    this.props.navigation.navigate("Room");
+                    AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                      this.props.navigation.navigate("Room");
+                    });
                   });
                 });
               });
@@ -125,21 +156,20 @@ export default class CreateRoom extends React.Component {
       });
   }
 
-  pickRoomType = () => 
-  {
-    return(
-      <Picker  
-        style={{  width: '80%', borderColor:'green', borderWidth: 2 }} 
-        selectedValue={this.state.roomTypeName} 
-        onValueChange={(itemValue) => this.setState({roomTypeName : itemValue})}>
+  pickRoomType = () => {
+    return (
+      <Picker
+        style={styles.pickerStyle}
+        selectedValue={this.state.roomTypeName}
+        onValueChange={(itemValue) => this.setState({ roomTypeName: itemValue })}>
         {
           this.state.roomTypes.map((roomType) => {
-            return(
-              <Picker.Item key={roomType["RoomTypeCode"]} label={roomType["RoomTypeName"]} value={roomType["RoomTypeName"]}/>
+            return (
+              <Picker.Item key={roomType["RoomTypeCode"]} label={roomType["RoomTypeName"]} value={roomType["RoomTypeName"]} />
             )
           })
         }
-        </Picker>
+      </Picker>
     );
   }
 
@@ -147,16 +177,26 @@ export default class CreateRoom extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Room Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.roomName} placeholder="Room Name" onChangeText={(roomName) => this.setState({ roomName })}></TextInput>
-          <Text style={styles.textStyle}>Room Type Name</Text>
-          {this.pickRoomType()}
-          <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
-            <Text style={styles.textStyle}>Is Shared?(true/false)</Text>
-            <Switch value={this.state.isShared} onValueChange={(isShared) => {this.setState({isShared})}} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Room Name</Text>
           </View>
-          <Button primary text="Create" onPress={this.createRoom} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("Rooms") }} />
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.roomName} placeholder="Room Name" onChangeText={(roomName) => this.setState({ roomName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Room Type Name</Text>
+          </View>
+          {this.pickRoomType()}
+          <View style={styles.switchViewStyle}>
+            <Text style={styles.textStyle}>Is Shared?(true/false)</Text>
+            <Switch value={this.state.isShared} onValueChange={(isShared) => { this.setState({ isShared }) }} />
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Create" onPress={this.createRoom} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("Rooms") }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -165,7 +205,7 @@ export default class CreateRoom extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'peachpuff',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -173,8 +213,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  switchViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1,
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between'
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
+  pickerStyle: { 
+    width: '80%', 
+    borderColor: 'black', 
+    borderRadius:5, 
+    borderWidth: 2 
+  },
 });

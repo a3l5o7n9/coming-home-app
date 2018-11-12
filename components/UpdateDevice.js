@@ -12,6 +12,12 @@ export default class UpdateDevice extends React.Component {
 
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       home: {},
       room: {
         RoomId: '',
@@ -50,6 +56,12 @@ export default class UpdateDevice extends React.Component {
                 this.setState(
                 {
                   appUser: details.appUser,
+                  userList: details.userList,
+                  homeList: details.homeList,
+                  allUserRoomsList: details.allUserRoomsList,
+                  allUserDevicesList: details.allUserDevicesList,
+                  allUserActivationConditionsList: details.allUserActivationConditionsList,
+                  resultMessage: details.resultMessage,
                   home: home,
                   deviceTypes: deviceTypes,
                   roomList: rooms.roomList,
@@ -128,6 +140,7 @@ export default class UpdateDevice extends React.Component {
               AsyncStorage.getItem('devicesStr').then((value) => {
                 devices = JSON.parse(value);
                 var deviceList = new Array();
+                var allUserDevicesList = new Array();
                 var devicesResultMessage = devices.resultMessage;
 
                 if (devices.deviceList != null) {
@@ -138,10 +151,16 @@ export default class UpdateDevice extends React.Component {
                   devicesResultMessage = 'Data';
                 }
 
+                if (this.state.allUserDevicesList != null)
+                {
+                  allUserDevicesList = this.state.allUserDevicesList;
+                }
+
                 var filteredDeviceList = deviceList.filter((d) => (d.DeviceId === deviceId));
                 var numOfOccurrences = filteredDeviceList.length;
 
                 var deviceFirstIndex = deviceList.findIndex((d) => (d.DeviceId === deviceId));
+                var deviceFirstIndexA = allUserDevicesList.findIndex((de) => (de.DeviceId === deviceId));
 
                 for (var i = deviceFirstIndex; i <= deviceFirstIndex + numOfOccurrences - 1; i++)
                 {
@@ -150,16 +169,35 @@ export default class UpdateDevice extends React.Component {
                   deviceList[i].IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
                 }
 
+                for (var j = deviceFirstIndexA; j <= deviceFirstIndexA + numOfOccurrences - 1; j++)
+                {
+                  allUserDevicesList[j].DeviceName = newDevice.DeviceName;
+                  allUserDevicesList[j].DeviceTypeName = newDevice.DeviceTypeName;
+                  allUserDevicesList[j].IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
+                }
+
                 var devicesNew = {
                   deviceList,
                   resultMessage: devicesResultMessage,
                 }
 
+                var detailsNew = {
+                  appUser: this.state.appUser,
+                  userList: this.state.userList,
+                  homeList: this.state.homeList,
+                  allUserRoomsList: this.state.allUserRoomsList,
+                  allUserDevicesList: allUserDevicesList,
+                  allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                  resultMessage: this.state.resultMessage
+                }
+
                 let deviceStr = JSON.stringify(newDevice);
                 let devicesStr = JSON.stringify(devicesNew);
+                let detailsNewStr = JSON.stringify(detailsNew);
 
                 AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                   AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
+                   AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
                     var { room } = this.state;
 
                     let roomStr = JSON.stringify(room);
@@ -167,6 +205,7 @@ export default class UpdateDevice extends React.Component {
                     AsyncStorage.setItem('roomStr', roomStr).then(() => {
                       this.props.navigation.navigate("Device");
                     });
+                   });
                   });
                 });
               });
@@ -188,7 +227,7 @@ export default class UpdateDevice extends React.Component {
   pickDeviceType = () => {
     return (
       <Picker
-        style={{ width: '80%', borderColor: 'green', borderWidth: 2 }}
+        style={styles.pickerStyle}
         selectedValue={this.state.newDeviceTypeCode}
         onValueChange={(itemValue) => this.setState({ newDeviceTypeCode: itemValue })}>
         {
@@ -206,16 +245,26 @@ export default class UpdateDevice extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Device Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newDeviceName} placeholder={this.state.device.DeviceName} onChangeText={(newDeviceName) => this.setState({ newDeviceName: newDeviceName })}></TextInput>
-          <Text style={styles.textStyle}>Device Type</Text>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newDeviceName} placeholder={this.state.device.DeviceName} onChangeText={(newDeviceName) => this.setState({ newDeviceName: newDeviceName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Device Type</Text>
+          </View>
           {this.pickDeviceType()}
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={styles.switchViewStyle}>
             <Text style={styles.textStyle}>Is Divided Into Rooms?(true/false)</Text>
             <Switch value={this.state.newDivideStatus} onValueChange={(newDivideStatus) => { this.setState({ newDivideStatus }) }} />
           </View>
-          <Button primary text="Update" onPress={this.updateDeviceDetails} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Update" onPress={this.updateDeviceDetails} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -224,7 +273,7 @@ export default class UpdateDevice extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'salmon',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -232,8 +281,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  switchViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1,
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between'
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
+  pickerStyle: {
+    width: '80%', 
+    borderColor: 'black',
+    borderRadius:5, 
+    borderWidth: 2
+  },
 });

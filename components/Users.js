@@ -54,12 +54,14 @@ export default class Users extends React.Component {
           <Text style={styles.textStyle}>Your Home Members</Text>
           {
             this.state.userList.map((user, UserId) => (
-              <Button primary key={UserId} text={user["UserName"] + "\n" + user["FirstName"] + " " + user["LastName"]} onPress={() => {
-                let userStr = JSON.stringify(user);
-                AsyncStorage.setItem('userStr', userStr).then(() => {
-                  this.props.navigation.navigate("User");
-                });
-              }} />
+              <View key={UserId} style={{borderColor:'cyan', borderRadius:10, borderWidth:5, backgroundColor:'lightcyan', flex: 1, flexDirection:'row', alignItems: 'center' }}>
+                <Button primary text={user["UserName"] + "\n" + user["FirstName"] + " " + user["LastName"]} onPress={() => {
+                  let userStr = JSON.stringify(user);
+                  AsyncStorage.setItem('userStr', userStr).then(() => {
+                    this.props.navigation.navigate("User");
+                  });
+                }} />
+              </View>
             ))
           }
         </View>
@@ -80,10 +82,12 @@ export default class Users extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.container}>
+          <View>
             {this.showUsers()}
           </View>
-          <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+          <View style={styles.homeButtonStyle}>
+            <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
+          </View>
         </View>
       </ScrollView>
     );
@@ -92,7 +96,8 @@ export default class Users extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    width:'100%',
+    backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -103,5 +108,12 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

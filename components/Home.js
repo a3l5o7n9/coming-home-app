@@ -55,9 +55,9 @@ export default class Home extends React.Component {
           appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
-          roomList: jsonData.LR,
-          deviceList: jsonData.LD,
-          activationConditionList: jsonData.LActCon,
+          allUserRoomsList: jsonData.LR,
+          allUserDevicesList: jsonData.LD,
+          allUserActivationConditionsList: jsonData.LActCon,
           resultMessage: jsonData.ResultMessage
         }
 
@@ -145,33 +145,35 @@ export default class Home extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30 }}>{this.state.home["HomeName"]}</Text>
-          <Text style={{ fontSize: 20 }}>
-            Hello, {this.state.appUser["FirstName"]}
-          </Text>
+          <View style={styles.textViewStyle}>
+            <Text style={{ fontSize: 30 }}>{this.state.home["HomeName"]}</Text>
+            <Text style={{ fontSize: 20 }}>
+              Hello, {this.state.appUser["FirstName"]}
+            </Text>
+          </View>
           <View style={{ flex: 1, width: '100%', height: '100%', flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-            <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'powderblue', flexWrap: 'wrap', alignContent: 'center' }}>
+            <View style={{borderColor:'blue', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'powderblue', flexWrap: 'wrap', alignContent: 'center' }}>
               <Button primary text="Rooms" onPress={() => { 
                   this.getUserHomeDetails();
                   this.props.navigation.navigate("Rooms"); 
                 }} 
               />
             </View>
-            <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'skyblue', flexWrap: 'wrap' }}>
+            <View style={{borderColor:'blue', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'skyblue', flexWrap: 'wrap' }}>
               <Button primary text="Devices" onPress={() => { 
                   this.getUserHomeDetails();
                   this.props.navigation.navigate("Devices");
                 }} 
               />
             </View>
-            <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'steelblue', flexWrap: 'wrap' }}>
+            <View style={{borderColor:'lightcyan', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'cyan', flexWrap: 'wrap' }}>
               <Button primary text="Users" onPress={() => {
                   this.getUserHomeDetails(); 
                   this.props.navigation.navigate("Users");
                 }} 
               />
             </View>
-            <View style={{ width: '40%', height: 100, margin: 10, backgroundColor: 'blue', flexWrap: 'wrap' }}>
+            <View style={{borderColor:'green', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'lawngreen', flexWrap: 'wrap' }}>
               <Button primary text="Activation Conditions" onPress={() => {
                   this.getUserHomeDetails(); 
                   this.props.navigation.navigate("ActivationConditions"); 
@@ -179,8 +181,12 @@ export default class Home extends React.Component {
               />
             </View>
           </View>
-          <Button primary text="Update Home Details" onPress={() => {this.props.navigation.navigate('UpdateHome')}}/>
-          <Button primary text="Main Page" onPress={this.backToMainPage} />
+          <View style={styles.updateButtonViewStyle}>
+            <Button primary text="Update Home Details" onPress={() => {this.props.navigation.navigate('UpdateHome')}}/>
+          </View>
+          <View style={styles.mainPageButtonViewStyle}>
+            <Button primary text="Main Page" onPress={this.backToMainPage} />
+          </View>
         </View>
       </ScrollView>
     );
@@ -189,7 +195,7 @@ export default class Home extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'orange',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -200,5 +206,28 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  updateButtonViewStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  mainPageButtonViewStyle: {
+    margin:5,
+    backgroundColor:'mediumpurple',
+    borderColor:'indigo',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

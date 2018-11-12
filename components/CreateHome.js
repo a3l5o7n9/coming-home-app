@@ -13,6 +13,12 @@ export default class CreateHome extends React.Component {
 
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       homeName: '',
       address: ''
     }
@@ -24,6 +30,12 @@ export default class CreateHome extends React.Component {
 
       this.setState({
         appUser: details.appUser,
+        userList: details.userList,
+        homeList: details.homeList,
+        allUserRoomsList: details.allUserRoomsList,
+        allUserDevicesList: details.allUserDevicesList,
+        allUserActivationConditionsList: details.allUserActivationConditionsList,
+        resultMessage: details.resultMessage
       });
     });
   }
@@ -74,10 +86,52 @@ export default class CreateHome extends React.Component {
                   NumOfUsers: 1
                 }
 
+                var newUser = {
+                  UserId: this.state.appUser.UserId,
+                  UserName: this.state.appUser.UserName,
+                  UserPassword: this.state.appUser.UserPassword,
+                  FirstName: this.state.appUser.FirstName,
+                  LastName: this.state.appUser.LastName,
+                  HomeId: homeId,
+                  UserTypeName: 'דייר אחראי',
+                  Token: this.state.appUser.Token
+                }
+
+                var userList = [];
+                var homeList = [];
+
+                if (this.state.userList != null)
+                {
+                  userList = this.state.userList;
+                }
+
+                userList.push(newUser);
+
+                if (this.state.homeList != null)
+                {
+                  homeList = this.state.homeList;
+                }
+
+                homeList.push(home);
+
                 let homeStr = JSON.stringify(home);
 
+                let detailsNew = {
+                  appUser: this.state.appUser,
+                  userList: userList,
+                  homeList: homeList,
+                  allUserRoomsList: this.state.allUserRoomsList,
+                  allUserDevicesList: this.state.allUserDevicesList,
+                  allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                  resultMessage: this.state.resultMessage
+                }
+
+                let detailsNewStr = JSON.stringify(detailsNew);
+
                 AsyncStorage.setItem('homeStr', homeStr).then(() => {
-                  this.props.navigation.navigate("Home");
+                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                    this.props.navigation.navigate("Home");
+                  });
                 });
                 break;
               }
@@ -93,12 +147,24 @@ export default class CreateHome extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Home Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.homeName} placeholder="Home Name" onChangeText={(homeName) => this.setState({ homeName })}></TextInput>
-          <Text style={styles.textStyle}>Address</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.address} placeholder="Address" onChangeText={(address) => this.setState({ address })}></TextInput>
-          <Button primary text="Create" onPress={this.createHome} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("MainPage") }} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Home Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.homeName} placeholder="Home Name" onChangeText={(homeName) => this.setState({ homeName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Address</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.address} placeholder="Address" onChangeText={(address) => this.setState({ address })}></TextInput>
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Create" onPress={this.createHome} />          
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("MainPage") }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -107,7 +173,7 @@ export default class CreateHome extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -115,8 +181,32 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

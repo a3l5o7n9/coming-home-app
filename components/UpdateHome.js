@@ -13,6 +13,12 @@ export default class UpdateHome extends React.Component {
 
     this.state = {
       appUser: {},
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       home: {
         HomeName: '',
         Address: ''
@@ -31,6 +37,12 @@ export default class UpdateHome extends React.Component {
 
         this.setState({
           appUser: details.appUser,
+          userList: details.userList,
+          homeList: details.homeList,
+          allUserRoomsList: details.allUserRoomsList,
+          allUserDevicesList: details.allUserDevicesList,
+          allUserActivationConditionsList: details.allUserActivationConditionsList,
+          resultMessage: details.resultMessage,
           home: home
         });
       });
@@ -110,10 +122,40 @@ export default class UpdateHome extends React.Component {
                 NumOfUsers: this.state.home.NumOfUsers
               }
 
+              var homeList = new Array();
+
+              if (this.state.homeList != null)
+              {
+                homeList = this.state.homeList;
+              }
+
+              var index = homeList.findIndex((h) => (h.HomeId === homeId));
+
+              homeList[index].HomeName = home.HomeName;
+              homeList[index].Address = home.Address;
+              homeList[index].Latitude = home.Latitude;
+              homeList[index].Longitude = home.Longitude;
+              homeList[index].Altitude = home.Altitude;
+              homeList[index].Accuracy = home.Accuracy;
+              homeList[index].NumOfUsers = home.NumOfUsers;
+
+              var detailsNew = {
+                appUser: this.state.appUser,
+                userList: this.state.userList,
+                homeList: homeList,
+                allUserRoomsList: this.state.allUserRoomsList,
+                allUserDevicesList: this.state.allUserDevicesList,
+                allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                resultMessage: this.state.resultMessage
+              }
+
               let homeStr = JSON.stringify(home);
+              let detailsNewStr = JSON.stringify(detailsNew);
 
               AsyncStorage.setItem('homeStr', homeStr).then(() => {
+               AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
                 this.props.navigation.navigate("Home");
+               });
               });
               break;
             }
@@ -133,12 +175,24 @@ export default class UpdateHome extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Home Name</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newHomeName} placeholder={this.state.home.HomeName} onChangeText={(newHomeName) => this.setState({ newHomeName })}></TextInput>
-          <Text style={styles.textStyle}>Address</Text>
-          <TextInput style={styles.textInputStyle} value={this.state.newAddress} placeholder={this.state.home.Address} onChangeText={(newAddress) => this.setState({ newAddress })}></TextInput>
-          <Button primary text="Update" onPress={this.updateHomeDetails} />
-          <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Home Name</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newHomeName} placeholder={this.state.home.HomeName} onChangeText={(newHomeName) => this.setState({ newHomeName })}></TextInput>
+          </View>
+          <View style={styles.textViewStyle}>
+            <Text style={styles.textStyle}>Address</Text>
+          </View>
+          <View style={styles.textInputViewStyle}>
+            <TextInput style={styles.textInputStyle} value={this.state.newAddress} placeholder={this.state.home.Address} onChangeText={(newAddress) => this.setState({ newAddress })}></TextInput>
+          </View>
+          <View style={styles.submitButtonViewStyle}>
+            <Button primary text="Update" onPress={this.updateHomeDetails} />
+          </View>
+          <View style={styles.cancelButtonViewStyle}>
+            <Button primary text="Cancel" onPress={() => { this.props.navigation.goBack() }} />
+          </View>
         </View>
       </ScrollView>
     )
@@ -147,7 +201,7 @@ export default class UpdateHome extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'salmon',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -155,8 +209,32 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
+    color:'green',
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  textInputViewStyle: {
+    margin:5,
+    borderColor:'black',
+    borderRadius:5,
+    borderWidth:1
+  },
+  submitButtonViewStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  cancelButtonViewStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

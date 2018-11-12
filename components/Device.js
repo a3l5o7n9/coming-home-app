@@ -23,6 +23,12 @@ export default class Device extends React.Component {
         RoomId: '',
         RoomName: ''
       },
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       activationConditionList: [],
     }
   }
@@ -48,6 +54,12 @@ export default class Device extends React.Component {
                 home: home,
                 device: device,
                 room: room,
+                userList: details.userList,
+                homeList: details.homeList,
+                allUserRoomsList: details.allUserRoomsList,
+                allUserDevicesList: details.allUserDevicesList,
+                allUserActivationConditionsList: details.allUserActivationConditionsList,
+                resultMessage: details.resultMessage,
                 activationConditionList: activationConditions.activationConditionList
               });
             });
@@ -64,7 +76,9 @@ export default class Device extends React.Component {
       if (filteredConditionList != null) {
         return (
           <View style={styles.container}>
-            <Text style={styles.textStyle}>Your Activation Conditions For This Device</Text>
+            <View style={styles.textViewStyle}>
+              <Text style={styles.textStyle}>Your Activation Conditions For This Device</Text>
+            </View>
             {
               filteredConditionList.map((activationCondition, ConditionId) => {
                 var { device } = this.state;
@@ -84,7 +98,7 @@ export default class Device extends React.Component {
       }
       else {
         return (
-          <View>
+          <View style={styles.textViewStyle}>
             {
               <Text style={styles.textStyle}>There are no activation conditions for this device that you have access to</Text>
             }
@@ -94,7 +108,7 @@ export default class Device extends React.Component {
     }
     else {
       return (
-        <View>
+        <View style={styles.textViewStyle}>
           {
             <Text style={styles.textStyle}>There are no activation conditions for this device that you have access to</Text>
           }
@@ -165,7 +179,7 @@ export default class Device extends React.Component {
                   devices = JSON.parse(value);
                   var deviceList = [];
                   deviceList = devices.deviceList;
-                  var index = deviceList.findIndex((d) => d.DeviceId == this.state.device.DeviceId);
+                  var index = deviceList.findIndex((d) => d.DeviceId == this.state.device.DeviceId && d.RoomId == this.state.device.RoomId);
                   deviceList[index].IsOn = this.state.device.IsOn;
                   var devices = {
                     deviceList,
@@ -174,9 +188,28 @@ export default class Device extends React.Component {
                  var devicesStr = JSON.stringify(devices);
 
                   AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                    this.setState({ device });
+                   var allUserDevicesList = [];
+                   allUserDevicesList = this.state.allUserDevicesList;
+                   var indexA = allUserDevicesList.findIndex((de) => (de.DeviceId == this.state.device.DeviceId && de.RoomId == this.state.device.RoomId));
+                   allUserDevicesList[indexA].IsOn = this.state.device.IsOn;
+
+                   var detailsNew = {
+                     appUser: this.state.appUser,
+                     userList: this.state.userList,
+                     homeList: this.state.homeList,
+                     allUserRoomsList: this.state.allUserRoomsList,
+                     allUserDevicesList: allUserDevicesList,
+                     allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                     resultMessage: this.state.resultMessage
+                   }
+
+                   var detailsNewStr = JSON.stringify(detailsNew);
+
+                   AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                    this.setState({ device, allUserDevicesList });
                     alert("Device status changed!");
-                  }) 
+                   });
+                  }); 
                 });
               });
               break;
@@ -239,7 +272,7 @@ export default class Device extends React.Component {
       <ScrollView>
         <View style={styles.container}>
           <View style={{flex: 2, flexDirection:'row', justifyContent:'space-between'}}>
-            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <View style={{margin:5, flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
               <Text style={{flex: 1, fontSize: 25 }}>{this.state.device["DeviceName"]}</Text>
               <Text style={{flex: 1, fontSize: 10 }}>{this.state.room["RoomName"]}</Text>
             </View>
@@ -250,11 +283,22 @@ export default class Device extends React.Component {
           <View style={{ flex: 8 }}>
             {this.showActivationConditions()}
           </View>
-          <View style={{ flex: 3 }}>
-            <Button primary text="Bind This Device To Another Room" onPress={this.goToBindDeviceToRoom}/>
-            <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-            <Button primary text="Update Device Details" onPress={() => {this.props.navigation.navigate("UpdateDevice")}}/>
-            <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          <View>
+            <View style={styles.bindButtonStyle}>
+              <Button primary text="Bind This Device To Another Room" onPress={this.goToBindDeviceToRoom}/>
+            </View>
+            <View style={styles.createButtonStyle}>
+              <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
+            </View>
+            <View style={styles.updateButtonStyle}>
+              <Button primary text="Update Device Details" onPress={() => {this.props.navigation.navigate("UpdateDevice")}}/>
+            </View>
+            <View style={styles.listButtonStyle}>
+              <Button primary text="Devices" onPress={() => {this.props.navigation.navigate("Devices")}}/>
+            </View>
+            <View style={styles.homeButtonStyle}>
+              <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -264,7 +308,8 @@ export default class Device extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    width:'100%',
+    backgroundColor: 'skyblue',
     justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
@@ -275,5 +320,43 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  updateButtonStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  bindButtonStyle: {
+    margin:5,
+    backgroundColor:'sandybrown',
+    borderColor:'brown',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
+  listButtonStyle: {
+    margin:5,
+    backgroundColor:'blue',
+    borderColor:'skyblue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

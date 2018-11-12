@@ -47,9 +47,9 @@ export default class Login extends React.Component {
           appUser: jsonData.AU,
           userList: jsonData.LU,
           homeList: jsonData.LH,
-          roomList: jsonData.LR,
-          deviceList: jsonData.LD,
-          activationConditionList: jsonData.LActCon,
+          allUserRoomsList: jsonData.LR,
+          allUserDevicesList: jsonData.LD,
+          allUserActivationConditionsList: jsonData.LActCon,
           resultMessage: jsonData.ResultMessage
         }
 
@@ -77,12 +77,24 @@ export default class Login extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Username</Text>
-          <TextInput style={styles.textInputStyle} name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({ userName })}></TextInput>
-          <Text style={styles.textStyle}>Password</Text>
-          <TextInput style={styles.textInputStyle} name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({ userPassword })}></TextInput>
-          <Button primary text="Sign In" onPress={this.signIn} />
-          <Button primary text="Sign Up" onPress={() => { this.props.navigation.navigate('Register') }} />
+          <View style={{margin:5}}>
+            <Text style={styles.textStyle}>Username</Text>
+          </View>
+          <View style={{margin:5, borderColor:'black', borderRadius:5, borderWidth:1}}>
+            <TextInput style={styles.textInputStyle} name="userNameTxt" value={this.state.userName} placeholder="My Name" onChangeText={(userName) => this.setState({ userName })}></TextInput>
+          </View>
+          <View style={{margin:5}}>
+            <Text style={styles.textStyle}>Password</Text>
+          </View>
+          <View style={{margin:5, borderColor:'black', borderRadius:5, borderWidth:1}}>
+            <TextInput style={styles.textInputStyle} name="passwordTxt" value={this.state.userPassword} placeholder="My Password" onChangeText={(userPassword) => this.setState({ userPassword })}></TextInput>
+          </View>
+          <View style={{margin:5, backgroundColor:'lightblue', borderColor:'blue', borderRadius:50, borderWidth:1}}>
+            <Button primary text="Sign In" onPress={this.signIn} />
+          </View>
+          <View style={{margin:5, backgroundColor:'lawngreen', borderColor:'green', borderRadius:50, borderWidth:1}}>
+            <Button primary text="Sign Up" onPress={() => { this.props.navigation.navigate('Register') }} />
+          </View> 
         </View>
       </ScrollView>
     );
@@ -91,7 +103,8 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    height:'100%',
+    backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,

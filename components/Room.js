@@ -20,6 +20,12 @@ export default class Room extends React.Component {
         RoomTypeName: ''
       },
       deviceList: [],
+      userList: [],
+      homeList: [],
+      allUserRoomsList: [],
+      allUserDevicesList: [],
+      allUserActivationConditionsList: [],
+      resultMessage: '',
       activationConditionList: []
     }
   }
@@ -45,6 +51,12 @@ export default class Room extends React.Component {
                 home: home,
                 room: room,
                 deviceList: devices.deviceList,
+                userList: details.userList,
+                homeList: details.homeList,
+                allUserRoomsList: details.allUserRoomsList,
+                allUserDevicesList: details.allUserDevicesList,
+                allUserActivationConditionsList: details.allUserActivationConditionsList,
+                resultMessage: details.resultMessage,
                 activationConditionList: activationConditions.activationConditionList
               })
             })
@@ -69,8 +81,8 @@ export default class Room extends React.Component {
                 var { home } = this.state;
 
                 return (
-                  <View key={DeviceId} style={{ flex: 1, alignItems: 'center' }}>
-                    <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList}/>
+                  <View key={DeviceId} style={{borderColor:'blue', borderRadius:10, borderWidth:5, backgroundColor:'skyblue', flex: 1, alignItems: 'center' }}>
+                    <DeviceDetails appUser={appUser} home={home} device={device} room={room} navigation={this.props.navigation} deviceList={this.state.deviceList} userList={this.state.userList} homeList={this.state.homeList} allUserRoomsList={this.state.allUserRoomsList} allUserDevicesList={this.state.allUserDevicesList} allUserActivationConditionsList={this.state.allUserActivationConditionsList} resultMessage={this.state.resultMessage}/>
                   </View>
                 )
               })
@@ -193,12 +205,25 @@ export default class Room extends React.Component {
           <View style={{ flex: 8 }}>
             {this.showDevices()}
           </View>
-          <View style={{ flex: 4 }}>
-            <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
-            <Button primary text="Add Existing Device" onPress={this.goToBindDeviceToRoom}/>
-            <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
-            <Button primary text="Update Room Details" onPress={() => {this.props.navigation.navigate('UpdateRoom')}}/>
-            <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+          <View>
+            <View style={styles.createButtonStyle}>
+              <Button primary text="Add New Device" onPress={this.goToCreateDevice}/>
+            </View>
+            <View style={styles.bindButtonStyle}>
+              <Button primary text="Add Existing Device" onPress={this.goToBindDeviceToRoom}/>
+            </View>
+            <View style={styles.createButtonStyle}>
+              <Button primary text="Add New Condition" onPress={this.goToCreateActivationCondition} />
+            </View>
+            <View style={styles.updateButtonStyle}>
+              <Button primary text="Update Room Details" onPress={() => {this.props.navigation.navigate('UpdateRoom')}}/>
+            </View>
+            <View style={styles.listButtonStyle}>
+              <Button primary text="Rooms" onPress={() => {this.props.navigation.navigate("Rooms")}}/>
+            </View>
+            <View style={styles.homeButtonStyle}>
+              <Button primary text="Home" onPress={() => {this.props.navigation.navigate("Home")}}/>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -208,7 +233,7 @@ export default class Room extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: 'powderblue',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -219,5 +244,43 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  textViewStyle: {
+    margin:5,
+  },
+  updateButtonStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  bindButtonStyle: {
+    margin:5,
+    backgroundColor:'sandybrown',
+    borderColor:'brown',
+    borderRadius:50,
+    borderWidth:1
+  },
+  homeButtonStyle: {
+    margin:5,
+    backgroundColor:'lightblue',
+    borderColor:'blue',
+    borderRadius:50,
+    borderWidth:1
+  },
+  listButtonStyle: {
+    margin:5,
+    backgroundColor:'blue',
+    borderColor:'powderblue',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

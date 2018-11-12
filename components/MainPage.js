@@ -42,12 +42,14 @@ export default class MainPage extends React.Component {
           <Text style={styles.textStyle}>Your Homes</Text>
           {
             this.state.homeList.map((home, HomeId) => (
-              <Button primary key={HomeId} text={home["HomeName"] + "\n" + home["Address"]} onPress={() => {
-                let homeStr = JSON.stringify(home);
-                AsyncStorage.setItem('homeStr', homeStr).then(() => {
-                  this.props.navigation.navigate("Home");
-                });
-              }} />
+              <View key={HomeId} style={{borderColor:'cyan', borderRadius:10, borderWidth:5, backgroundColor:'lightcyan', flex: 1, flexDirection:'row', alignItems: 'center' }}>
+                <Button primary text={home["HomeName"] + "\n" + home["Address"]} onPress={() => {
+                  let homeStr = JSON.stringify(home);
+                  AsyncStorage.setItem('homeStr', homeStr).then(() => {
+                    this.props.navigation.navigate("Home");
+                  });
+                }} />
+              </View>
             ))
           }
         </View>
@@ -79,13 +81,21 @@ export default class MainPage extends React.Component {
           <Text style={styles.textStyle}>
             Hello, {appUser["FirstName"]}
           </Text>
-          <View style={styles.container}>
+          <View>
             {this.showHomes()}
           </View>
-          <Button primary text="Update User Details" onPress={() => { this.props.navigation.navigate('UpdateUser', back = "MainPage") }} />
-          <Button primary text="Create New Home" onPress={() => { this.props.navigation.navigate("CreateHome") }} />
-          <Button primary text="Join an existing Home" onPress={() => { this.props.navigation.navigate("JoinHome") }} />
-          <Button primary text="Sign Out" onPress={this.signOut} />
+          <View style={styles.updateButtonStyle}>
+            <Button primary text="Update User Details" onPress={() => { this.props.navigation.navigate('UpdateUser', back = "MainPage") }} />
+          </View>
+          <View style={styles.createButtonStyle}>
+            <Button primary text="Create New Home" onPress={() => { this.props.navigation.navigate("CreateHome") }} />
+          </View>
+          <View style={styles.joinButtonStyle}>
+            <Button primary text="Join an existing Home" onPress={() => { this.props.navigation.navigate("JoinHome") }} />
+          </View>
+          <View style={styles.signOutButtonStyle}>
+            <Button primary text="Sign Out" onPress={this.signOut} />
+          </View>
         </View>
       </ScrollView>
     );
@@ -94,7 +104,8 @@ export default class MainPage extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    width:'100%',
+    backgroundColor: 'mediumpurple',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -105,5 +116,33 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     fontSize: 25,
-  }
+  },
+  updateButtonStyle: {
+    margin:5,
+    backgroundColor:'lightgrey',
+    borderColor:'silver',
+    borderRadius:50,
+    borderWidth:1
+  },
+  createButtonStyle: {
+    margin:5,
+    backgroundColor:'yellow',
+    borderColor:'gold',
+    borderRadius:50,
+    borderWidth:1
+  },
+  joinButtonStyle: {
+    margin:5,
+    backgroundColor:'sandybrown',
+    borderColor:'brown',
+    borderRadius:50,
+    borderWidth:1
+  },
+  signOutButtonStyle: {
+    margin:5,
+    backgroundColor:'grey',
+    borderColor:'lightgrey',
+    borderRadius:50,
+    borderWidth:1
+  },
 });

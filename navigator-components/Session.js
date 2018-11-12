@@ -76,15 +76,15 @@ export default class Session extends React.Component {
       appUser: {},
       userList: null,
       homeList: null,
-      roomList: null,
-      deviceList: null,
-      activationConditionList: null,
+      allUserRoomsList: null,
+      allUserDevicesList: null,
+      allUserActivationConditionsList: null,
     };
   }
 
   componentDidMount() {
     registerForPushNotificationsAsync();
-    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 1000 }, (position) => this.getDeviceCurrentPositionAsync());
+    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 100 }, (position) => this.getDeviceCurrentPositionAsync());
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
@@ -121,24 +121,24 @@ export default class Session extends React.Component {
 
           var userList = new Array();
           var homeList = new Array();
-          var roomList = new Array();
-          var deviceList = new Array();
-          var activationConditionList = new Array();
+          var allUserRoomsList = new Array();
+          var allUserDevicesList = new Array();
+          var allUserActivationConditionsList = new Array();
           var appUser = details.appUser;
           var resultMessage = details.resultMessage;
 
           userList = details.userList;
           homeList = details.homeList;
-          roomList = details.roomList;
-          deviceList = details.deviceList;
-          activationConditionList = details.activationConditionList;
+          allUserRoomsList = details.allUserRoomsList;
+          allUserDevicesList = details.allUserDevicesList;
+          allUserActivationConditionsList = details.allUserActivationConditionsList;
 
-          activationConditionList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום' && ac.IsActive === true));
+          allUserActivationConditionsList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום' && ac.IsActive === true));
 
-          activationConditionList.forEach((ac) => {
+          allUserActivationConditionsList.forEach((ac) => {
             var home = homeList.find((h) => (h.HomeId === ac.HomeId));
-            var room = roomList.find((r) => (r.RoomId === ac.RoomId));
-            var device = deviceList.find((d) => (d.DeviceId === ac.DeviceId && d.RoomId === ac.RoomId));
+            var room = allUserRoomsList.find((r) => (r.RoomId === ac.RoomId));
+            var device = allUserDevicesList.find((d) => (d.DeviceId === ac.DeviceId && d.RoomId === ac.RoomId));
             var aGCLatitude = home.Latitude;
             var aGCLongitude = home.Longitude;
             var aGCAltitude = home.Altitude;
@@ -251,15 +251,15 @@ export default class Session extends React.Component {
                       }
                     default:
                       {
-                        var index = deviceList.findIndex((d) => (d.DeviceId === deviceId && d.RoomId === roomId));
-                        deviceList[index].IsOn = turnOn;
+                        var index = allUserDevicesList.findIndex((d) => (d.DeviceId === deviceId && d.RoomId === roomId));
+                        allUserDevicesList[index].IsOn = turnOn;
                         var detailsNew = {
                           appUser: appUser,
                           userList: userList,
                           homeList: homeList,
-                          roomList: roomList,
-                          deviceList: deviceList,
-                          activationConditionList: activationConditionList,
+                          allUserRoomsList: allUserRoomsList,
+                          allUserDevicesList: allUserDevicesList,
+                          allUserActivationConditionsList: allUserActivationConditionsList,
                           resultMessage: resultMessage
                         }
 
