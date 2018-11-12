@@ -133,151 +133,154 @@ export default class Session extends React.Component {
           allUserDevicesList = details.allUserDevicesList;
           allUserActivationConditionsList = details.allUserActivationConditionsList;
 
-          allUserActivationConditionsList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום' && ac.IsActive === true));
+          if (allUserActivationConditionsList != null)
+          {
+            allUserActivationConditionsList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום' && ac.IsActive === true));
 
-          allUserActivationConditionsList.forEach((ac) => {
-            var home = homeList.find((h) => (h.HomeId === ac.HomeId));
-            var room = allUserRoomsList.find((r) => (r.RoomId === ac.RoomId));
-            var device = allUserDevicesList.find((d) => (d.DeviceId === ac.DeviceId && d.RoomId === ac.RoomId));
-            var aGCLatitude = home.Latitude;
-            var aGCLongitude = home.Longitude;
-            var aGCAltitude = home.Altitude;
-            var aGCAccuracy = home.Accuracy;
-            var distanceParam = '';
-            distanceParam = ac.DistanceOrTimeParam;
-            var distanceParamArray = new Array();
-            var distanceParamNumber = 0;
-
-            if (distanceParam.toLowerCase().includes('km') || distanceParam.toLowerCase().includes('kilometers')) {
-              distanceParamArray = distanceParam.toLowerCase().split('k');
-              distanceParamNumber = distanceParamArray[0] * 1000;
-              console.log("distanceParamNumber = " + distanceParamNumber);
-            }
-
-            if (currentLatitude > aGCLatitude)
-            //The device is currently north of the address
-            {
-              if (((currentHeading >= 0 && currentHeading < 90) || (currentHeading > 270 && currentHeading <= 360)) && currentSpeed > 5000 / 3600)
-              //The device is also moving north
+            allUserActivationConditionsList.forEach((ac) => {
+              var home = homeList.find((h) => (h.HomeId === ac.HomeId));
+              var room = allUserRoomsList.find((r) => (r.RoomId === ac.RoomId));
+              var device = allUserDevicesList.find((d) => (d.DeviceId === ac.DeviceId && d.RoomId === ac.RoomId));
+              var aGCLatitude = home.Latitude;
+              var aGCLongitude = home.Longitude;
+              var aGCAltitude = home.Altitude;
+              var aGCAccuracy = home.Accuracy;
+              var distanceParam = '';
+              distanceParam = ac.DistanceOrTimeParam;
+              var distanceParamArray = new Array();
+              var distanceParamNumber = 0;
+  
+              if (distanceParam.toLowerCase().includes('km') || distanceParam.toLowerCase().includes('kilometers')) {
+                distanceParamArray = distanceParam.toLowerCase().split('k');
+                distanceParamNumber = distanceParamArray[0] * 1000;
+                console.log("distanceParamNumber = " + distanceParamNumber);
+              }
+  
+              if (currentLatitude > aGCLatitude)
+              //The device is currently north of the address
               {
-                return;
+                if (((currentHeading >= 0 && currentHeading < 90) || (currentHeading > 270 && currentHeading <= 360)) && currentSpeed > 5000 / 3600)
+                //The device is also moving north
+                {
+                  return;
+                }
               }
-            }
-
-            if (currentLatitude < aGCLatitude)
-            //The device is currently south of the address
-            {
-              if (currentHeading > 90 && currentHeading < 270 && currentSpeed > 5000 / 3600)
-              //The device is also moving south
+  
+              if (currentLatitude < aGCLatitude)
+              //The device is currently south of the address
               {
-                return;
+                if (currentHeading > 90 && currentHeading < 270 && currentSpeed > 5000 / 3600)
+                //The device is also moving south
+                {
+                  return;
+                }
               }
-            }
-
-            if (currentLongitude > aGCLongitude)
-            //The device is currently east of the address
-            {
-              if (currentHeading > 0 && currentHeading < 180 && currentSpeed > 5000 / 3600)
-              //The device is also moving east
+  
+              if (currentLongitude > aGCLongitude)
+              //The device is currently east of the address
               {
-                return;
+                if (currentHeading > 0 && currentHeading < 180 && currentSpeed > 5000 / 3600)
+                //The device is also moving east
+                {
+                  return;
+                }
               }
-            }
-
-            if (currentLongitude < aGCLongitude)
-            //The device is currently west of the address
-            {
-              if (currentHeading > 180 && currentHeading < 360 && currentSpeed > 5000 / 3600)
-              //The device is also moving west
+  
+              if (currentLongitude < aGCLongitude)
+              //The device is currently west of the address
               {
-                return;
+                if (currentHeading > 180 && currentHeading < 360 && currentSpeed > 5000 / 3600)
+                //The device is also moving west
+                {
+                  return;
+                }
               }
-            }
-
-            var currentDistance = geolib.getDistance({ latitude: aGCLatitude, longitude: aGCLongitude }, { latitude: currentLatitude, longitude: currentLongitude });
-            console.log("currentDistance = " + currentDistance);
-
-            if (currentDistance <= distanceParamNumber && currentDistance > 5 && currentSpeed > 0) {
-              var userId = appUser.UserId;
-              var deviceId = ac.DeviceId;
-              var roomId = ac.RoomId;
-              var turnOn = ac.TurnOn;
-              var statusDetails = '';
-              var conditionId = ac.ConditionId;
-
-              if (ac.ActivationParam == '' || ac.ActivationParam == null) {
-                statusDetails = 'null';
-              }
-              else {
-                statusDetails = ac.ActivationParam;
-              }
-
-              var request = {
-                userId,
-                deviceId,
-                roomId,
-                turnOn,
-                activationMethodCode: '3',
-                statusDetails,
-                conditionId
-              }
-
-              fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
-                method: 'POST',
-                headers: new Headers({
-                  'Content-Type': 'application/json;'
-                }),
-                body: JSON.stringify(request)
-              })
-                .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-                .then((result) => { // no error in server
-                  let changeData = JSON.parse(result.d);
-
-                  switch (changeData) {
-                    case -2:
-                      {
-                        console.log("You do not have permission to change this device's status right now.");
-                        break;
-                      }
-                    case -1:
-                      {
-                        console.log("Data Error!");
-                        break;
-                      }
-                    case 0:
-                      {
-                        console.log("Action aborted, as it does not actually change the device's current status.");
-                        break;
-                      }
-                    default:
-                      {
-                        var index = allUserDevicesList.findIndex((d) => (d.DeviceId === deviceId && d.RoomId === roomId));
-                        allUserDevicesList[index].IsOn = turnOn;
-                        var detailsNew = {
-                          appUser: appUser,
-                          userList: userList,
-                          homeList: homeList,
-                          allUserRoomsList: allUserRoomsList,
-                          allUserDevicesList: allUserDevicesList,
-                          allUserActivationConditionsList: allUserActivationConditionsList,
-                          resultMessage: resultMessage
-                        }
-
-                        var detailsNewStr = JSON.stringify(detailsNew);
-
-                        AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
-                          alert(device.DeviceName + "'s status in " + room.RoomName + " in " + home.HomeName + " has changed.");
-                        });
-
-                        break;
-                      }
-                  }
+  
+              var currentDistance = geolib.getDistance({ latitude: aGCLatitude, longitude: aGCLongitude }, { latitude: currentLatitude, longitude: currentLongitude });
+              console.log("currentDistance = " + currentDistance);
+  
+              if (currentDistance <= distanceParamNumber && currentDistance > 5 && currentSpeed > 0) {
+                var userId = appUser.UserId;
+                var deviceId = ac.DeviceId;
+                var roomId = ac.RoomId;
+                var turnOn = ac.TurnOn;
+                var statusDetails = '';
+                var conditionId = ac.ConditionId;
+  
+                if (ac.ActivationParam == '' || ac.ActivationParam == null) {
+                  statusDetails = 'null';
+                }
+                else {
+                  statusDetails = ac.ActivationParam;
+                }
+  
+                var request = {
+                  userId,
+                  deviceId,
+                  roomId,
+                  turnOn,
+                  activationMethodCode: '3',
+                  statusDetails,
+                  conditionId
+                }
+  
+                fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
+                  method: 'POST',
+                  headers: new Headers({
+                    'Content-Type': 'application/json;'
+                  }),
+                  body: JSON.stringify(request)
                 })
-                .catch((error) => {
-                  console.log("A connection Error has occurred.");
-                });
-            }
-          });
+                  .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+                  .then((result) => { // no error in server
+                    let changeData = JSON.parse(result.d);
+  
+                    switch (changeData) {
+                      case -2:
+                        {
+                          console.log("You do not have permission to change this device's status right now.");
+                          break;
+                        }
+                      case -1:
+                        {
+                          console.log("Data Error!");
+                          break;
+                        }
+                      case 0:
+                        {
+                          console.log("Action aborted, as it does not actually change the device's current status.");
+                          break;
+                        }
+                      default:
+                        {
+                          var index = allUserDevicesList.findIndex((d) => (d.DeviceId === deviceId && d.RoomId === roomId));
+                          allUserDevicesList[index].IsOn = turnOn;
+                          var detailsNew = {
+                            appUser: appUser,
+                            userList: userList,
+                            homeList: homeList,
+                            allUserRoomsList: allUserRoomsList,
+                            allUserDevicesList: allUserDevicesList,
+                            allUserActivationConditionsList: allUserActivationConditionsList,
+                            resultMessage: resultMessage
+                          }
+  
+                          var detailsNewStr = JSON.stringify(detailsNew);
+  
+                          AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                            alert(device.DeviceName + "'s status in " + room.RoomName + " in " + home.HomeName + " has changed.");
+                          });
+  
+                          break;
+                        }
+                    }
+                  })
+                  .catch((error) => {
+                    console.log("A connection Error has occurred.");
+                  });
+              }
+            });
+          }
         });
       },
       (error) => console.log(error.message),
