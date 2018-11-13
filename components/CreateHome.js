@@ -50,6 +50,7 @@ export default class CreateHome extends React.Component {
     }
 
     Location.geocodeAsync(address).then((addressGC) => {
+      console.log('addressGC = ' + JSON.stringify(addressGC));
       var request = {
         userId,
         homeName,

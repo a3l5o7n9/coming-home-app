@@ -12,7 +12,8 @@ export default class Home extends React.Component {
 
     this.state = {
       appUser: {},
-      home: {}
+      home: {},
+      userTypeName: {}
     }
   }
 
@@ -23,9 +24,16 @@ export default class Home extends React.Component {
       AsyncStorage.getItem('detailsStr').then((value) => {
         details = JSON.parse(value);
 
+        var userList = new Array();
+
+        userList = details.userList;
+
+        var homeUser = userList.find((u) => (u.HomeId === home.HomeId));
+
         this.setState({
           appUser: details.appUser,
-          home: home
+          home: home,
+          userTypeName: homeUser.UserTypeName
         });
 
         this.getUserHomeDetails();
@@ -142,6 +150,9 @@ export default class Home extends React.Component {
   }
 
   render() {
+    var {userTypeName} = this.state;
+    var disableUsersButton = userTypeName === 'דייר';
+
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -167,7 +178,7 @@ export default class Home extends React.Component {
               />
             </View>
             <View style={{borderColor:'lightcyan', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'cyan', flexWrap: 'wrap' }}>
-              <Button primary text="Users" onPress={() => {
+              <Button primary text="Users" disabled={disableUsersButton} onPress={() => {
                   this.getUserHomeDetails(); 
                   this.props.navigation.navigate("Users");
                 }} 

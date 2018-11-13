@@ -58,6 +58,7 @@ export default class JoinHome extends React.Component {
     }
 
     Location.geocodeAsync(address).then((addressGC) => {
+      console.log('addressGC = ' + JSON.stringify(addressGC));
       var request = {
         userId,
         homeName,
@@ -133,7 +134,7 @@ export default class JoinHome extends React.Component {
           let detailsNewStr = JSON.stringify(detailsNew);
 
           AsyncStorage.setItem('homeStr', homeStr).then(() => {
-            AsyncStorage.setItem('detailsStr',setailsNewStr).then(() => {
+            AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
               this.props.navigation.navigate("Home");
             });
           });
@@ -161,7 +162,7 @@ export default class JoinHome extends React.Component {
             <TextInput style={styles.textInputStyle} value={this.state.address} placeholder="Address" onChangeText={(address) => this.setState({ address })}></TextInput>
           </View>
           <View style={styles.submitButtonViewStyle}>
-            <Button primary text="Create" onPress={this.joinHome} />
+            <Button primary text="Join" onPress={this.joinHome} />
           </View>
           <View style={styles.cancelButtonViewStyle}>
             <Button primary text="Cancel" onPress={() => { this.props.navigation.navigate("MainPage") }} />
