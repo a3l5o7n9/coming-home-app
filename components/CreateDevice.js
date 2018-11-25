@@ -217,39 +217,57 @@ export default class CreateDevice extends React.Component {
       var roomList = new Array();
       roomList = this.state.roomList;
       var accessibleRoomList = roomList.filter((ro) => (ro.HasAccess === true));
-      
-      return (
-        <Picker
-          style={styles.pickerStyle}
-          selectedValue={this.state.room.RoomId}
-          onValueChange={(itemValue) => {
-            var room = this.state.roomList.find((room) => room.RoomId === itemValue);
-            this.setState({ room: room })
-          }}
-        >
-          {
-            accessibleRoomList.map((r) => {
-              return (
-                <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
-              );
-            })
-          }
-        </Picker>
-      );
+      if (accessibleRoomList != null)
+      {
+        if (accessibleRoomList.length > 1)
+        {
+          return (
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={this.state.room.RoomId}
+              onValueChange={(itemValue) => {
+                var room = this.state.roomList.find((room) => room.RoomId === itemValue);
+                this.setState({ room: room })
+              }}
+            >
+              {
+                accessibleRoomList.map((r) => {
+                  return (
+                    <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
+                  );
+                })
+              }
+            </Picker>
+          );
+        }
+        else if (accessibleRoomList.length == 1)
+        {
+          var defaultRoom = accessibleRoomList[0];
+          return(
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={this.state.room.RoomId}
+              onValueChange={(itemValue) => {
+                var {room} = defaultRoom
+                this.setState({ room: room })
+              }}
+            > 
+                <Picker.Item key={defaultRoom.RoomId} label={defaultRoom.RoomName} value={defaultRoom.RoomId} />
+            </Picker>
+          );
+        }
+      }
+      else
+      {
+        return(
+          <Text style={styles.textStyle}>You do not possess permissions to add devices to any of the rooms in this home</Text>
+        );
+      }
     }
     else
     {
       return(
-        <Picker
-          style={styles.pickerStyle}
-          selectedValue={this.state.room.RoomId}
-          onValueChange={(itemValue) => {
-            var {room} = this.state
-            this.setState({ room: room })
-          }}
-        > 
-            <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
-        </Picker>
+        <Text style={styles.textStyle}>You must create a room first!</Text>
       );
     }
   }

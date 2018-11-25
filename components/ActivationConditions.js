@@ -112,13 +112,15 @@ export default class ActivationConditions extends React.Component {
         var room = {
           RoomId: '',
           RoomName: '',
-          RoomTypeName: ''
+          RoomTypeName: '',
+          HasAccess: false
         }
 
         var device = {
           DeviceId: '',
           DeviceName: '',
-          DeviceTypeName: ''
+          DeviceTypeName: '',
+          HasPermission: false
         }
 
         let activationMethodsStr = JSON.stringify(activationMethods);

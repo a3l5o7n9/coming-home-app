@@ -88,8 +88,8 @@ export default class CreateActivationCondition extends React.Component {
   createActivationCondition = () => {
     const userId = this.state.appUser['UserId'];
     const homeId = this.state.home['HomeId'];
-    const device = this.state.device;
-    const room = this.state.room;
+    var device = this.state.device;
+    var room = this.state.room;
     var { conditionName, turnOn, activationMethodName, distanceOrTimeParam, activationParam } = this.state;
 
     if (conditionName == '' || activationMethodName == '' || device.DeviceId == '' || room.RoomId == '') {
@@ -240,106 +240,154 @@ export default class CreateActivationCondition extends React.Component {
   }
 
   pickDevice = () => {
-    if (this.state.room.RoomId == '') {
-      if (this.state.deviceList != null) {
-        return (
-          <Picker
-            style={styles.pickerStyle}
-            selectedValue={this.state.device.DeviceId}
-            onValueChange={(itemValue) => {
-              var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
-              this.setState({ device: device })
-            }}
-          >
+    if (this.state.deviceList != null) {
+      var filteredDeviceList = this.state.deviceList.filter((d) => (d.HasPermission === true));
+      if (filteredDeviceList != null) {
+        if  (this.state.room.RoomId == ''){
+          if (filteredDeviceList.length > 1)
+          {
+            return (
+              <Picker
+                style={styles.pickerStyle}
+                selectedValue={this.state.device.DeviceId}
+                onValueChange={(itemValue) => {
+                  var device = this.state.deviceList.find((device) => device.DeviceId === itemValue);
+                  this.setState({ device: device })
+                }}
+              >
+                {
+                  filteredDeviceList.map((d) => {
+                    return (
+                      <Picker.Item key={d.DeviceId} label={d.DeviceName} value={d.DeviceId} />
+                    )
+                  })
+                }
+              </Picker>
+            );
+          }
+          else if(filteredDeviceList.length == 1)
+          {
+            var defaultDevice = filteredDeviceList[0];
+            return (
+              <Picker
+                style={styles.pickerStyle}
+                selectedValue={this.state.device.DeviceId}
+                onValueChange={(itemValue) => {
+                  var { device } = defaultDevice
+                  this.setState({ device: device })
+                }}
+              >
+                <Picker.Item key={device.DeviceId} label={device.DeviceName} value={device.DeviceId} />
+              </Picker>
+            );
+          }
+        }
+        else {
+          var filteredDeviceListInRoom = this.state.deviceList.filter((d) => (d.RoomId === this.state.room.RoomId && d.HasPermission === true));
+          if (filteredDeviceListInRoom != null) {
+            if (filteredDeviceListInRoom.length > 1)
             {
-              this.state.deviceList.map((d) => {
-                return (
-                  <Picker.Item key={d.DeviceId} label={d.DeviceName} value={d.DeviceId} />
-                )
-              })
+              return (
+                <Picker
+                  style={styles.pickerStyle}
+                  selectedValue={this.state.device.DeviceId}
+                  onValueChange={(itemValue) => {
+                    var device = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
+                    this.setState({ device: device })
+                  }}
+                >
+                  {
+                    filteredDeviceListInRoom.map((d) => {
+                      return (
+                        <Picker.Item key={d.DeviceId} label={d.DeviceName} value={d.DeviceId} />
+                      )
+                    })
+                  }
+                </Picker>
+              );
             }
-          </Picker>
-        );
+            else if (filteredDeviceListInRoom.length == 1)
+            {
+              var defaultDevice = filteredDeviceListInRoom[0];
+              return (
+                <Picker
+                  style={styles.pickerStyle}
+                  selectedValue={this.state.device.DeviceId}
+                  onValueChange={(itemValue) => {
+                    var { device } = defaultDevice
+                    this.setState({ device: device })
+                  }}
+                >
+                  <Picker.Item key={defaultDevice.DeviceId} label={defaultDevice.DeviceName} value={defaultDevice.DeviceId} />
+                </Picker>
+              );
+            }
+          }
+          else {
+            return (
+              <Text style={styles.textStyle}>There are no devices in this room that you have permission to</Text>
+            );
+          }
+        }
       }
-      else {
+      else
+      {
         return (
-          <Text style={styles.textStyle}>You must create a room and a device first!</Text>
+          <Text style={styles.textStyle}>You must gain permissions to devices in this home first!</Text>
         );
       }
     }
     else {
-      if (this.state.deviceList != null) {
-        var filteredDeviceList = this.state.deviceList.filter((d) => (d.RoomId === this.state.room.RoomId));
-        return (
-          <Picker
-            style={styles.pickerStyle}
-            selectedValue={this.state.device.DeviceId}
-            onValueChange={(itemValue) => {
-              var device = this.state.deviceList.find((device) => device.DeviceId === itemValue && device.RoomId === this.state.room.RoomId);
-              this.setState({ device: device })
-            }}
-          >
-            {
-              filteredDeviceList.map((d) => {
-                return (
-                  <Picker.Item key={d.DeviceId} label={d.DeviceName} value={d.DeviceId} />
-                )
-              })
-            }
-          </Picker>
-        );
-      }
-      else {
-        return (
-          <Picker
-            style={styles.pickerStyle}
-            selectedValue={this.state.device.DeviceId}
-            onValueChange={(itemValue) => {
-              var { device } = this.state;
-              this.setState({ device: device })
-            }}
-          >
-            <Picker.Item key={device.DeviceId} label={device.DeviceName} value={device.DeviceId} />
-          </Picker>
-        );
-      }
+      return (
+        <Text style={styles.textStyle}>You must create a room and a device first!</Text>
+      );
     }
   }
 
   pickRoom = () => {
     if (this.state.roomList != null) {
-      return (
-        <Picker
-          style={styles.pickerStyle}
-          selectedValue={this.state.room.RoomId}
-          onValueChange={(itemValue) => {
-            var room = this.state.roomList.find((room) => room.RoomId === itemValue);
-            this.setState({ room: room })
-          }}
-        >
-          {
-            this.state.roomList.map((r) => {
-              return (
-                <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
-              );
-            })
-          }
-        </Picker>
-      );
+      if (this.state.roomList.length > 1)
+      {
+        return (
+          <Picker
+            style={styles.pickerStyle}
+            selectedValue={this.state.room.RoomId}
+            onValueChange={(itemValue) => {
+              var room = this.state.roomList.find((room) => room.RoomId === itemValue);
+              this.setState({ room: room })
+            }}
+          >
+            {
+              this.state.roomList.map((r) => {
+                return (
+                  <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
+                );
+              })
+            }
+          </Picker>
+        );
+      }
+      else if (this.state.roomList.length == 1)
+      {
+        var defaultRoom = this.state.roomList[0];
+        return (
+          <Picker
+            style={styles.pickerStyle}
+            selectedValue={this.state.room.RoomId}
+            onValueChange={(itemValue) => {
+              var { room } = defaultRoom
+              this.setState({ room: room })
+            }}
+          >
+            <Picker.Item key={defaultRoom.RoomId} label={defaultRoom.RoomName} value={defaultRoom.RoomId} />
+          </Picker>
+        );
+      }
     }
     else {
-      return (
-        <Picker
-          style={styles.pickerStyle}
-          selectedValue={this.state.room.RoomId}
-          onValueChange={(itemValue) => {
-            var { room } = this.state
-            this.setState({ room: room })
-          }}
-        >
-          <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
-        </Picker>
-      );
+      return(
+        <Text style={styles.textStyle}>You must create a room and a device first!</Text>
+      )
     }
   }
 
