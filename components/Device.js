@@ -258,6 +258,7 @@ export default class Device extends React.Component {
       RoomId: '',
       RoomName: '',
       RoomTypeName: '',
+      HasAccess: 'false'
     }
 
     var roomStr = JSON.stringify(room);

@@ -30,56 +30,6 @@ export default class App extends React.Component {
     this.setState({ notification: notification });
   };
 
-  // getDeviceCurrentPositionAsync() {
-  //   debugger;
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const output= 
-  //       'latitude=' + position.coords.latitude +
-  //       '\nlongitude=' + position.coords.longitude +
-  //       '\naltitude=' + position.coords.altitude +
-  //       '\nheading=' + position.coords.heading +
-  //       '\nspeed=' + position.coords.speed
-
-  //       AsyncStorage.getItem('userActivationConditionListStr').then((value) => {
-  //         userActivationConditionList = JSON.parse(value);
-
-  //         AsyncStorage.getItem('detailsStr').then((value) => {
-  //           details = JSON.parse(value);
-
-  //           var homeList = new Array();
-
-  //           homeList = details.homeList;
-
-  //           var activationConditionList = new Array();
-
-  //           activationConditionList = userActivationConditionList;
-
-  //           activationConditionList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום'));
-
-  //           activationConditionList.forEach((ac) => {
-  //             var home = homeList.find((h) => (h.HomeId === ac.HomeId));
-  //             var address = home.Address;
-
-  //             console.log(address);
-
-  //             var addressCoords = Location.geocodeAsync(address).then(() => {
-  //               console.log('latitude=' + addressCoords.coords.latitude +
-  //               ' longitude=' + addressCoords.coords.longitude +
-  //               ' altitude=' + addressCoords.coords.altitude +
-  //               ' heading=' + addressCoords.coords.heading +
-  //               ' speed=' + addressCoords.coords.speed);
-  //             });
-  //           });
-  //         });
-  //       });
-  //       alert(output);
-  //     },
-  //     (error) => alert(error.message),
-  //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-  //   );
-  // }
-
   render() {
     return (
       <AppNavigator />

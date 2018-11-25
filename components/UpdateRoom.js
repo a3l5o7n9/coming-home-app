@@ -113,6 +113,7 @@ export default class UpdateRoom extends React.Component {
                 RoomTypeName: newRoomTypeName,
                 HomeId: homeId,
                 IsShared: newShareStatus == 'null' ? this.state.room.IsShared : newShareStatus,
+                HasAccess: this.state.room.HasAccess
               }
 
               AsyncStorage.getItem('roomsStr').then((value) => {

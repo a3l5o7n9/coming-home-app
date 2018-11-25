@@ -17,7 +17,8 @@ export default class Room extends React.Component {
       room: {
         RoomId: '',
         RoomName: '',
-        RoomTypeName: ''
+        RoomTypeName: '',
+        HasAccess: false
       },
       deviceList: [],
       userList: [],

@@ -50,23 +50,37 @@ export default class Rooms extends React.Component {
 
   showRooms = () => {
     if (this.state.roomList != null) {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.textStyle}>Your Rooms</Text>
-          {
-            this.state.roomList.map((room, RoomId) => (
-              <View key={RoomId} style={{margin:5, borderColor:'blue', borderRadius:10, borderWidth:5, backgroundColor:'powderblue', flex: 1, flexDirection:'row', alignItems: 'center' }}>
-                <Button primary text={room["RoomName"] + "\n" + room["RoomTypeName"]} onPress={() => {
-                  let roomStr = JSON.stringify(room);
-                  AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                    this.props.navigation.navigate("Room");
-                  });
-                }} />
-              </View>
-            ))
-          }
-        </View>
-      );
+      var accessibleRoomList = new Array();
+      accessibleRoomList = this.state.roomList.filter((ro) => ro.HasAccess === true)
+
+      if (accessibleRoomList != null) {
+        return (
+          <View style={styles.container}>
+            <Text style={styles.textStyle}>Your Rooms</Text>
+            {
+              this.state.roomList.map((room, RoomId) => (
+                <View key={RoomId} style={{ margin: 5, borderColor: 'blue', borderRadius: 10, borderWidth: 5, backgroundColor: 'powderblue', flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                  <Button primary text={room["RoomName"] + "\n" + room["RoomTypeName"]} onPress={() => {
+                    let roomStr = JSON.stringify(room);
+                    AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                      this.props.navigation.navigate("Room");
+                    });
+                  }} />
+                </View>
+              ))
+            }
+          </View>
+        );
+      }
+      else {
+        return (
+          <View>
+            {
+              <Text style={styles.textStyle}>There are no rooms in your home that you have access to</Text>
+            }
+          </View>
+        );
+      }
     }
     else {
       return (
@@ -79,8 +93,7 @@ export default class Rooms extends React.Component {
     }
   }
 
-  goToCreateRoom = () =>
-  {
+  goToCreateRoom = () => {
     fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetRoomTypes", {
       method: 'POST',
       headers: new Headers({
@@ -111,7 +124,7 @@ export default class Rooms extends React.Component {
             {this.showRooms()}
           </View>
           <View style={styles.createButtonStyle}>
-            <Button primary text="Add New Room" onPress={ this.goToCreateRoom } />
+            <Button primary text="Add New Room" onPress={this.goToCreateRoom} />
           </View>
           <View style={styles.homeButtonStyle}>
             <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
@@ -124,7 +137,7 @@ export default class Rooms extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width:'100%',
+    width: '100%',
     backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
@@ -138,17 +151,17 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   createButtonStyle: {
-    margin:5,
-    backgroundColor:'yellow',
-    borderColor:'gold',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'yellow',
+    borderColor: 'gold',
+    borderRadius: 50,
+    borderWidth: 1
   },
   homeButtonStyle: {
-    margin:5,
-    backgroundColor:'lightblue',
-    borderColor:'blue',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightblue',
+    borderColor: 'blue',
+    borderRadius: 50,
+    borderWidth: 1
   },
 });

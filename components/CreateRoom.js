@@ -94,7 +94,8 @@ export default class CreateRoom extends React.Component {
                 RoomName: roomName,
                 RoomTypeName: roomTypeName,
                 HomeId: homeId,
-                IsShared: isShared
+                IsShared: isShared,
+                HasAccess: true
               }
 
               AsyncStorage.getItem('roomsStr').then((value) => {

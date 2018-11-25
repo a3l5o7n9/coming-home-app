@@ -85,6 +85,9 @@ export default class Users extends React.Component {
           <View>
             {this.showUsers()}
           </View>
+          <View style={styles.inviteButtonStyle}>
+            <Button primary text="Invite New User" onPress={() => {this.props.navigation.navigate("InviteUser")}}/>
+          </View>
           <View style={styles.homeButtonStyle}>
             <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
           </View>
@@ -116,4 +119,11 @@ const styles = StyleSheet.create({
     borderRadius:50,
     borderWidth:1
   },
+  inviteButtonStyle: {
+    margin:5,
+    backgroundColor:'orange',
+    borderColor:'orange',
+    borderRadius:50,
+    borderWidth:1
+  }
 });

@@ -16,7 +16,8 @@ export default class CreateDevice extends React.Component {
       room: {
         RoomId: '',
         RoomName: '',
-        RoomTypeName: ''
+        RoomTypeName: '',
+        HasAccess: false
       },
       roomList: [],
       deviceName: '',
@@ -73,6 +74,13 @@ export default class CreateDevice extends React.Component {
     const homeId = this.state.home['HomeId'];
     const roomId = this.state.room['RoomId'];
     const { deviceName, deviceTypeName, isDividedIntoRooms } = this.state;
+    var hasRoomAccess = this.state.room.HasAccess;
+
+    if (hasRoomAccess == false)
+    {
+      alert("You do not have access to this room.");
+      return;
+    }
 
     if (deviceName == '' || deviceTypeName == '' || roomId == '') {
       alert("Creating a device requires a device name, a device type name, and an indication if it is divided into rooms.");
@@ -115,7 +123,8 @@ export default class CreateDevice extends React.Component {
                 HomeId: homeId,
                 IsDividedIntoRooms: isDividedIntoRooms,
                 RoomId: roomId,
-                IsOn: false
+                IsOn: false,
+                HasPermission: true
               }
 
               AsyncStorage.getItem('devicesStr').then((value) => {
@@ -205,6 +214,10 @@ export default class CreateDevice extends React.Component {
   pickRoom = () => {
     if (this.state.roomList != null) 
     {
+      var roomList = new Array();
+      roomList = this.state.roomList;
+      var accessibleRoomList = roomList.filter((ro) => (ro.HasAccess === true));
+      
       return (
         <Picker
           style={styles.pickerStyle}
@@ -215,7 +228,7 @@ export default class CreateDevice extends React.Component {
           }}
         >
           {
-            this.state.roomList.map((r) => {
+            accessibleRoomList.map((r) => {
               return (
                 <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
               );

@@ -22,7 +22,8 @@ export default class UpdateDevice extends React.Component {
       room: {
         RoomId: '',
         RoomName: '',
-        RoomTypeName: ''
+        RoomTypeName: '',
+        HasAccess: false
       },
       device: {},
       roomList: [],
@@ -134,7 +135,8 @@ export default class UpdateDevice extends React.Component {
                 HomeId: homeId,
                 IsDividedIntoRooms: newDivideStatus == 'null' ? this.state.device.IsDividedIntoRooms : newDivideStatus,
                 RoomId: this.state.room.RoomId,
-                IsOn: this.state.device.IsOn
+                IsOn: this.state.device.IsOn,
+                HasPermission: this.state.device.HasPermission
               }
 
               AsyncStorage.getItem('devicesStr').then((value) => {

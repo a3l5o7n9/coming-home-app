@@ -128,8 +128,7 @@ export default class BindDeviceToRoom extends React.Component {
 
               var allUserDevicesList = [];
 
-              if (this.state.allUserDevicesList != null)
-              {
+              if (this.state.allUserDevicesList != null) {
                 allUserDevicesList = this.state.allUserDevicesList;
               }
 
@@ -161,7 +160,7 @@ export default class BindDeviceToRoom extends React.Component {
                     var { room } = this.state;
 
                     let roomStr = JSON.stringify(room);
-  
+
                     AsyncStorage.setItem('roomStr', roomStr).then(() => {
                       this.props.navigation.navigate("Device");
                     });
@@ -182,24 +181,44 @@ export default class BindDeviceToRoom extends React.Component {
     var { room } = this.state;
     if (room.RoomId == '') {
       if (this.state.roomList != null) {
-        return (
-          <Picker
-            style={styles.pickerStyle}
-            selectedValue={this.state.room.RoomId}
-            onValueChange={(itemValue) => {
-              var room = this.state.roomList.find((room) => room.RoomId === itemValue);
-              this.setState({ room: room })
-            }}
-          >
-            {
-              this.state.roomList.map((r) => {
-                return (
-                  <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
-                );
-              })
-            }
-          </Picker>
-        );
+        var roomList = new Array();
+        roomList = this.state.roomList;
+        var accessibleRoomList = roomList.filter((ro) => ro.HasAccess === true);
+
+        if (accessibleRoomList != null) {
+          return (
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={this.state.room.RoomId}
+              onValueChange={(itemValue) => {
+                var room = this.state.roomList.find((room) => room.RoomId === itemValue);
+                this.setState({ room: room })
+              }}
+            >
+              {
+                accessibleRoomList.map((r) => {
+                  return (
+                    <Picker.Item key={r.RoomId} label={r.RoomName} value={r.RoomId} />
+                  );
+                })
+              }
+            </Picker>
+          );
+        }
+        else {
+          return (
+            <Picker
+              style={styles.pickerStyle}
+              selectedValue={this.state.room.RoomId}
+              onValueChange={(itemValue) => {
+                var { room } = this.state
+                this.setState({ room: room })
+              }}
+            >
+              <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
+            </Picker>
+          );
+        }
       }
       else {
         return (
@@ -216,27 +235,12 @@ export default class BindDeviceToRoom extends React.Component {
         );
       }
     }
-    else {
-      return (
-        <Picker
-          style={styles.pickerStyle}
-          selectedValue={this.state.room.RoomId}
-          onValueChange={(itemValue) => {
-            var { room } = this.state
-            this.setState({ room: room })
-          }}
-        >
-          <Picker.Item key={room.RoomId} label={room.RoomName} value={room.RoomId} />
-        </Picker>
-      )
-    }
   }
 
   pickDevice = () => {
     var { device } = this.state;
 
-    if (this.state.deviceList != null) 
-    {
+    if (this.state.deviceList != null) {
       return (
         <Picker
           style={styles.pickerStyle}
@@ -256,8 +260,7 @@ export default class BindDeviceToRoom extends React.Component {
         </Picker>
       );
     }
-    else 
-    {
+    else {
       return (
         <Picker
           style={styles.pickerStyle}
@@ -307,39 +310,39 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
-    color:'green',
+    color: 'green',
   },
   textInputStyle: {
     fontSize: 25,
   },
   textViewStyle: {
-    margin:5,
+    margin: 5,
   },
   textInputViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1
   },
   submitButtonViewStyle: {
-    margin:5,
-    backgroundColor:'lightgrey',
-    borderColor:'silver',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightgrey',
+    borderColor: 'silver',
+    borderRadius: 50,
+    borderWidth: 1
   },
   cancelButtonViewStyle: {
-    margin:5,
-    backgroundColor:'grey',
-    borderColor:'lightgrey',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'grey',
+    borderColor: 'lightgrey',
+    borderRadius: 50,
+    borderWidth: 1
   },
-  pickerStyle: { 
-    width: '80%', 
-    borderColor: 'black', 
-    borderRadius:5, 
-    borderWidth: 2 
+  pickerStyle: {
+    width: '80%',
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 2
   },
 });
 
