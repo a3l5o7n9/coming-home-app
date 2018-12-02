@@ -97,7 +97,7 @@ export default class Session extends React.Component {
 
   componentDidMount() {
     registerForPushNotificationsAsync();
-    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 100 }, (position) => this.getDeviceCurrentPositionAsync());
+    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 6000, distanceInterval: 10 }, (position) => this.getDeviceCurrentPositionAsync());
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
@@ -105,9 +105,7 @@ export default class Session extends React.Component {
     // this function will fire on the next tick after the app starts
     // with the notification data.
     this._notificationSubscription = Notifications.addListener(this._handleNotification);
-  }
 
-  async componentDidMount() {
     try {
       AsyncStorage.getItem('userTypesStr').then((value) => {
         userTypes = JSON.parse(value);
@@ -136,74 +134,6 @@ export default class Session extends React.Component {
       error(error);
     }
   }
-
-  // async componentDidMount() {
-  //   try {
-  //     const userTypesDataStr = await AsyncStorage.getItem('userTypesStr');
-
-  //     if (userTypesDataStr !== null)
-  //     {
-  //       const userTypesData = JSON.parse(userTypesDataStr);
-  //       console.log('userTypes = ' + JSON.stringify(userTypesData));
-
-  //       this.setState({userTypes : userTypesData});
-  //     }
-  //   }
-  //   catch(error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // async componentDidMount() {
-  //   try {
-  //     const roomTypesDataStr = await AsyncStorage.getItem('roomTypesStr');
-
-  //     if (roomTypesDataStr !== null)
-  //     {
-  //       const roomTypesData = JSON.parse(roomTypesDataStr);
-  //       console.log('roomTypes = ' + JSON.stringify(roomTypesData));
-
-  //       this.setState({roomTypes : roomTypesData});
-  //     }
-  //   }
-  //   catch(error) {
-  //     console.log("Error fetching roomTypes ",error);
-  //   }
-  // }
-
-  // async componentDidMount() {
-  //   try {
-  //     const deviceTypesDataStr = await AsyncStorage.getItem('deviceTypesStr');
-
-  //     if (deviceTypesDataStr !== null)
-  //     {
-  //       const deviceTypesData = JSON.parse(deviceTypesDataStr);
-  //       console.log('deviceTypes = ' + JSON.stringify(deviceTypesData));
-
-  //       this.setState({deviceTypes : deviceTypesData});
-  //     }
-  //   }
-  //   catch(error) {
-  //     console.log("Error fetching deviceTypes ",error);
-  //   }
-  // }
-
-  // async componentDidMount() {
-  //   try {
-  //     const activationMethodsDataStr = await AsyncStorage.getItem('activationMethodsStr');
-
-  //     if (activationMethodsDataStr !== null)
-  //     {
-  //       const activationMethodsData = JSON.parse(activationMethodsDataStr);
-  //       console.log('activationMethods = ' + JSON.stringify(activationMethodsData));
-
-  //       this.setState({activationMethods : activationMethodsData});
-  //     }
-  //   }
-  //   catch(error) {
-  //     console.log("Error fetching activationMethods ",error);
-  //   }
-  // }
 
   _handleNotification = (notification) => {
     this.setState({ notification: notification });
@@ -349,7 +279,7 @@ export default class Session extends React.Component {
                     switch (changeData) {
                       case -2:
                         {
-                          console.log("You do not have permission to change this device's status right now.");
+                          console.log("Lacking permission to change this device's status right now.");
                           break;
                         }
                       case -1:
@@ -414,7 +344,6 @@ export default class Session extends React.Component {
         let userTypesStr = JSON.stringify(userTypes);
 
         AsyncStorage.setItem('userTypesStr', userTypesStr).then(() => {
-          console.log('userTypes = ' + userTypesStr);
           this.setState({userTypes : userTypes});
         });
       })
@@ -438,7 +367,6 @@ export default class Session extends React.Component {
         let roomTypesStr = JSON.stringify(roomTypes);
 
         AsyncStorage.setItem('roomTypesStr', roomTypesStr).then(() => {
-          console.log('roomTypes = ' + roomTypesStr);
           this.setState({roomTypes : roomTypes});
         });
       })
@@ -462,7 +390,6 @@ export default class Session extends React.Component {
         let deviceTypesStr = JSON.stringify(deviceTypes);
 
         AsyncStorage.setItem('deviceTypesStr', deviceTypesStr).then(() => {
-          console.log('deviceTypes = ' + deviceTypesStr);
           this.setState({deviceTypes : deviceTypes});
         });
       })
@@ -486,7 +413,6 @@ export default class Session extends React.Component {
         let activationMethodsStr = JSON.stringify(activationMethods);
 
         AsyncStorage.setItem('activationMethodsStr', activationMethodsStr).then(() => {
-          console.log('activationMethods = ' + activationMethodsStr);
           this.setState({activationMethods : activationMethods});
         });
       })
