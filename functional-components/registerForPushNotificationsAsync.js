@@ -33,7 +33,7 @@ export default async function registerForPushNotificationsAsync() {
 
         var appUser = details.appUser;
 
-        fetch('http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateTokenForUserId', {
+        fetch('http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateTokenForUserId', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

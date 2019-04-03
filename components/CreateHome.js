@@ -61,7 +61,7 @@ export default class CreateHome extends React.Component {
         accuracy: addressGC[0].accuracy
       }  
 
-      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateHome", {
+      fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/CreateHome", {
         method: 'POST',
         headers: new Headers({
           'Content-Type': 'application/json;'

@@ -38,7 +38,7 @@ export default class Register extends React.Component {
       lastName
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Register", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/Register", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

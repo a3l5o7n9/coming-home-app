@@ -86,7 +86,7 @@ export default class BindDeviceToRoom extends React.Component {
       userId
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/BindDeviceToRoom", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/BindDeviceToRoom", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

@@ -89,7 +89,7 @@ export default class UpdateRoom extends React.Component {
       updatedUserTypeName
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateUserTypeInHome", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserTypeInHome", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

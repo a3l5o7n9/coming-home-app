@@ -153,7 +153,7 @@ export default class UpdateActivationCondition extends React.Component {
       newActivationParam
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateActivationConditionDetails", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateActivationConditionDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

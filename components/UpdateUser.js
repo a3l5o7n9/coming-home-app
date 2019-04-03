@@ -100,7 +100,7 @@ export default class UpdateUser extends React.Component {
       newLastName
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateUserDetails", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

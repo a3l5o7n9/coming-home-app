@@ -46,7 +46,7 @@ export default class DeviceDetails extends React.Component {
       conditionId: 'null'
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

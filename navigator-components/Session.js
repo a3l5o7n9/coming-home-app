@@ -97,7 +97,7 @@ export default class Session extends React.Component {
 
   componentDidMount() {
     registerForPushNotificationsAsync();
-    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 6000, distanceInterval: 10 }, (position) => this.getDeviceCurrentPositionAsync());
+    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 10 }, (position) => this.getDeviceCurrentPositionAsync());
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
@@ -265,7 +265,7 @@ export default class Session extends React.Component {
                   conditionId
                 }
   
-                fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
+                fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
                   method: 'POST',
                   headers: new Headers({
                     'Content-Type': 'application/json;'
@@ -330,7 +330,7 @@ export default class Session extends React.Component {
   }
 
   fetchUserTypes = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserTypes", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -353,7 +353,7 @@ export default class Session extends React.Component {
   }
 
   fetchRoomTypes = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetRoomTypes", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetRoomTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -376,7 +376,7 @@ export default class Session extends React.Component {
   }
 
   fetchDeviceTypes = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetDeviceTypes", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetDeviceTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -399,7 +399,7 @@ export default class Session extends React.Component {
   }
 
   fetchActivationMethods = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetActivationMethods", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

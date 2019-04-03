@@ -94,7 +94,7 @@ export default class Rooms extends React.Component {
   }
 
   goToCreateRoom = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetRoomTypes", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetRoomTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

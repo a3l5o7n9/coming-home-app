@@ -97,7 +97,7 @@ export default class ActivationCondition extends React.Component {
       newStatus
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeConditionStatus", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeConditionStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -173,6 +173,7 @@ export default class ActivationCondition extends React.Component {
       })
       .catch((error) => {
         alert("A connection Error has occurred.");
+        console.log(error);
       });
   }
 

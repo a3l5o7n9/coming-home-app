@@ -98,7 +98,7 @@ export default class ActivationConditions extends React.Component {
   }
 
   goToCreateActivationCondition = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetActivationMethods", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

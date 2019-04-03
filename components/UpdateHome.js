@@ -97,7 +97,7 @@ export default class UpdateHome extends React.Component {
     }
 
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateHomeDetails", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

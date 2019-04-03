@@ -106,7 +106,7 @@ export default class Devices extends React.Component {
   }
 
   goToCreateDevice = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetDeviceTypes", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetDeviceTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

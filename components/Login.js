@@ -33,7 +33,7 @@ export default class Login extends React.Component {
       userPassword
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Login", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/Login", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

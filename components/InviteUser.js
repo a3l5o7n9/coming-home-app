@@ -62,7 +62,7 @@ export default class InviteUser extends React.Component {
         accuracy: addressGC[0].accuracy
       }
 
-      fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/InviteUserToHome", {
+      fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/InviteUserToHome", {
         method: 'POST',
         headers: new Headers({
           'Content-Type': 'application/json;'

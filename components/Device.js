@@ -141,7 +141,7 @@ export default class Device extends React.Component {
       conditionId: 'null'
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/ChangeDeviceStatus", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -222,7 +222,7 @@ export default class Device extends React.Component {
   }
 
   goToCreateActivationCondition = () => {
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetActivationMethods", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

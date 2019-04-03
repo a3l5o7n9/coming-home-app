@@ -69,7 +69,7 @@ export default class CreateRoom extends React.Component {
       userId
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateRoom", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/CreateRoom", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

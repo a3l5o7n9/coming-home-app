@@ -42,7 +42,7 @@ export default class DevicePermissionDetails extends React.Component {
       hasPermission
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/UpdateUserDevicePermissions", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserDevicePermissions", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

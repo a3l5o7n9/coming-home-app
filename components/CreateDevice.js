@@ -96,7 +96,7 @@ export default class CreateDevice extends React.Component {
       roomId
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/CreateDevice", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/CreateDevice", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

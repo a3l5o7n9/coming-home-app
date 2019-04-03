@@ -49,7 +49,7 @@ export default class Home extends React.Component {
       userName,
       userPassword
     }
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/Login", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/Login", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -97,7 +97,7 @@ export default class Home extends React.Component {
       userId,
       homeId
     }
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserHomeDetails", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

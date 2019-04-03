@@ -57,7 +57,7 @@ export default class User extends React.Component {
       userId,
       homeId
     }
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/GetUserHomeDetails", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -110,7 +110,7 @@ export default class User extends React.Component {
       homeId
     }
 
-    fetch("http://ruppinmobile.tempdomain.co.il/SITE14/ComingHomeWS.asmx/LeaveHome", {
+    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/LeaveHome", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
