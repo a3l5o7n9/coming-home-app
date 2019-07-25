@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class UpdateRoom extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class UpdateRoom extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -41,8 +42,10 @@ export default class UpdateRoom extends React.Component {
           AsyncStorage.getItem('roomStr').then((value) => {
             room = JSON.parse(value);
 
-            this.setState(
-              {
+            AsyncStorage.getItem('apiStr').then((value) => {
+              this.api = JSON.parse(value);
+
+              this.setState({
                 appUser: details.appUser,
                 userList: details.userList,
                 homeList: details.homeList,
@@ -54,6 +57,7 @@ export default class UpdateRoom extends React.Component {
                 roomTypes: roomTypes,
                 room: room
               });
+            });
           });
         });
       });
@@ -92,7 +96,7 @@ export default class UpdateRoom extends React.Component {
       newShareStatus
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateRoomDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/UpdateRoomDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -243,47 +247,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
-    color:'green',
+    color: 'green',
   },
   textInputStyle: {
     fontSize: 25,
   },
   textViewStyle: {
-    margin:5,
+    margin: 5,
   },
   textInputViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1
   },
   switchViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1,
-    flex: 1, 
-    flexDirection: 'row', 
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   submitButtonViewStyle: {
-    margin:5,
-    backgroundColor:'lightgrey',
-    borderColor:'silver',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightgrey',
+    borderColor: 'silver',
+    borderRadius: 50,
+    borderWidth: 1
   },
   cancelButtonViewStyle: {
-    margin:5,
-    backgroundColor:'grey',
-    borderColor:'lightgrey',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'grey',
+    borderColor: 'lightgrey',
+    borderRadius: 50,
+    borderWidth: 1
   },
-  pickerStyle: { 
-    width: '80%', 
-    borderColor: 'black', 
-    borderRadius:5, 
-    borderWidth: 2 
+  pickerStyle: {
+    width: '80%',
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 2
   },
 });

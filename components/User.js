@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class User extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class User extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       home: {},
@@ -33,16 +34,20 @@ export default class User extends React.Component {
         AsyncStorage.getItem('userStr').then((value) => {
           user = JSON.parse(value);
 
-          this.setState({
-            appUser: details.appUser,
-            userList: details.userList,
-            homeList: details.homeList,
-            allUserRoomsList: details.allUserRoomsList,
-            allUserDevicesList: details.allUserDevicesList,
-            allUserActivationConditionsList: details.allUserActivationConditionsList,
-            resultMessage: details.resultMessage,
-            home: home,
-            user: user
+          AsyncStorage.getItem('apiStr').then((value) => {
+            this.api = JSON.parse(value);
+            
+            this.setState({
+              appUser: details.appUser,
+              userList: details.userList,
+              homeList: details.homeList,
+              allUserRoomsList: details.allUserRoomsList,
+              allUserDevicesList: details.allUserDevicesList,
+              allUserActivationConditionsList: details.allUserActivationConditionsList,
+              resultMessage: details.resultMessage,
+              home: home,
+              user: user
+            });
           });
         });
       });
@@ -57,7 +62,7 @@ export default class User extends React.Component {
       userId,
       homeId
     }
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserHomeDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetUserHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -110,7 +115,7 @@ export default class User extends React.Component {
       homeId
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/LeaveHome", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/LeaveHome", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

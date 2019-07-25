@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class Rooms extends React.Component {
   static navigationOptions = {
@@ -94,7 +94,7 @@ export default class Rooms extends React.Component {
   }
 
   goToCreateRoom = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetRoomTypes", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetRoomTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 import {Location} from 'expo';
 
 export default class UpdateHome extends React.Component {
@@ -11,6 +11,7 @@ export default class UpdateHome extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -35,15 +36,19 @@ export default class UpdateHome extends React.Component {
       AsyncStorage.getItem('detailsStr').then((value) => {
         details = JSON.parse(value);
 
-        this.setState({
-          appUser: details.appUser,
-          userList: details.userList,
-          homeList: details.homeList,
-          allUserRoomsList: details.allUserRoomsList,
-          allUserDevicesList: details.allUserDevicesList,
-          allUserActivationConditionsList: details.allUserActivationConditionsList,
-          resultMessage: details.resultMessage,
-          home: home
+        AsyncStorage.getItem('apiStr').then((value) => {
+          this.api = JSON.parse(value);
+
+          this.setState({
+            appUser: details.appUser,
+            userList: details.userList,
+            homeList: details.homeList,
+            allUserRoomsList: details.allUserRoomsList,
+            allUserDevicesList: details.allUserDevicesList,
+            allUserActivationConditionsList: details.allUserActivationConditionsList,
+            resultMessage: details.resultMessage,
+            home: home
+          });
         });
       });
     });
@@ -97,7 +102,7 @@ export default class UpdateHome extends React.Component {
     }
 
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateHomeDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/UpdateHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

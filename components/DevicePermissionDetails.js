@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class DevicePermissionDetails extends React.Component {
   constructor(props) {
@@ -42,56 +41,60 @@ export default class DevicePermissionDetails extends React.Component {
       hasPermission
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserDevicePermissions", {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json;'
-      }),
-      body: JSON.stringify(request)
-    })
-      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-      .then((result) => { // no error in server
-        let changeData = JSON.parse(result.d);
+    AsyncStorage.getItem('apiStr').then((value) => {
+      let api = JSON.parse(value);
 
-        switch (changeData) {
-          case -2:
-            {
-              alert("You do not have permission to change this user's permissions for this device.");
-              break;
-            }
-          case -1:
-            {
-              alert("Device not found in that room.");
-              break;
-            }
-          case 0:
-            {
-              alert("Action aborted, as it does not actually change the user's current permissions for this device.");
-              break;
-            }
-          default:
-            {
-              devicePermission.HasPermission = !(devicePermission.HasPermission);              
-              var devicePermissionList = this.state.devicePermissionList;
-              var index = devicePermissionList.findIndex((d) => d.DeviceId === this.state.devicePermission.DeviceId && d.RoomId === this.state.devicePermission.RoomId);
-              devicePermissionList[index].HasPermission = this.state.devicePermission.HasPermission;
-              var devicePermissions = {
-                devicePermissionList,
-                resultMessage: 'Data'
+      fetch("http://" + api + "/ComingHomeWS.asmx/UpdateUserDevicePermissions", {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json;'
+        }),
+        body: JSON.stringify(request)
+      })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+          let changeData = JSON.parse(result.d);
+
+          switch (changeData) {
+            case -2:
+              {
+                alert("You do not have permission to change this user's permissions for this device.");
+                break;
               }
-              var devicePermissionsStr = JSON.stringify(devicePermissions);
+            case -1:
+              {
+                alert("Device not found in that room.");
+                break;
+              }
+            case 0:
+              {
+                alert("Action aborted, as it does not actually change the user's current permissions for this device.");
+                break;
+              }
+            default:
+              {
+                devicePermission.HasPermission = !(devicePermission.HasPermission);
+                var devicePermissionList = this.state.devicePermissionList;
+                var index = devicePermissionList.findIndex((d) => d.DeviceId === this.state.devicePermission.DeviceId && d.RoomId === this.state.devicePermission.RoomId);
+                devicePermissionList[index].HasPermission = this.state.devicePermission.HasPermission;
+                var devicePermissions = {
+                  devicePermissionList,
+                  resultMessage: 'Data'
+                }
+                var devicePermissionsStr = JSON.stringify(devicePermissions);
 
-              AsyncStorage.setItem('devicePermissionsStr', devicePermissionsStr).then(() => {
+                AsyncStorage.setItem('devicePermissionsStr', devicePermissionsStr).then(() => {
                   this.setState({ devicePermission, devicePermissionList });
                   alert("Device Permission updated!");
-              });
-              break;
-            }
-        }
-      })
-      .catch((error) => {
-        alert("A connection Error has occurred.");
-      });
+                });
+                break;
+              }
+          }
+        })
+        .catch((error) => {
+          alert("A connection Error has occurred.");
+        });
+    });
   }
 
   render() {

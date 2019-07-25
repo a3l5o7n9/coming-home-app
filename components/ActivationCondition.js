@@ -10,6 +10,7 @@ export default class ActivationCondition extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       home: {},
@@ -52,18 +53,22 @@ export default class ActivationCondition extends React.Component {
             AsyncStorage.getItem('activationConditionStr').then((value) => {
               activationCondition = JSON.parse(value);
 
-              this.setState({
-                appUser: details.appUser,
-                home: home,
-                device: device,
-                room: room,
-                activationCondition: activationCondition,
-                userList: details.userList,
-                homeList: details.homeList,
-                allUserRoomsList: details.allUserRoomsList,
-                allUserDevicesList: details.allUserDevicesList,
-                allUserActivationConditionsList: details.allUserActivationConditionsList,
-                resultMessage: details.resultMessage
+              AsyncStorage.getItem('apiStr').then((value) => {
+                this.api = JSON.parse(value);
+                
+                this.setState({
+                  appUser: details.appUser,
+                  home: home,
+                  device: device,
+                  room: room,
+                  activationCondition: activationCondition,
+                  userList: details.userList,
+                  homeList: details.homeList,
+                  allUserRoomsList: details.allUserRoomsList,
+                  allUserDevicesList: details.allUserDevicesList,
+                  allUserActivationConditionsList: details.allUserActivationConditionsList,
+                  resultMessage: details.resultMessage
+                });
               });
             });
           });
@@ -97,7 +102,7 @@ export default class ActivationCondition extends React.Component {
       newStatus
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeConditionStatus", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/ChangeConditionStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

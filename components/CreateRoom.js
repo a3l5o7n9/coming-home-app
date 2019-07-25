@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class CreateRoom extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class CreateRoom extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -35,16 +36,21 @@ export default class CreateRoom extends React.Component {
 
         AsyncStorage.getItem('roomTypesStr').then((value) => {
           roomTypes = JSON.parse(value);
-          this.setState({
-            appUser: details.appUser,
-            userList: details.userList,
-            homeList: details.homeList,
-            allUserRoomsList: details.allUserRoomsList,
-            allUserDevicesList: details.allUserDevicesList,
-            allUserActivationConditionsList: details.allUserActivationConditionsList,
-            resultMessage: details.resultMessage,
-            home: home,
-            roomTypes: roomTypes
+
+          AsyncStorage.getItem('apiStr').then((value) => {
+            this.api = JSON.parse(value);
+
+            this.setState({
+              appUser: details.appUser,
+              userList: details.userList,
+              homeList: details.homeList,
+              allUserRoomsList: details.allUserRoomsList,
+              allUserDevicesList: details.allUserDevicesList,
+              allUserActivationConditionsList: details.allUserActivationConditionsList,
+              resultMessage: details.resultMessage,
+              home: home,
+              roomTypes: roomTypes
+            });
           });
         });
       });
@@ -69,7 +75,7 @@ export default class CreateRoom extends React.Component {
       userId
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/CreateRoom", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/CreateRoom", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

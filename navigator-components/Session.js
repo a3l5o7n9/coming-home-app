@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, AsyncStorage } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { AsyncStorage } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Notifications, Location } from 'expo';
 import geolib from 'geolib';
@@ -79,6 +78,7 @@ export default class Session extends React.Component {
 
   constructor(props) {
     super(props);
+    this.api = "";
     this.state = {
       notification: {},
       appUser: {},
@@ -96,15 +96,19 @@ export default class Session extends React.Component {
   }
 
   componentDidMount() {
-    registerForPushNotificationsAsync();
-    Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 10 }, (position) => this.getDeviceCurrentPositionAsync());
+    AsyncStorage.getItem('apiStr').then((value) => {
+      this.api = JSON.parse(value);
 
-    // Handle notifications that are received or selected while the app
-    // is open. If the app was closed and then opened by tapping the
-    // notification (rather than just tapping the app icon to open it),
-    // this function will fire on the next tick after the app starts
-    // with the notification data.
-    this._notificationSubscription = Notifications.addListener(this._handleNotification);
+      registerForPushNotificationsAsync();
+      Location.watchPositionAsync({ enableHighAccuracy: true, timeInterval: 60000, distanceInterval: 10 }, (position) => this.getDeviceCurrentPositionAsync());
+
+      // Handle notifications that are received or selected while the app
+      // is open. If the app was closed and then opened by tapping the
+      // notification (rather than just tapping the app icon to open it),
+      // this function will fire on the next tick after the app starts
+      // with the notification data.
+      this._notificationSubscription = Notifications.addListener(this._handleNotification);
+    })
 
     try {
       AsyncStorage.getItem('userTypesStr').then((value) => {
@@ -130,7 +134,7 @@ export default class Session extends React.Component {
         });
       });
     }
-    catch(error) {
+    catch (error) {
       error(error);
     }
   }
@@ -174,8 +178,7 @@ export default class Session extends React.Component {
           allUserDevicesList = details.allUserDevicesList;
           allUserActivationConditionsList = details.allUserActivationConditionsList;
 
-          if (allUserActivationConditionsList != null)
-          {
+          if (allUserActivationConditionsList != null) {
             allUserActivationConditionsList.filter((ac) => (ac.ActivationMethodName === 'לפי מרחק/מיקום' && ac.IsActive === true));
 
             allUserActivationConditionsList.forEach((ac) => {
@@ -190,13 +193,13 @@ export default class Session extends React.Component {
               distanceParam = ac.DistanceOrTimeParam;
               var distanceParamArray = new Array();
               var distanceParamNumber = 0;
-  
+
               if (distanceParam.toLowerCase().includes('km') || distanceParam.toLowerCase().includes('kilometers')) {
                 distanceParamArray = distanceParam.toLowerCase().split('k');
                 distanceParamNumber = distanceParamArray[0] * 1000;
                 console.log("distanceParamNumber = " + distanceParamNumber);
               }
-  
+
               if (currentLatitude > aGCLatitude)
               //The device is currently north of the address
               {
@@ -206,7 +209,7 @@ export default class Session extends React.Component {
                   return;
                 }
               }
-  
+
               if (currentLatitude < aGCLatitude)
               //The device is currently south of the address
               {
@@ -216,7 +219,7 @@ export default class Session extends React.Component {
                   return;
                 }
               }
-  
+
               if (currentLongitude > aGCLongitude)
               //The device is currently east of the address
               {
@@ -226,7 +229,7 @@ export default class Session extends React.Component {
                   return;
                 }
               }
-  
+
               if (currentLongitude < aGCLongitude)
               //The device is currently west of the address
               {
@@ -236,10 +239,10 @@ export default class Session extends React.Component {
                   return;
                 }
               }
-  
+
               var currentDistance = geolib.getDistance({ latitude: aGCLatitude, longitude: aGCLongitude }, { latitude: currentLatitude, longitude: currentLongitude });
               console.log("currentDistance = " + currentDistance);
-  
+
               if (currentDistance <= distanceParamNumber && currentDistance > 5 && currentSpeed > 0) {
                 var userId = appUser.UserId;
                 var deviceId = ac.DeviceId;
@@ -247,14 +250,14 @@ export default class Session extends React.Component {
                 var turnOn = ac.TurnOn;
                 var statusDetails = '';
                 var conditionId = ac.ConditionId;
-  
+
                 if (ac.ActivationParam == '' || ac.ActivationParam == null) {
                   statusDetails = 'null';
                 }
                 else {
                   statusDetails = ac.ActivationParam;
                 }
-  
+
                 var request = {
                   userId,
                   deviceId,
@@ -264,8 +267,8 @@ export default class Session extends React.Component {
                   statusDetails,
                   conditionId
                 }
-  
-                fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
+
+                fetch("http://" + this.api + "/ComingHomeWS.asmx/ChangeDeviceStatus", {
                   method: 'POST',
                   headers: new Headers({
                     'Content-Type': 'application/json;'
@@ -275,7 +278,7 @@ export default class Session extends React.Component {
                   .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
                   .then((result) => { // no error in server
                     let changeData = JSON.parse(result.d);
-  
+
                     switch (changeData) {
                       case -2:
                         {
@@ -305,13 +308,13 @@ export default class Session extends React.Component {
                             allUserActivationConditionsList: allUserActivationConditionsList,
                             resultMessage: resultMessage
                           }
-  
+
                           var detailsNewStr = JSON.stringify(detailsNew);
-  
+
                           AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
                             alert(device.DeviceName + "'s status in " + room.RoomName + " in " + home.HomeName + " has changed.");
                           });
-  
+
                           break;
                         }
                     }
@@ -330,7 +333,7 @@ export default class Session extends React.Component {
   }
 
   fetchUserTypes = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserTypes", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetUserTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -344,7 +347,7 @@ export default class Session extends React.Component {
         let userTypesStr = JSON.stringify(userTypes);
 
         AsyncStorage.setItem('userTypesStr', userTypesStr).then(() => {
-          this.setState({userTypes : userTypes});
+          this.setState({ userTypes: userTypes });
         });
       })
       .catch((error) => {
@@ -353,7 +356,7 @@ export default class Session extends React.Component {
   }
 
   fetchRoomTypes = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetRoomTypes", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetRoomTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -367,7 +370,7 @@ export default class Session extends React.Component {
         let roomTypesStr = JSON.stringify(roomTypes);
 
         AsyncStorage.setItem('roomTypesStr', roomTypesStr).then(() => {
-          this.setState({roomTypes : roomTypes});
+          this.setState({ roomTypes: roomTypes });
         });
       })
       .catch((error) => {
@@ -376,7 +379,7 @@ export default class Session extends React.Component {
   }
 
   fetchDeviceTypes = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetDeviceTypes", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetDeviceTypes", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -390,7 +393,7 @@ export default class Session extends React.Component {
         let deviceTypesStr = JSON.stringify(deviceTypes);
 
         AsyncStorage.setItem('deviceTypesStr', deviceTypesStr).then(() => {
-          this.setState({deviceTypes : deviceTypes});
+          this.setState({ deviceTypes: deviceTypes });
         });
       })
       .catch((error) => {
@@ -399,7 +402,7 @@ export default class Session extends React.Component {
   }
 
   fetchActivationMethods = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetActivationMethods", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -413,7 +416,7 @@ export default class Session extends React.Component {
         let activationMethodsStr = JSON.stringify(activationMethods);
 
         AsyncStorage.setItem('activationMethodsStr', activationMethodsStr).then(() => {
-          this.setState({activationMethods : activationMethods});
+          this.setState({ activationMethods: activationMethods });
         });
       })
       .catch((error) => {
@@ -422,8 +425,7 @@ export default class Session extends React.Component {
   }
 
   render() {
-    if (this.state.userTypes == null)
-    {
+    if (this.state.userTypes == null) {
       this.fetchUserTypes();
     }
 

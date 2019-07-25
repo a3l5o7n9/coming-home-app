@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class CreateActivationCondition extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class CreateActivationCondition extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -57,23 +58,27 @@ export default class CreateActivationCondition extends React.Component {
                   AsyncStorage.getItem('deviceStr').then((value) => {
                     device = JSON.parse(value);
 
-                    this.setState({
-                      appUser: details.appUser,
-                      userList: details.userList,
-                      homeList: details.homeList,
-                      allUserRoomsList: details.allUserRoomsList,
-                      allUserDevicesList: details.allUserDevicesList,
-                      allUserActivationConditionsList: details.allUserActivationConditionsList,
-                      resultMessage: details.resultMessage,
-                      home: home,
-                      deviceList: devices.deviceList,
-                      roomList: rooms.roomList,
-                      activationConditionList: activationConditions.activationConditionList,
-                      activationMethods: activationMethods,
-                      room: room,
-                      device: device,
-                      roomList: rooms.roomList,
-                      deviceList: devices.deviceList
+                    AsyncStorage.getItem('apiStr').then((value) => {
+                      this.api = JSON.parse(value);
+
+                      this.setState({
+                        appUser: details.appUser,
+                        userList: details.userList,
+                        homeList: details.homeList,
+                        allUserRoomsList: details.allUserRoomsList,
+                        allUserDevicesList: details.allUserDevicesList,
+                        allUserActivationConditionsList: details.allUserActivationConditionsList,
+                        resultMessage: details.resultMessage,
+                        home: home,
+                        deviceList: devices.deviceList,
+                        roomList: rooms.roomList,
+                        activationConditionList: activationConditions.activationConditionList,
+                        activationMethods: activationMethods,
+                        room: room,
+                        device: device,
+                        roomList: rooms.roomList,
+                        deviceList: devices.deviceList
+                      });
                     });
                   });
                 });
@@ -120,7 +125,7 @@ export default class CreateActivationCondition extends React.Component {
       activationParam
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/CreateActivationCondition", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/CreateActivationCondition", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

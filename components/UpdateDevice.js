@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class UpdateDevice extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class UpdateDevice extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -54,22 +55,25 @@ export default class UpdateDevice extends React.Component {
               AsyncStorage.getItem('deviceStr').then((value) => {
                 device = JSON.parse(value);
 
-                this.setState(
-                {
-                  appUser: details.appUser,
-                  userList: details.userList,
-                  homeList: details.homeList,
-                  allUserRoomsList: details.allUserRoomsList,
-                  allUserDevicesList: details.allUserDevicesList,
-                  allUserActivationConditionsList: details.allUserActivationConditionsList,
-                  resultMessage: details.resultMessage,
-                  home: home,
-                  deviceTypes: deviceTypes,
-                  roomList: rooms.roomList,
-                  room: room,
-                  device: device
+                AsyncStorage.getItem('apiStr').then((Value) => {
+                  this.api = JSON.parse(value);
+
+                  this.setState({
+                    appUser: details.appUser,
+                    userList: details.userList,
+                    homeList: details.homeList,
+                    allUserRoomsList: details.allUserRoomsList,
+                    allUserDevicesList: details.allUserDevicesList,
+                    allUserActivationConditionsList: details.allUserActivationConditionsList,
+                    resultMessage: details.resultMessage,
+                    home: home,
+                    deviceTypes: deviceTypes,
+                    roomList: rooms.roomList,
+                    room: room,
+                    device: device
+                  });
                 });
-              })
+              });
             });
           });
         });
@@ -83,24 +87,20 @@ export default class UpdateDevice extends React.Component {
     const deviceId = this.state.device['DeviceId'];
     var { newDeviceName, newDeviceTypeCode, newDeviceTypeName, newDivideStatus } = this.state;
 
-    if (newDeviceName == '' || newDeviceName == null) 
-    {
+    if (newDeviceName == '' || newDeviceName == null) {
       newDeviceName = 'null';
     }
 
-    if (newDeviceTypeCode == '' || newDeviceTypeCode == null)
-    {
+    if (newDeviceTypeCode == '' || newDeviceTypeCode == null) {
       newDeviceTypeCode = 'null';
       newDeviceTypeName = this.state.device.DeviceTypeName;
     }
-    else
-    {
+    else {
       var typeIndex = this.state.deviceTypes.findIndex((dt) => dt.DeviceTypeCode == newDeviceTypeCode);
       newDeviceTypeName = this.state.deviceTypes[typeIndex].DeviceTypeName;
     }
 
-    if (newDivideStatus == '' || newDivideStatus == null)
-    {
+    if (newDivideStatus == '' || newDivideStatus == null) {
       newDivideStatus = 'null';
     }
 
@@ -113,7 +113,7 @@ export default class UpdateDevice extends React.Component {
       newDivideStatus
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateDeviceDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/UpdateDeviceDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -153,8 +153,7 @@ export default class UpdateDevice extends React.Component {
                   devicesResultMessage = 'Data';
                 }
 
-                if (this.state.allUserDevicesList != null)
-                {
+                if (this.state.allUserDevicesList != null) {
                   allUserDevicesList = this.state.allUserDevicesList;
                 }
 
@@ -164,15 +163,13 @@ export default class UpdateDevice extends React.Component {
                 var deviceFirstIndex = deviceList.findIndex((d) => (d.DeviceId === deviceId));
                 var deviceFirstIndexA = allUserDevicesList.findIndex((de) => (de.DeviceId === deviceId));
 
-                for (var i = deviceFirstIndex; i <= deviceFirstIndex + numOfOccurrences - 1; i++)
-                {
+                for (var i = deviceFirstIndex; i <= deviceFirstIndex + numOfOccurrences - 1; i++) {
                   deviceList[i].DeviceName = newDevice.DeviceName;
                   deviceList[i].DeviceTypeName = newDevice.DeviceTypeName;
                   deviceList[i].IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
                 }
 
-                for (var j = deviceFirstIndexA; j <= deviceFirstIndexA + numOfOccurrences - 1; j++)
-                {
+                for (var j = deviceFirstIndexA; j <= deviceFirstIndexA + numOfOccurrences - 1; j++) {
                   allUserDevicesList[j].DeviceName = newDevice.DeviceName;
                   allUserDevicesList[j].DeviceTypeName = newDevice.DeviceTypeName;
                   allUserDevicesList[j].IsDividedIntoRooms = newDevice.IsDividedIntoRooms;
@@ -199,15 +196,15 @@ export default class UpdateDevice extends React.Component {
 
                 AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
                   AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                   AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
-                    var { room } = this.state;
+                    AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                      var { room } = this.state;
 
-                    let roomStr = JSON.stringify(room);
+                      let roomStr = JSON.stringify(room);
 
-                    AsyncStorage.setItem('roomStr', roomStr).then(() => {
-                      this.props.navigation.navigate("Device");
+                      AsyncStorage.setItem('roomStr', roomStr).then(() => {
+                        this.props.navigation.navigate("Device");
+                      });
                     });
-                   });
                   });
                 });
               });
@@ -283,47 +280,47 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     alignItems: 'center',
-    color:'green',
+    color: 'green',
   },
   textInputStyle: {
     fontSize: 25,
   },
   textViewStyle: {
-    margin:5,
+    margin: 5,
   },
   textInputViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1
   },
   switchViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1,
-    flex: 1, 
-    flexDirection: 'row', 
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   submitButtonViewStyle: {
-    margin:5,
-    backgroundColor:'lightgrey',
-    borderColor:'silver',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightgrey',
+    borderColor: 'silver',
+    borderRadius: 50,
+    borderWidth: 1
   },
   cancelButtonViewStyle: {
-    margin:5,
-    backgroundColor:'grey',
-    borderColor:'lightgrey',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'grey',
+    borderColor: 'lightgrey',
+    borderRadius: 50,
+    borderWidth: 1
   },
   pickerStyle: {
-    width: '80%', 
+    width: '80%',
     borderColor: 'black',
-    borderRadius:5, 
+    borderRadius: 5,
     borderWidth: 2
   },
 });

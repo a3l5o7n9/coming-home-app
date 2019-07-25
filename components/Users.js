@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class Users extends React.Component {
   static navigationOptions = {
@@ -54,7 +54,7 @@ export default class Users extends React.Component {
           <Text style={styles.textStyle}>Your Home Members</Text>
           {
             this.state.userList.map((user, UserId) => (
-              <View key={UserId} style={{borderColor:'cyan', borderRadius:10, borderWidth:5, backgroundColor:'lightcyan', flex: 1, flexDirection:'row', alignItems: 'center' }}>
+              <View key={UserId} style={{ borderColor: 'cyan', borderRadius: 10, borderWidth: 5, backgroundColor: 'lightcyan', flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                 <Button primary text={user["UserName"] + "\n" + user["FirstName"] + " " + user["LastName"]} onPress={() => {
                   let userStr = JSON.stringify(user);
                   AsyncStorage.setItem('userStr', userStr).then(() => {
@@ -86,7 +86,7 @@ export default class Users extends React.Component {
             {this.showUsers()}
           </View>
           <View style={styles.inviteButtonStyle}>
-            <Button primary text="Invite New User" onPress={() => {this.props.navigation.navigate("InviteUser")}}/>
+            <Button primary text="Invite New User" onPress={() => { this.props.navigation.navigate("InviteUser") }} />
           </View>
           <View style={styles.homeButtonStyle}>
             <Button primary text="Home" onPress={() => { this.props.navigation.navigate("Home") }} />
@@ -99,7 +99,7 @@ export default class Users extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width:'100%',
+    width: '100%',
     backgroundColor: 'cyan',
     justifyContent: 'center',
     alignItems: 'center',
@@ -113,17 +113,17 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   homeButtonStyle: {
-    margin:5,
-    backgroundColor:'lightblue',
-    borderColor:'blue',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightblue',
+    borderColor: 'blue',
+    borderRadius: 50,
+    borderWidth: 1
   },
   inviteButtonStyle: {
-    margin:5,
-    backgroundColor:'orange',
-    borderColor:'orange',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'orange',
+    borderColor: 'orange',
+    borderRadius: 50,
+    borderWidth: 1
   }
 });

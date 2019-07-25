@@ -1,6 +1,4 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 import { createStackNavigator } from 'react-navigation';
 import Login from '../components/Login';
 import Register from '../components/Register';

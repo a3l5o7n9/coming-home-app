@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class ConditionDetails extends React.Component {
   constructor(props) {
@@ -48,7 +48,10 @@ export default class ConditionDetails extends React.Component {
       newStatus
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeConditionStatus", {
+    AsyncStorage.getItem('apiStr').then((value) => {
+      let api = JSON.parse(value);
+
+      fetch("http://" + api + "/ComingHomeWS.asmx/ChangeConditionStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -123,6 +126,7 @@ export default class ConditionDetails extends React.Component {
       .catch((error) => {
         alert("A connection Error has occurred.");
       });
+    });
   }
 
   render() {

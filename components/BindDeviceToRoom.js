@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView, Picker } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class BindDeviceToRoom extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class BindDeviceToRoom extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       home: {},
@@ -52,19 +53,23 @@ export default class BindDeviceToRoom extends React.Component {
               AsyncStorage.getItem('deviceStr').then((value) => {
                 device = JSON.parse(value);
 
-                this.setState({
-                  appUser: details.appUser,
-                  home: home,
-                  roomList: rooms.roomList,
-                  deviceList: devices.deviceList,
-                  room: room,
-                  device: device,
-                  userList: details.userList,
-                  homeList: details.homeList,
-                  allUserRoomsList: details.allUserRoomsList,
-                  allUserDevicesList: details.allUserDevicesList,
-                  allUserActivationConditionsList: details.allUserActivationConditionsList,
-                  resultMessage: details.resultMessage
+                AsyncStorage.getItem('apiStr').then((value) => {
+                  this.api = JSON.parse(value);
+
+                  this.setState({
+                    appUser: details.appUser,
+                    home: home,
+                    roomList: rooms.roomList,
+                    deviceList: devices.deviceList,
+                    room: room,
+                    device: device,
+                    userList: details.userList,
+                    homeList: details.homeList,
+                    allUserRoomsList: details.allUserRoomsList,
+                    allUserDevicesList: details.allUserDevicesList,
+                    allUserActivationConditionsList: details.allUserActivationConditionsList,
+                    resultMessage: details.resultMessage
+                  });
                 });
               });
             });
@@ -86,7 +91,7 @@ export default class BindDeviceToRoom extends React.Component {
       userId
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/BindDeviceToRoom", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/BindDeviceToRoom", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

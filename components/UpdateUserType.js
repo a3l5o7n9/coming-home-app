@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView, Picker } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class UpdateRoom extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class UpdateRoom extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -45,8 +46,10 @@ export default class UpdateRoom extends React.Component {
 
               var userTypeCode = userTypes.find((usty) => usty.UserTypeName == user.UserTypeName).UserTypeCode;
 
-              this.setState(
-                {
+              AsyncStorage.getItem('apiStr').then((value) => {
+                this.api = JSON.parse(value);
+
+                this.setState({
                   appUser: details.appUser,
                   userList: details.userList,
                   homeList: details.homeList,
@@ -61,6 +64,7 @@ export default class UpdateRoom extends React.Component {
                   updatedUserTypeCode: userTypeCode,
                   updatedUserTypeName: user.UserTypeName
                 });
+              });
             });
           });
         });
@@ -89,7 +93,7 @@ export default class UpdateRoom extends React.Component {
       updatedUserTypeName
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserTypeInHome", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/UpdateUserTypeInHome", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -118,7 +122,7 @@ export default class UpdateRoom extends React.Component {
             }
           default:
             {
-              var {user} = this.state;
+              var { user } = this.state;
               var homeUserList = [];
               homeUserList = this.state.homeUserList;
 
@@ -128,7 +132,7 @@ export default class UpdateRoom extends React.Component {
               homeUserList[index].UserTypeName = user.UserTypeName;
 
               var usersNew = {
-                userList : homeUserList,
+                userList: homeUserList,
                 resultMessage: 'data'
               }
 
@@ -139,8 +143,7 @@ export default class UpdateRoom extends React.Component {
                 AsyncStorage.setItem('usersStr', usersNewStr).then(() => {
                   var pathName = "User";
 
-                  if (appUserId == userToUpdateId)
-                  {
+                  if (appUserId == userToUpdateId) {
                     var userList = [];
                     userList = this.state.userList;
 
@@ -156,7 +159,7 @@ export default class UpdateRoom extends React.Component {
                       allUserActivationConditionsList: this.state.allUserActivationConditionsList,
                       resultMessage: this.state.resultMessage
                     }
-    
+
                     let detailsNewStr = JSON.stringify(detailsNew);
 
                     AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {

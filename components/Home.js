@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class Home extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       home: {},
@@ -24,19 +25,23 @@ export default class Home extends React.Component {
       AsyncStorage.getItem('detailsStr').then((value) => {
         details = JSON.parse(value);
 
-        var userList = new Array();
+        AsyncStorage.getItem('apiStr').then((value) => {
+          this.api = JSON.parse(value);
 
-        userList = details.userList;
+          var userList = new Array();
 
-        var homeUser = userList.find((u) => (u.HomeId === home.HomeId));
+          userList = details.userList;
 
-        this.setState({
-          appUser: details.appUser,
-          home: home,
-          userTypeName: homeUser.UserTypeName
+          var homeUser = userList.find((u) => (u.HomeId === home.HomeId));
+
+          this.setState({
+            appUser: details.appUser,
+            home: home,
+            userTypeName: homeUser.UserTypeName
+          });
+
+          this.getUserHomeDetails();
         });
-
-        this.getUserHomeDetails();
       });
     });
   }
@@ -49,7 +54,7 @@ export default class Home extends React.Component {
       userName,
       userPassword
     }
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/Login", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/Login", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -97,7 +102,7 @@ export default class Home extends React.Component {
       userId,
       homeId
     }
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetUserHomeDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetUserHomeDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -150,7 +155,7 @@ export default class Home extends React.Component {
   }
 
   render() {
-    var {userTypeName} = this.state;
+    var { userTypeName } = this.state;
     var disableUsersButton = userTypeName === 'דייר';
 
     return (
@@ -163,37 +168,37 @@ export default class Home extends React.Component {
             </Text>
           </View>
           <View style={{ flex: 1, width: '100%', height: '100%', flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-            <View style={{borderColor:'blue', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'powderblue', flexWrap: 'wrap', alignContent: 'center' }}>
-              <Button primary text="Rooms" onPress={() => { 
-                  this.getUserHomeDetails();
-                  this.props.navigation.navigate("Rooms"); 
-                }} 
+            <View style={{ borderColor: 'blue', borderRadius: 5, borderWidth: 1, width: '40%', height: 100, margin: 10, backgroundColor: 'powderblue', flexWrap: 'wrap', alignContent: 'center' }}>
+              <Button primary text="Rooms" onPress={() => {
+                this.getUserHomeDetails();
+                this.props.navigation.navigate("Rooms");
+              }}
               />
             </View>
-            <View style={{borderColor:'blue', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'skyblue', flexWrap: 'wrap' }}>
-              <Button primary text="Devices" onPress={() => { 
-                  this.getUserHomeDetails();
-                  this.props.navigation.navigate("Devices");
-                }} 
+            <View style={{ borderColor: 'blue', borderRadius: 5, borderWidth: 1, width: '40%', height: 100, margin: 10, backgroundColor: 'skyblue', flexWrap: 'wrap' }}>
+              <Button primary text="Devices" onPress={() => {
+                this.getUserHomeDetails();
+                this.props.navigation.navigate("Devices");
+              }}
               />
             </View>
-            <View style={{borderColor:'lightcyan', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'cyan', flexWrap: 'wrap' }}>
+            <View style={{ borderColor: 'lightcyan', borderRadius: 5, borderWidth: 1, width: '40%', height: 100, margin: 10, backgroundColor: 'cyan', flexWrap: 'wrap' }}>
               <Button primary text="Users" disabled={disableUsersButton} onPress={() => {
-                  this.getUserHomeDetails(); 
-                  this.props.navigation.navigate("Users");
-                }} 
+                this.getUserHomeDetails();
+                this.props.navigation.navigate("Users");
+              }}
               />
             </View>
-            <View style={{borderColor:'green', borderRadius:5, borderWidth:1, width: '40%', height: 100, margin: 10, backgroundColor: 'lawngreen', flexWrap: 'wrap' }}>
+            <View style={{ borderColor: 'green', borderRadius: 5, borderWidth: 1, width: '40%', height: 100, margin: 10, backgroundColor: 'lawngreen', flexWrap: 'wrap' }}>
               <Button primary text="Activation Conditions" onPress={() => {
-                  this.getUserHomeDetails(); 
-                  this.props.navigation.navigate("ActivationConditions"); 
-                }} 
+                this.getUserHomeDetails();
+                this.props.navigation.navigate("ActivationConditions");
+              }}
               />
             </View>
           </View>
           <View style={styles.updateButtonViewStyle}>
-            <Button primary text="Update Home Details" onPress={() => {this.props.navigation.navigate('UpdateHome')}}/>
+            <Button primary text="Update Home Details" onPress={() => { this.props.navigation.navigate('UpdateHome') }} />
           </View>
           <View style={styles.mainPageButtonViewStyle}>
             <Button primary text="Main Page" onPress={this.backToMainPage} />
@@ -219,26 +224,26 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   textViewStyle: {
-    margin:5,
+    margin: 5,
   },
   textInputViewStyle: {
-    margin:5,
-    borderColor:'black',
-    borderRadius:5,
-    borderWidth:1
+    margin: 5,
+    borderColor: 'black',
+    borderRadius: 5,
+    borderWidth: 1
   },
   updateButtonViewStyle: {
-    margin:5,
-    backgroundColor:'lightgrey',
-    borderColor:'silver',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'lightgrey',
+    borderColor: 'silver',
+    borderRadius: 50,
+    borderWidth: 1
   },
   mainPageButtonViewStyle: {
-    margin:5,
-    backgroundColor:'mediumpurple',
-    borderColor:'indigo',
-    borderRadius:50,
-    borderWidth:1
+    margin: 5,
+    backgroundColor: 'mediumpurple',
+    borderColor: 'indigo',
+    borderRadius: 50,
+    borderWidth: 1
   },
 });

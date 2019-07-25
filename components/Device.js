@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, ScrollView, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 import ConditionDetails from './ConditionDetails';
 
 export default class Device extends React.Component {
@@ -11,6 +11,7 @@ export default class Device extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       home: {},
@@ -49,18 +50,22 @@ export default class Device extends React.Component {
             AsyncStorage.getItem('activationConditionsStr').then((value) => {
               activationConditions = JSON.parse(value)
 
-              this.setState({
-                appUser: details.appUser,
-                home: home,
-                device: device,
-                room: room,
-                userList: details.userList,
-                homeList: details.homeList,
-                allUserRoomsList: details.allUserRoomsList,
-                allUserDevicesList: details.allUserDevicesList,
-                allUserActivationConditionsList: details.allUserActivationConditionsList,
-                resultMessage: details.resultMessage,
-                activationConditionList: activationConditions.activationConditionList
+              AsyncStorage.getItem('apiStr').then((value) => {
+                this.api = JSON.parse(value);
+
+                this.setState({
+                  appUser: details.appUser,
+                  home: home,
+                  device: device,
+                  room: room,
+                  userList: details.userList,
+                  homeList: details.homeList,
+                  allUserRoomsList: details.allUserRoomsList,
+                  allUserDevicesList: details.allUserDevicesList,
+                  allUserActivationConditionsList: details.allUserActivationConditionsList,
+                  resultMessage: details.resultMessage,
+                  activationConditionList: activationConditions.activationConditionList
+                });
               });
             });
           });
@@ -141,7 +146,7 @@ export default class Device extends React.Component {
       conditionId: 'null'
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/ChangeDeviceStatus", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -222,7 +227,7 @@ export default class Device extends React.Component {
   }
 
   goToCreateActivationCondition = () => {
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/GetActivationMethods", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/GetActivationMethods", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

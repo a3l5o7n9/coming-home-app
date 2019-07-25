@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class DeviceDetails extends React.Component {
   constructor(props) {
@@ -46,79 +46,83 @@ export default class DeviceDetails extends React.Component {
       conditionId: 'null'
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/ChangeDeviceStatus", {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json;'
-      }),
-      body: JSON.stringify(request)
-    })
-      .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
-      .then((result) => { // no error in server
-        let changeData = JSON.parse(result.d);
+    AsyncStorage.getItem('apiStr').then((value) => {
+      let api = JSON.parse(value);
 
-        switch (changeData) {
-          case -2:
-            {
-              alert("You do not have permission to change this device's status right now.");
-              break;
-            }
-          case -1:
-            {
-              alert("Data Error!");
-              break;
-            }
-          case 0:
-            {
-              alert("Action aborted, as it does not actually change the device's current status.");
-              break;
-            }
-          default:
-            {
-              device.IsOn = !(device.IsOn);
+      fetch("http://" + api + "/ComingHomeWS.asmx/ChangeDeviceStatus", {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json;'
+        }),
+        body: JSON.stringify(request)
+      })
+        .then(res => res.json()) // קובע שהתשובה מהשרת תהיה בפורמט JSON
+        .then((result) => { // no error in server
+          let changeData = JSON.parse(result.d);
 
-              var deviceStr = JSON.stringify(device);
+          switch (changeData) {
+            case -2:
+              {
+                alert("You do not have permission to change this device's status right now.");
+                break;
+              }
+            case -1:
+              {
+                alert("Data Error!");
+                break;
+              }
+            case 0:
+              {
+                alert("Action aborted, as it does not actually change the device's current status.");
+                break;
+              }
+            default:
+              {
+                device.IsOn = !(device.IsOn);
 
-              AsyncStorage.setItem('deviceStr', deviceStr).then(() => { 
-                var deviceList = this.state.deviceList;
-                var index = deviceList.findIndex((d) => d.DeviceId === this.state.device.DeviceId && d.RoomId === this.state.device.RoomId);
-                deviceList[index].IsOn = this.state.device.IsOn;
-                var devices = {
-                  deviceList,
-                  resultMessage : 'Data'
-                }
-                var devicesStr = JSON.stringify(devices);
+                var deviceStr = JSON.stringify(device);
 
-                AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
-                  var allUserDevicesList = this.state.allUserDevicesList;
-                  var indexA = allUserDevicesList.findIndex((de) => (de.DeviceId === this.state.device.DeviceId && de.RoomId === this.state.device.RoomId));
-                  allUserDevicesList[indexA].IsOn = this.state.device.IsOn;
-
-                  var detailsNew = {
-                    appUser: this.state.appUser,
-                    userList: this.state.userList,
-                    homeList: this.state.homeList,
-                    allUserRoomsList: this.state.allUserRoomsList,
-                    allUserDevicesList: allUserDevicesList,
-                    allUserActivationConditionsList: this.state.allUserActivationConditionsList,
-                    resultMessage: this.state.resultMessage
+                AsyncStorage.setItem('deviceStr', deviceStr).then(() => {
+                  var deviceList = this.state.deviceList;
+                  var index = deviceList.findIndex((d) => d.DeviceId === this.state.device.DeviceId && d.RoomId === this.state.device.RoomId);
+                  deviceList[index].IsOn = this.state.device.IsOn;
+                  var devices = {
+                    deviceList,
+                    resultMessage: 'Data'
                   }
+                  var devicesStr = JSON.stringify(devices);
 
-                  var detailsNewStr = JSON.stringify(detailsNew);
+                  AsyncStorage.setItem('devicesStr', devicesStr).then(() => {
+                    var allUserDevicesList = this.state.allUserDevicesList;
+                    var indexA = allUserDevicesList.findIndex((de) => (de.DeviceId === this.state.device.DeviceId && de.RoomId === this.state.device.RoomId));
+                    allUserDevicesList[indexA].IsOn = this.state.device.IsOn;
 
-                  AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
-                    this.setState({ device, deviceList, allUserDevicesList });
-                    alert("Device status changed!");
+                    var detailsNew = {
+                      appUser: this.state.appUser,
+                      userList: this.state.userList,
+                      homeList: this.state.homeList,
+                      allUserRoomsList: this.state.allUserRoomsList,
+                      allUserDevicesList: allUserDevicesList,
+                      allUserActivationConditionsList: this.state.allUserActivationConditionsList,
+                      resultMessage: this.state.resultMessage
+                    }
+
+                    var detailsNewStr = JSON.stringify(detailsNew);
+
+                    AsyncStorage.setItem('detailsStr', detailsNewStr).then(() => {
+                      this.setState({ device, deviceList, allUserDevicesList });
+                      alert("Device status changed!");
+                    });
                   });
                 });
-              });
-              break;
-            }
-        }
-      })
-      .catch((error) => {
-        alert("A connection Error has occurred.");
-      });
+                break;
+              }
+          }
+        })
+        .catch((error) => {
+          alert("A connection Error has occurred.");
+        });
+    });
   }
 
   render() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView, Picker, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 
 export default class UpdateActivationCondition extends React.Component {
   static navigationOptions = {
@@ -10,6 +10,7 @@ export default class UpdateActivationCondition extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -63,27 +64,31 @@ export default class UpdateActivationCondition extends React.Component {
                     AsyncStorage.getItem('activationConditionStr').then((value) => {
                       activationCondition = JSON.parse(value);
 
-                      this.setState({
-                        appUser: details.appUser,
-                        userList: details.userList,
-                        homeList: details.homeList,
-                        allUserRoomsList: details.allUserRoomsList,
-                        allUserDevicesList: details.allUserDevicesList,
-                        allUserActivationConditionsList: details.allUserActivationConditionsList,
-                        resultMessage: details.resultMessage,
-                        home: home,
-                        deviceList: devices.deviceList,
-                        roomList: rooms.roomList,
-                        activationConditionList: activationConditions.activationConditionList,
-                        activationMethods: activationMethods,
-                        room: room,
-                        device: device,
-                        activationCondition: activationCondition,
-                        roomList: rooms.roomList,
-                        deviceList: devices.deviceList,
-                        newActivationMethodCode: activationMethods.find((activationMethod) => activationMethod.ActivationMethodName === activationCondition.ActivationMethodName).ActivationMethodCode,
-                        newDistanceOrTimeParam: activationCondition.DistanceOrTimeParam,
-                        newActivationParam: activationCondition.ActivationParam
+                      AsyncStorage.getItem('apiStr').then((value) => {
+                        this.api = JSON.parse(value);
+
+                        this.setState({
+                          appUser: details.appUser,
+                          userList: details.userList,
+                          homeList: details.homeList,
+                          allUserRoomsList: details.allUserRoomsList,
+                          allUserDevicesList: details.allUserDevicesList,
+                          allUserActivationConditionsList: details.allUserActivationConditionsList,
+                          resultMessage: details.resultMessage,
+                          home: home,
+                          deviceList: devices.deviceList,
+                          roomList: rooms.roomList,
+                          activationConditionList: activationConditions.activationConditionList,
+                          activationMethods: activationMethods,
+                          room: room,
+                          device: device,
+                          activationCondition: activationCondition,
+                          roomList: rooms.roomList,
+                          deviceList: devices.deviceList,
+                          newActivationMethodCode: activationMethods.find((activationMethod) => activationMethod.ActivationMethodName === activationCondition.ActivationMethodName).ActivationMethodCode,
+                          newDistanceOrTimeParam: activationCondition.DistanceOrTimeParam,
+                          newActivationParam: activationCondition.ActivationParam
+                        });
                       });
                     });
                   });
@@ -153,7 +158,7 @@ export default class UpdateActivationCondition extends React.Component {
       newActivationParam
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateActivationConditionDetails", {
+    fetch("http://" + this.api + "/ComingHomeWS.asmx/UpdateActivationConditionDetails", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'

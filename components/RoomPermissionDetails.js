@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, AsyncStorage, Switch } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
 
 export default class RoomPermissionDetails extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: this.props.appUser,
       home: this.props.home,
@@ -39,7 +39,10 @@ export default class RoomPermissionDetails extends React.Component {
       hasAccess
     }
 
-    fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/UpdateUserRoomPermissions", {
+    AsyncStorage.getItem('apiStr').then((value) => {
+      let api = JSON.parse(value);
+
+      fetch("http://" + api + "/ComingHomeWS.asmx/UpdateUserRoomPermissions", {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json;'
@@ -89,6 +92,7 @@ export default class RoomPermissionDetails extends React.Component {
       .catch((error) => {
         alert("A connection Error has occurred.");
       });
+    });
   }
 
   render() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, AsyncStorage, ScrollView } from 'react-native';
-import { Button, ThemeProvider, Card } from 'react-native-material-ui';
+import { Button } from 'react-native-material-ui';
 import { Location } from 'expo';
 
 export default class InviteUser extends React.Component {
@@ -11,6 +11,7 @@ export default class InviteUser extends React.Component {
   constructor(props) {
     super(props);
 
+    this.api = "";
     this.state = {
       appUser: {},
       userList: [],
@@ -31,15 +32,19 @@ export default class InviteUser extends React.Component {
       AsyncStorage.getItem('homeStr').then((value) => {
         home = JSON.parse(value);
 
-        this.setState({
-          appUser: details.appUser,
-          userList: details.userList,
-          homeList: details.homeList,
-          allUserRoomsList: details.allUserRoomsList,
-          allUserDevicesList: details.allUserDevicesList,
-          allUserActivationConditionsList: details.allUserActivationConditionsList,
-          resultMessage: details.resultMessage,
-          home: home
+        AsyncStorage.getItem('apiStr').then((value) => {
+          this.api = JSON.parse(value);
+
+          this.setState({
+            appUser: details.appUser,
+            userList: details.userList,
+            homeList: details.homeList,
+            allUserRoomsList: details.allUserRoomsList,
+            allUserDevicesList: details.allUserDevicesList,
+            allUserActivationConditionsList: details.allUserActivationConditionsList,
+            resultMessage: details.resultMessage,
+            home: home
+          });
         });
       });
     });
@@ -62,7 +67,7 @@ export default class InviteUser extends React.Component {
         accuracy: addressGC[0].accuracy
       }
 
-      fetch("http://orhayseriesnet.ddns.net/Coming_Home/ComingHomeWS.asmx/InviteUserToHome", {
+      fetch("http://" + this.api + "/ComingHomeWS.asmx/InviteUserToHome", {
         method: 'POST',
         headers: new Headers({
           'Content-Type': 'application/json;'
